@@ -89,7 +89,7 @@ const DashboardViews = () => {
                                 <span>Komentar</span>
                             </button>
                             <button 
-                            onClick={() => router.push('/detail_postingan')}
+                            onClick={() => router.push('/detailPostingan')}
                             className="flex items-center space-x-1 hover:text-black">
                                 <i className="fas fa-info-circle"></i>
                                 <span>Info Lengkap</span>

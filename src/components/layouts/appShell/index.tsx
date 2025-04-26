@@ -1,21 +1,52 @@
 import { useRouter } from "next/router";
 import Navbar from "@/components/layouts/navbar";
+import Head from "next/head";
+import { ReactNode } from "react";
 
-type appShellProps = {
-    children: React.ReactNode;
+type AppShellProps = {
+  children: ReactNode;
 };
 
-const disableNavbar = ["/auth/login","/auth/signUp","/404","/auth/resetPassword","/auth/otp","/auth/newPassword"];
+const disableNavbar = [
+  "/auth/login",
+  "/auth/signUp",
+  "/auth/resetPassword",
+  "/auth/otp",
+  "/auth/newPassword",
+  "/",
+];
 
-const AppShell = (props: appShellProps) => {
-    const {children} = props;
-    const {pathname} = useRouter();
-    return (
-        <main>
-            {!disableNavbar.includes(pathname) && <Navbar />}
-            {children}
-        </main>
-    );
+function generateTitle(path: string) {
+  if (path === "/") return "Home";
+  const segments = path.split("/").filter(Boolean);
+  return segments
+    .map((seg) =>
+      seg
+        .replace(/[-_]/g, " ")
+        .replace(/\b\w/g, (char) => char.toUpperCase())
+    )
+    .join(" | ");
 }
+
+const AppShell = ({ children }: AppShellProps) => {
+  const { pathname } = useRouter();
+  const pageTitle = generateTitle(pathname);
+
+  return (
+    <>
+      <Head>
+        <title>{pageTitle}</title>
+        <meta
+          name="description"
+          content={`This is the ${pageTitle} page of My Website`}
+        />
+      </Head>
+      <main>
+        {!disableNavbar.includes(pathname) && <Navbar />}
+        {children}
+      </main>
+    </>
+  );
+};
 
 export default AppShell;

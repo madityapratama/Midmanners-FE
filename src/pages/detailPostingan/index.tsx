@@ -1,4 +1,4 @@
-import DetailPostinganViews from "../views/detail_postingan"; // Pastikan path benar
+import DetailPostinganViews from "../views/detailPostingan"; // Pastikan path benar
 
 const DetailPostinganPage = () => {
     return (
