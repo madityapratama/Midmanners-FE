@@ -14,10 +14,11 @@ const disableNavbar = [
   "/auth/otp",
   "/auth/newPassword",
   "/",
+  "/buyer/aktivitas"
 ];
 
 function generateTitle(path: string) {
-  if (path === "/") return "Home";
+  if (path === "/") return "Landing Page";
   const segments = path.split("/").filter(Boolean);
   return segments
     .map((seg) =>
