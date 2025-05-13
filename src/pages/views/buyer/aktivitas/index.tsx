@@ -27,8 +27,8 @@ export default function AktivitasViews() {
     switch (activeTab) {
       case "menunggu":
         return (
-          <div className="bg-gray-200 p-4 rounded-lg">
-            <div className="flex justify-between text-sm text-gray-600">
+          <div className="bg-indigo-950 font-poppins p-4 rounded-lg">
+            <div className="flex justify-between text-sm text-white">
               <span>7 April 2025, Pukul 10.00</span>
               <span className="font-medium">Menunggu Dikirim</span>
             </div>
@@ -38,28 +38,28 @@ export default function AktivitasViews() {
                 <span className="text-sm text-gray-400">📷</span>
               </div>
               <div>
-                <div className="font-semibold text-black">Nama Barang</div>
-                <div className="text-sm text-black">Kategori</div>
+                <div className="font-semibold text-white">Nama Barang</div>
+                <div className="text-sm text-white">Kategori</div>
               </div>
             </div>
 
             <hr className="my-3 border-gray-400" />
 
             <div className="text-sm">
-              <div className="text-black">Total Pembelian</div>
-              <div className="font-medium text-black">Rp. 15.000</div>
+              <div className="text-white">Total Pembelian</div>
+              <div className="font-medium text-white">Rp. 15.000</div>
             </div>
           </div>
         );
       case "terkirim":
         return (
-          <div className="bg-gray-200 p-4 rounded-lg text-black text-center">
+          <div className="bg-indigo-950 p-4 rounded-lg font-poppins font-semibold text-white text-center">
             Belum ada pesanan terkirim.
           </div>
         );
       case "selesai":
         return (
-          <div className="bg-gray-200 p-4 rounded-lg text-black text-center">
+          <div className="bg-indigo-950 p-4 rounded-lg text-white font-poppins font-semibold text-center">
             Belum ada pesanan selesai.
           </div>
         );
@@ -74,7 +74,7 @@ export default function AktivitasViews() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className="min-h-screen font-calsans bg-gray-100 p-4">
       <div className="bg-white shadow-md rounded-md">
         <div className="flex items-center border-b px-4 py-2">
           <button
@@ -84,7 +84,7 @@ export default function AktivitasViews() {
           >
             <MoveLeft />
           </button>
-          <h1 className="text-lg text-black font-semibold ml-2">Riwayat Aktivitas</h1>
+          <h1 className="text-lg text-indigo-950 font-calsans ml-2">Riwayat Aktivitas</h1>
         </div>
 
         <div className="flex justify-around border-b text-center">
@@ -93,7 +93,7 @@ export default function AktivitasViews() {
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
               className={`flex-1 py-3 font-medium ${
-                activeTab === tab.key ? "border-b-2 border-black text-black" : "text-black"
+                activeTab === tab.key ? "border-b-2 border-black text-indigo-950" : "text-indigo-950"
               }`}
             >
               {tab.label}

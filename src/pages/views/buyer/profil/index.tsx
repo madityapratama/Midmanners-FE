@@ -1,52 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation"; // <- tambahkan ini
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Truck, PackageCheck, CheckCircle, Pencil, Store } from "lucide-react";
 
 export default function ProfilBuyerViews() {
-  const [coverPhoto, setCoverPhoto] = useState<string | null>(null);
-  const router = useRouter(); // <- buat router
+  const router = useRouter();
 
-  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setCoverPhoto(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // function untuk handle klik aktivitas
   const handleNavigateToAktivitas = (tab: string) => {
     router.push(`/buyer/aktivitas?tab=${tab}`);
   };
 
+  const handleDaftarSeller = () => {
+    router.push('/daftarSeller');
+  };
+
   return (
-    <div className="pt-14">
-      {/* Foto Sampul */}
-      <div
-        className="relative bg-gray-700 text-white text-center min-h-[300px] flex flex-col items-center justify-center"
-        style={{
-          backgroundImage: coverPhoto ? `url(${coverPhoto})` : undefined,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
+    <div className="pt-14 bg-zinc-300 min-h-screen">
+      {/* Header / Background Section */}
+      <div className="relative bg-gray-700 text-white text-center min-h-[300px] flex flex-col items-center justify-center">
         <div className="absolute bottom-4 right-4 flex gap-2">
-          <label className="bg-white/80 text-gray-800 px-3 py-1 rounded-full text-xs font-medium hover:bg-white transition backdrop-blur-sm cursor-pointer flex items-center">
-            Upload Foto
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleCoverChange}
-              className="hidden"
-            />
-          </label>
-          <button className="bg-white/80 text-gray-800 px-3 py-1 rounded-full text-xs font-medium hover:bg-white transition backdrop-blur-sm flex items-center gap-2">
+          <button
+            className="bg-white/80 text-gray-800 px-3 py-1 rounded-full text-xs font-poppins font-medium hover:bg-white transition backdrop-blur-sm flex items-center gap-2"
+            onClick={() => router.push('/buyer/edit')}
+          >
             <Pencil size={14} />
             Edit Profil
           </button>
@@ -56,7 +33,7 @@ export default function ProfilBuyerViews() {
       {/* Profil Section */}
       <div className="flex flex-col mt-8 px-6">
         <div className="flex items-center gap-4">
-          <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
+          <div className="w-24 h-24 rounded-full bg-gray-400 flex items-center justify-center overflow-hidden">
             <Image
               src="/placeholder-profile.png"
               alt="Profile"
@@ -64,29 +41,32 @@ export default function ProfilBuyerViews() {
               height={105}
             />
           </div>
-          <h2 className="text-2xl font-bold">Nama Pembeli</h2>
+          <h2 className="text-2xl text-indigo-950 font-bold font-calsans">Nama Pembeli</h2>
         </div>
       </div>
 
       {/* Tombol Mulai Jualan */}
-      <div className="flex justify-end mt-6 px-6">
-        <button className="flex items-center gap-2 bg-white border border-gray-400 rounded-full px-4 py-2 text-black text-sm font-semibold hover:bg-gray-100 transition">
-          <Store size={16} />
-          Mulai Jualan
+      <div className="flex justify-end mt-6 px-6 text-indigo-950">
+        <button
+        onClick={handleDaftarSeller} // ✅ Navigasi ke halaman /daftarSeller
+        className="flex items-center gap-2 bg-white border font-poppins border-indigo-950 rounded-full px-4 py-2 text-indigo-950 text-sm font-semibold hover:bg-gray-100 hover:bg-indigo-800 hover:scale-105 transition duration-200 ease-in-out"
+        >
+        <Store size={16} />
+        Mulai Jualan
         </button>
-      </div>
+        </div>
 
       {/* Riwayat Aktivitas */}
       <div className="mt-12 px-4">
-        <h3 className="text-xl font-bold mb-6">Riwayat Aktivitas</h3>
-        <div className="flex justify-around">
+        <h3 className="text-xl mb-6 font-calsans text-indigo-950">Riwayat Aktivitas</h3>
+        <div className="flex justify-center gap-70">
           {/* Menunggu Dikirim */}
           <div
             className="flex flex-col items-center group hover:scale-110 hover:text-blue-600 transition cursor-pointer"
             onClick={() => handleNavigateToAktivitas('menunggu')}
           >
-            <Truck className="w-12 h-12 mb-2" />
-            <p className="text-sm font-semibold">Menunggu Dikirim</p>
+            <Truck className="w-8 h-8 mb-2 text-indigo-950" />
+            <p className="text-sm font-semibold font-poppins text-indigo-950">Menunggu Dikirim</p>
           </div>
 
           {/* Sudah Terkirim */}
@@ -94,8 +74,8 @@ export default function ProfilBuyerViews() {
             className="flex flex-col items-center group hover:scale-110 hover:text-green-600 transition cursor-pointer"
             onClick={() => handleNavigateToAktivitas('terkirim')}
           >
-            <PackageCheck className="w-12 h-12 mb-2" />
-            <p className="text-sm font-semibold">Sudah Terkirim</p>
+            <PackageCheck className="w-8 h-8 mb-2 text-indigo-950" />
+            <p className="text-sm font-semibold font-poppins text-indigo-950">Sudah Terkirim</p>
           </div>
 
           {/* Selesai */}
@@ -103,17 +83,17 @@ export default function ProfilBuyerViews() {
             className="flex flex-col items-center group hover:scale-110 hover:text-emerald-600 transition cursor-pointer"
             onClick={() => handleNavigateToAktivitas('selesai')}
           >
-            <CheckCircle className="w-12 h-12 mb-2" />
-            <p className="text-sm font-semibold">Selesai</p>
+            <CheckCircle className="w-8 h-8 mb-2 text-indigo-950" />
+            <p className="text-sm font-semibold font-poppins text-indigo-950">Selesai</p>
           </div>
         </div>
+      </div>
 
-        {/* Tombol Logout */}
-        <div className="flex justify-center mt-20 mb-15">
-          <button className="flex items-center gap-2 bg-red-500 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-600 transition">
-            Logout
-          </button>
-        </div>
+      {/* Tombol Logout */}
+      <div className="flex justify-center mt-20 py-10 bg-zinc-300">
+        <button className="flex items-center gap-2 font-poppins bg-indigo-950 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-600 hover:scale-105 transition duration-200 ease-in-out">
+          Log Out
+        </button>
       </div>
     </div>
   );
