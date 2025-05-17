@@ -1,11 +1,14 @@
-import ListUserViews from "../views/listUser";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import ListUserViews from "../../views/listUser";
 
 const listUserPage = () => {
-    return (
-        <div>
-            <ListUserViews  />
-        </div>
-    )
-}
+  return (
+    <div>
+      <ProtectedRoute>
+        <ListUserViews />
+      </ProtectedRoute>
+    </div>
+  );
+};
 
 export default listUserPage;

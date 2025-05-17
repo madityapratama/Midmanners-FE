@@ -1,11 +1,14 @@
-import DetailPostinganViews from "../views/detailPostingan"; // Pastikan path benar
+import ProtectedRoute from "@/components/ProtectedRoute";
+import DetailPostinganViews from "../../views/detailPostingan"; // Pastikan path benar
 
 const DetailPostinganPage = () => {
-    return (
-        <div>
-            <DetailPostinganViews />
-        </div>
-    );
+  return (
+    <div>
+      <ProtectedRoute>
+        <DetailPostinganViews />
+      </ProtectedRoute>
+    </div>
+  );
 };
 
 export default DetailPostinganPage;

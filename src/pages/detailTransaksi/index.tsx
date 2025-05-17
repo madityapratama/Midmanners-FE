@@ -1,11 +1,14 @@
-import DetailTransaksiViews from "../views/detailTransaksi";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import DetailTransaksiViews from "../../views/detailTransaksi";
 
 const detailTransaksiPage = () => {
-    return (
-        <div>
-            <DetailTransaksiViews  />
-        </div>
-    )
-}
+  return (
+    <div>
+      <ProtectedRoute>
+        <DetailTransaksiViews />
+      </ProtectedRoute>
+    </div>
+  );
+};
 
 export default detailTransaksiPage;

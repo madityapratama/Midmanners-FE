@@ -1,11 +1,14 @@
-import ProfilBuyerViews from "@/pages/views/buyer/profil";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import ProfilBuyerViews from "@/views/buyer/profil";
 
 const ProfilBuyerPage = () => {
-    return (
-        <div>
-            <ProfilBuyerViews  />
-        </div>
-    )
-}
+  return (
+    <div>
+      <ProtectedRoute>
+        <ProfilBuyerViews />
+      </ProtectedRoute>
+    </div>
+  );
+};
 
 export default ProfilBuyerPage;

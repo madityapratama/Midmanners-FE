@@ -1,11 +1,14 @@
-import EditProfilBuyerViews from "@/pages/views/buyer/edit"
+import ProtectedRoute from "@/components/ProtectedRoute";
+import EditProfilBuyerViews from "@/views/buyer/edit";
 
 const editProfilBuyerPage = () => {
-    return (
-        <div>
-            <EditProfilBuyerViews  />
-        </div>
-    )
-}
+  return (
+    <div>
+      <ProtectedRoute>
+        <EditProfilBuyerViews />
+      </ProtectedRoute>
+    </div>
+  );
+};
 
 export default editProfilBuyerPage;

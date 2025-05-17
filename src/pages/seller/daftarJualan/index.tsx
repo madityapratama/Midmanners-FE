@@ -1,11 +1,14 @@
-import DaftarJualanViews from "@/pages/views/seller/daftarJualan";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import DaftarJualanViews from "@/views/seller/daftarJualan";
 
 const daftarJualan = () => {
-    return (
-        <div>
-            <DaftarJualanViews />
-        </div>
-    )
-}
+  return (
+    <div>
+      <ProtectedRoute>
+        <DaftarJualanViews />
+      </ProtectedRoute>
+    </div>
+  );
+};
 
 export default daftarJualan;

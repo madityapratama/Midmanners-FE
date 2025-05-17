@@ -1,11 +1,14 @@
-import ProfilSellerViews from "@/pages/views/seller/profil";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import ProfilSellerViews from "@/views/seller/profil";
 
 const profilSellerPage = () => {
-    return (
-        <div>
-            <ProfilSellerViews />
-        </div>
-    )
-}
+  return (
+    <div>
+      <ProtectedRoute>
+        <ProfilSellerViews />
+      </ProtectedRoute>
+    </div>
+  );
+};
 
 export default profilSellerPage;

@@ -1,9 +1,12 @@
-import DaftarSellerViews from "../views/daftarSeller";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import DaftarSellerViews from "../../views/daftarSeller";
 
 const daftarSellerPage = () => {
-    return (
-        <DaftarSellerViews  />
-    )
-}
+  return (
+    <ProtectedRoute>
+      <DaftarSellerViews />
+    </ProtectedRoute>
+  );
+};
 
 export default daftarSellerPage;

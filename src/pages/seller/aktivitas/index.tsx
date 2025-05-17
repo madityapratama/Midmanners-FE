@@ -1,9 +1,12 @@
-import AktivitasViews from "@/pages/views/seller/aktivitas";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import AktivitasViews from "@/views/seller/aktivitas";
 
 const AktivitasPage = () => {
   return (
     <div>
-      <AktivitasViews />
+      <ProtectedRoute>
+        <AktivitasViews />
+      </ProtectedRoute>
     </div>
   );
 };

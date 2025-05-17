@@ -1,11 +1,14 @@
-import MenungguPersetujuanPostinganViews from "../views/menungguPersetujuanPostingan";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import MenungguPersetujuanPostinganViews from "../../views/menungguPersetujuanPostingan";
 
 const menungguPersetujuanPostinganPage = () => {
-    return (
-        <div>
-            <MenungguPersetujuanPostinganViews  />
-        </div>
-    )
-}
+  return (
+    <div>
+      <ProtectedRoute>
+        <MenungguPersetujuanPostinganViews />
+      </ProtectedRoute>
+    </div>
+  );
+};
 
 export default menungguPersetujuanPostinganPage;

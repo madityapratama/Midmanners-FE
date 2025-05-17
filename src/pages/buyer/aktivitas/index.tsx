@@ -1,11 +1,14 @@
-import AktivitasViews from "@/pages/views/buyer/aktivitas"
+import ProtectedRoute from "@/components/ProtectedRoute";
+import AktivitasViews from "@/views/buyer/aktivitas";
 
 const AktivitasPage = () => {
-    return (
-        <div>
-            <AktivitasViews  />
-        </div>
-    )
-}
+  return (
+    <div>
+      <ProtectedRoute>
+        <AktivitasViews />
+      </ProtectedRoute>
+    </div>
+  );
+};
 
 export default AktivitasPage;
