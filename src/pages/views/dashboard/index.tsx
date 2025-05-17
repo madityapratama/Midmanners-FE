@@ -16,6 +16,7 @@ const DashboardViews = () => {
   const [likedPosts, setLikedPosts] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [role, setRole] = useState<string>("");
+  
 
   useEffect(() => {
     // Ganti ini sesuai cara kamu ambil role user

@@ -1,18 +1,25 @@
-"use client";
-
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Truck, PackageCheck, CheckCircle, Pencil, Store, LogOut } from "lucide-react";
+import {
+  Truck,
+  PackageCheck,
+  CheckCircle,
+  Pencil,
+  Store,
+  LogOut,
+} from "lucide-react";
+import { useAuth } from "@/context/AuthContext"; // Import useAuth hook
 
 export default function ProfilBuyerViews() {
   const router = useRouter();
+  const { logout } = useAuth();
 
   const handleNavigateToAktivitas = (tab: string) => {
     router.push(`/buyer/aktivitas?tab=${tab}`);
   };
 
   const handleDaftarSeller = () => {
-    router.push('/daftarSeller');
+    router.push("/daftarSeller");
   };
 
   return (
@@ -22,7 +29,7 @@ export default function ProfilBuyerViews() {
         <div className="absolute bottom-4 right-4 flex gap-2">
           <button
             className="bg-white/80 text-gray-800 px-3 py-1 rounded-full text-xs font-poppins font-medium hover:bg-white transition backdrop-blur-sm flex items-center gap-2"
-            onClick={() => router.push('/buyer/edit')}
+            onClick={() => router.push("/buyer/edit")}
           >
             <Pencil size={14} />
             Edit Profil
@@ -41,20 +48,22 @@ export default function ProfilBuyerViews() {
               height={105}
             />
           </div>
-          <h2 className="text-2xl text-indigo-950 font-bold font-calsans">Nama Pembeli</h2>
+          <h2 className="text-2xl text-indigo-950 font-bold font-calsans">
+            Nama Pembeli
+          </h2>
         </div>
       </div>
 
       {/* Tombol Mulai Jualan */}
       <div className="flex justify-end mt-6 px-6 text-indigo-950">
         <button
-        onClick={handleDaftarSeller} // ✅ Navigasi ke halaman /daftarSeller
-        className="flex items-center gap-2 bg-white border font-poppins border-indigo-950 rounded-full px-4 py-2 text-indigo-950 text-sm font-semibold hover:bg-gray-100 hover:bg-indigo-800 hover:scale-105 transition duration-200 ease-in-out"
+          onClick={handleDaftarSeller} // ✅ Navigasi ke halaman /daftarSeller
+          className="flex items-center gap-2 bg-white border font-poppins border-indigo-950 rounded-full px-4 py-2 text-indigo-950 text-sm font-semibold hover:bg-gray-100 hover:bg-indigo-800 hover:scale-105 transition duration-200 ease-in-out"
         >
-        <Store size={16} />
-        Mulai Jualan
+          <Store size={16} />
+          Mulai Jualan
         </button>
-        </div>
+      </div>
 
       {/*Aktivitas */}
       <div className="mt-12 px-4">
@@ -63,35 +72,44 @@ export default function ProfilBuyerViews() {
           {/* Menunggu Dikirim */}
           <div
             className="flex flex-col items-center group hover:scale-110 hover:text-blue-600 transition cursor-pointer"
-            onClick={() => handleNavigateToAktivitas('menunggu')}
+            onClick={() => handleNavigateToAktivitas("menunggu")}
           >
             <Truck className="w-8 h-8 mb-2 text-indigo-950" />
-            <p className="text-sm font-semibold font-poppins text-indigo-950">Menunggu Dikirim</p>
+            <p className="text-sm font-semibold font-poppins text-indigo-950">
+              Menunggu Dikirim
+            </p>
           </div>
 
           {/* Sudah Terkirim */}
           <div
             className="flex flex-col items-center group hover:scale-110 hover:text-green-600 transition cursor-pointer"
-            onClick={() => handleNavigateToAktivitas('terkirim')}
+            onClick={() => handleNavigateToAktivitas("terkirim")}
           >
             <PackageCheck className="w-8 h-8 mb-2 text-indigo-950" />
-            <p className="text-sm font-semibold font-poppins text-indigo-950">Sudah Terkirim</p>
+            <p className="text-sm font-semibold font-poppins text-indigo-950">
+              Sudah Terkirim
+            </p>
           </div>
 
           {/* Selesai */}
           <div
             className="flex flex-col items-center group hover:scale-110 hover:text-emerald-600 transition cursor-pointer"
-            onClick={() => handleNavigateToAktivitas('selesai')}
+            onClick={() => handleNavigateToAktivitas("selesai")}
           >
             <CheckCircle className="w-8 h-8 mb-2 text-indigo-950" />
-            <p className="text-sm font-semibold font-poppins text-indigo-950">Selesai</p>
+            <p className="text-sm font-semibold font-poppins text-indigo-950">
+              Selesai
+            </p>
           </div>
         </div>
       </div>
 
       {/* Tombol Logout */}
       <div className="flex justify-center mt-20 py-10 bg-zinc-300">
-        <button className="flex items-center gap-2 font-poppins bg-indigo-950 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-600 hover:scale-105 transition duration-200 ease-in-out">
+        <button
+          onClick={logout}
+          className="flex items-center gap-2 font-poppins bg-indigo-950 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-600 hover:scale-105 transition duration-200 ease-in-out"
+        >
           <LogOut size={16} />
           Log Out
         </button>

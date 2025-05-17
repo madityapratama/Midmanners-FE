@@ -1,0 +1,21 @@
+export const protectedRoutes = [
+  '/dashboard',
+  '/profile',
+  '/semuaTransaksi',
+  '/pendingPostingan',
+  '/seller/*/*',
+  '/buyer*/*',
+  '/daftarSeller',
+  '/detailPengajuan',
+  '/detailTransaksi',
+  '/chat',
+  '/listUser',
+  '/menungguPersetujuanPostingan',
+  '/pendingPostingan',
+  '/detailPengajuan',
+  '/detailTransaksi',
+  '/pendingPostingan',
+  '/pengajuan*',
+  '/semuaTransaksi*',
+
+];
