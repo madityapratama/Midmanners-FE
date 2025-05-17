@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import { useSearchParams } from 'next/navigation';
 
 export default function OTPRegisterPage() {
+  const {email } = useSearchParams();
   const router = useRouter();
   const [otp, setOtp] = useState('');
-  const [email] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -15,14 +16,14 @@ export default function OTPRegisterPage() {
       console.error('Email kosong, tidak bisa kirim OTP');
       return;
     }
-    
+  
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/verify-otp`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resend-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: targetEmail }),
+        body: JSON.stringify({ email: targetEmail, otp}),
       });
       
       if (response.ok) {
@@ -41,7 +42,8 @@ export default function OTPRegisterPage() {
   const handleVerify = async () => {
     setLoading(true);
     try {
-      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/resend-otp`;
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/verify-otp`;
+      console.log("Nunggu response")
       const response = await axios.post(apiUrl, { email, otp });
       
       if (response.status === 200) {

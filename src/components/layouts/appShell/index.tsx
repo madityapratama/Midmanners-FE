@@ -18,6 +18,7 @@ const disableNavbar = [
   "/auth/otpRegister",
   "/buyer/edit",
   "/daftarSeller",
+  "/seller/aktivitas",
 ];
 
 function generateTitle(path: string) {

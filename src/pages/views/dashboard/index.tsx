@@ -20,7 +20,7 @@ const DashboardViews = () => {
   useEffect(() => {
     // Ganti ini sesuai cara kamu ambil role user
     const userRole = localStorage.getItem("userRole"); // contoh: "admin", "midman", "buyer"
-    setRole(userRole || "seller");
+    setRole(userRole || "buyer");
   }, []);
 
   const toggleLike = (postId: number) => {
@@ -43,9 +43,9 @@ const DashboardViews = () => {
     if (role === "admin") {
       return (
         <>
-          <SidebarItem icon={<User size={20} />} text="List User" href="/listUser" />
-          <SidebarItem icon={<FileClock size={20} />} text="Postingan Menunggu Persetujuan" href="/menungguPersetujuanPostingan" />
-          <SidebarItem icon={<Repeat size={20} />} text="Pengajuan Menjadi Seller" href="/pengajuanMenjadiSeller" />
+          <SidebarItem icon={<User size={20} />} text="List User" href="/admin/list-user" />
+          <SidebarItem icon={<FileClock size={20} />} text="Postingan Menunggu Persetujuan" href="/admin/menungguPersetujuanPostingan" />
+          <SidebarItem icon={<Repeat size={20} />} text="Pengajuan Menjadi Seller" href="/admin/pengajuanMenjadiSeller" />
         </>
       );
     }
@@ -53,8 +53,8 @@ const DashboardViews = () => {
     if (role === "midman") {
       return (
         <>
-          <SidebarItem icon={<User size={20} />} text="List User" href="/listUser"/>
-          <SidebarItem icon={<Clock size={20} />} text="Semua Transaksi" href="/semuaTransaksi" />
+          <SidebarItem icon={<User size={20} />} text="List User" href="/midman/list-user"/>
+          <SidebarItem icon={<Clock size={20} />} text="Semua Transaksi" href="/midman/semua-transaksi" />
         </>
       );
     }
@@ -80,9 +80,9 @@ const DashboardViews = () => {
   };
 
   return (
-    <div className="pt-9 flex bg-zinc-900 min-h-screen">
+    <div className="pt-7 flex bg-zinc-900 min-h-screen">
       {/* Sidebar */}
-      <div className="fixed top-10rem left-0 w-64 bg-zinc-300 shadow-md p-4 mt-5 h-screen overflow-y-auto font-poppins">
+      <div className="fixed top-10rem left-0 w-64 bg-zinc-300 shadow-md p-4 mt-7 h-screen overflow-y-auto font-poppins">
         <ul>{renderSidebar()}</ul>
       </div>
 

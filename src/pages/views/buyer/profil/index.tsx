@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Truck, PackageCheck, CheckCircle, Pencil, Store } from "lucide-react";
+import { Truck, PackageCheck, CheckCircle, Pencil, Store, LogOut } from "lucide-react";
 
 export default function ProfilBuyerViews() {
   const router = useRouter();
@@ -56,9 +56,9 @@ export default function ProfilBuyerViews() {
         </button>
         </div>
 
-      {/* Riwayat Aktivitas */}
+      {/*Aktivitas */}
       <div className="mt-12 px-4">
-        <h3 className="text-xl mb-6 font-calsans text-indigo-950">Riwayat Aktivitas</h3>
+        <h3 className="text-xl mb-6 font-calsans text-indigo-950">Aktivitas</h3>
         <div className="flex justify-center gap-70">
           {/* Menunggu Dikirim */}
           <div
@@ -92,6 +92,7 @@ export default function ProfilBuyerViews() {
       {/* Tombol Logout */}
       <div className="flex justify-center mt-20 py-10 bg-zinc-300">
         <button className="flex items-center gap-2 font-poppins bg-indigo-950 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-600 hover:scale-105 transition duration-200 ease-in-out">
+          <LogOut size={16} />
           Log Out
         </button>
       </div>

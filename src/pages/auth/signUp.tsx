@@ -74,7 +74,10 @@ export default function SignUp() {
 
         // Redirect ke halaman OTP tanpa parameter email
         setTimeout(() => {
-          router.push('/auth/otpRegister');
+          router.push({
+            pathname: '/auth/otpRegister',
+            query: {email: formData.email}
+          });
         }, 1500);
       }
     } catch (error) {
