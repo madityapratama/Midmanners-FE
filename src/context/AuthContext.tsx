@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import api from "@/lib/axios";
 import { useRouter } from "next/router";
 
 interface User {
@@ -11,6 +11,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
+  loadingData: boolean;
   login: (token: string, user: User) => void;
   logout: () => void;
 }
@@ -20,22 +21,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [loadingData, setLoadingData] = useState(true);
   const router = useRouter();
 
   // Load from localStorage on mount
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     const savedUser = localStorage.getItem("user");
+    const savedRole = localStorage.getItem("role");
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
     }
+     setLoadingData(false);
   }, []);
 
   // Setup axios interceptor
   useEffect(() => {
-    const api = axios.create();
-
     const requestInterceptor = api.interceptors.request.use((config) => {
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -62,6 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = (newToken: string, newUser: User) => {
     localStorage.setItem("token", newToken);
+    localStorage.setItem("role", newUser.role); 
     localStorage.setItem("user", JSON.stringify(newUser));
     setToken(newToken);
     setUser(newUser);
@@ -76,7 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout ,loadingData}}>
       {children}
     </AuthContext.Provider>
   );

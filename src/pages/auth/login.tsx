@@ -9,7 +9,15 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login,loadingData,user } = useAuth();
+
+   useEffect(() => {
+    if (!loadingData && user) {
+      router.push("/dashboard"); // arahkan ke dashboard jika sudah login
+    }
+  }, [user, loadingData,router]);
+
+
 
   useEffect(() => {
     const queryEmail =
@@ -21,6 +29,7 @@ export default function Login() {
       setPassword(queryPassword);
     }
   }, [router.query]);
+
 
   const handleSignUp = () => {
     router.push("/auth/signUp");
@@ -48,7 +57,7 @@ export default function Login() {
         toast.success(data.message || "Login berhasil!");
         setTimeout(() => {
           router.push("/dashboard");
-        }, 1000);
+        }, 1500);
     } catch (error) {
       console.error("Login error:", error);
       toast.error(

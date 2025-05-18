@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -8,11 +10,39 @@ import {
   Store,
   LogOut,
 } from "lucide-react";
-import { useAuth } from "@/context/AuthContext"; // Import useAuth hook
+import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext"; // Custom AuthContext
+import axios from "axios";
 
 export default function ProfilBuyerViews() {
   const router = useRouter();
   const { logout } = useAuth();
+  const [loading, setLoading] = useState(true); // state loading
+  const [profile, setProfile] = useState<any>(null); // state profile
+
+  // Fetch data profil saat komponen dimount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // sesuaikan jika kamu pakai Auth token
+          },
+        });
+        const data = await response.data;
+        console.log("Data profil:", data);
+        setProfile(data);
+      } catch (error) {
+        console.error("Gagal mengambil data profil:", error);
+      } finally{
+        setLoading(false); // set loading false setelah data diambil
+      }
+    };
+
+    fetchProfile();
+  }, [profile]);
+  
+  const imageUrl = `${process.env.NEXT_PUBLIC_IMG_URL}${profile?.profile_image}`;
 
   const handleNavigateToAktivitas = (tab: string) => {
     router.push(`/buyer/aktivitas?tab=${tab}`);
@@ -21,6 +51,14 @@ export default function ProfilBuyerViews() {
   const handleDaftarSeller = () => {
     router.push("/daftarSeller");
   };
+
+  if(loading){
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+      <p>Loading...</p>
+    </div>
+    );
+  }
 
   return (
     <div className="pt-14 bg-zinc-300 min-h-screen">
@@ -42,14 +80,15 @@ export default function ProfilBuyerViews() {
         <div className="flex items-center gap-4">
           <div className="w-24 h-24 rounded-full bg-gray-400 flex items-center justify-center overflow-hidden">
             <Image
-              src="/placeholder-profile.png"
+              src={imageUrl}
+              priority
               alt="Profile"
               width={105}
               height={105}
             />
           </div>
           <h2 className="text-2xl text-indigo-950 font-bold font-calsans">
-            Nama Pembeli
+            {profile?.name || "Nama Pembeli"}
           </h2>
         </div>
       </div>
@@ -57,7 +96,7 @@ export default function ProfilBuyerViews() {
       {/* Tombol Mulai Jualan */}
       <div className="flex justify-end mt-6 px-6 text-indigo-950">
         <button
-          onClick={handleDaftarSeller} // ✅ Navigasi ke halaman /daftarSeller
+          onClick={handleDaftarSeller}
           className="flex items-center gap-2 bg-white border font-poppins border-indigo-950 rounded-full px-4 py-2 text-indigo-950 text-sm font-semibold hover:bg-gray-100 hover:bg-indigo-800 hover:scale-105 transition duration-200 ease-in-out"
         >
           <Store size={16} />
@@ -65,11 +104,10 @@ export default function ProfilBuyerViews() {
         </button>
       </div>
 
-      {/*Aktivitas */}
+      {/* Aktivitas */}
       <div className="mt-12 px-4">
         <h3 className="text-xl mb-6 font-calsans text-indigo-950">Aktivitas</h3>
         <div className="flex justify-center gap-70">
-          {/* Menunggu Dikirim */}
           <div
             className="flex flex-col items-center group hover:scale-110 hover:text-blue-600 transition cursor-pointer"
             onClick={() => handleNavigateToAktivitas("menunggu")}
@@ -79,8 +117,6 @@ export default function ProfilBuyerViews() {
               Menunggu Dikirim
             </p>
           </div>
-
-          {/* Sudah Terkirim */}
           <div
             className="flex flex-col items-center group hover:scale-110 hover:text-green-600 transition cursor-pointer"
             onClick={() => handleNavigateToAktivitas("terkirim")}
@@ -90,8 +126,6 @@ export default function ProfilBuyerViews() {
               Sudah Terkirim
             </p>
           </div>
-
-          {/* Selesai */}
           <div
             className="flex flex-col items-center group hover:scale-110 hover:text-emerald-600 transition cursor-pointer"
             onClick={() => handleNavigateToAktivitas("selesai")}
