@@ -8,6 +8,7 @@ export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/login`,
         {
@@ -52,6 +54,8 @@ export default function Login() {
       toast.error(
         error.response?.data?.message || "Terjadi kesalahan saat login"
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,8 +107,9 @@ export default function Login() {
             <button
               type="submit"
               className="bg-indigo-950 text-white font-poppins py-2 rounded hover:bg-zinc-900 transition"
+              disabled={loading}
             >
-              Log In
+              {loading ? "Login..." : "Login"}
             </button>
             <button
               type="button"
