@@ -11,7 +11,9 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
+  role: string;
   loadingData: boolean;
+  setRole: (role: string) => void;
   login: (token: string, user: User) => void;
   logout: () => void;
 }
@@ -21,10 +23,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string>("");
   const [loadingData, setLoadingData] = useState(true);
   const router = useRouter();
 
-  // Load from localStorage on mount
+  // Load data dari localStorage ketika pertama kali render
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     const savedUser = localStorage.getItem("user");
@@ -32,11 +35,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
+      setRole(savedRole || "");
     }
-     setLoadingData(false);
+    setLoadingData(false);
   }, []);
 
-  // Setup axios interceptor
+  // Pasang axios interceptor untuk inject token
   useEffect(() => {
     const requestInterceptor = api.interceptors.request.use((config) => {
       if (token) {
@@ -62,24 +66,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [token]);
 
+  // Saat login berhasil
   const login = (newToken: string, newUser: User) => {
     localStorage.setItem("token", newToken);
-    localStorage.setItem("role", newUser.role); 
     localStorage.setItem("user", JSON.stringify(newUser));
+    localStorage.setItem("role", newUser.role);
+
     setToken(newToken);
     setUser(newUser);
+    setRole(newUser.role);
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("role");
+
     setToken(null);
     setUser(null);
+    setRole("");
     window.location.href = "/auth/login";
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout ,loadingData}}>
+    <AuthContext.Provider
+      value={{ user, token, role, loadingData, setRole, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
