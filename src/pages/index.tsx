@@ -1,27 +1,37 @@
-import Link from 'next/link';
+import React from "react";
 
-export default function landingPage() {
+export default function LandingPage() {
   return (
-        <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-        <main className="flex flex-col gap-[32px] row-start-2 items-center">
-          <div className="text-2xl">
-            Halaman Landing Page
-          </div>
-          <div className="flex gap-4 items-center flex-col sm:flex-row">
-            <Link
-              href="/auth/login"
-              className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            >
-              Login
-            </Link>
-            <Link
-              href="/auth/signUp"
-              className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            >
-              Daftar
-            </Link>
-          </div>
-        </main>
-      </div>
+    <main className="min-h-screen bg-gradient-to-b from-blue-900 to-indigo-900 text-white p-6 flex flex-col items-center justify-center">
+      <header className="w-full max-w-6xl flex justify-between items-center py-6">
+        <h1 className="text-3xl font-bold text-orange-400">MIDMANNERS</h1>
+        <nav className="space-x-6 text-white text-lg">
+          <a href="#" className="hover:text-orange-400 transition">Home</a>
+          <a href="#" className="hover:text-orange-400 transition">Sign up</a>
+          <a href="#" className="hover:text-orange-400 transition">About</a>
+          <a href="#" className="hover:text-orange-400 transition">Service</a>
+          <a href="#" className="hover:text-orange-400 transition">Contact</a>
+          <a href="#" className="hover:text-orange-400 transition">Community</a>
+        </nav>
+      </header>
+
+      <section className="text-center mt-16 max-w-3xl">
+        <h2 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-pink-500 to-purple-500 mb-6">
+          E-SPORT GAME
+        </h2>
+        <p className="text-lg text-gray-300 mb-8">
+          Temukan dunia game yang kompetitif dan menyenangkan bersama komunitas kami.
+          Ikuti turnamen, tingkatkan skill-mu, dan jadilah legenda di dunia e-sport!
+        </p>
+      </section>
+
+      <section className="mt-20">
+        <img
+          src="/controller-illustration.png"
+          alt="Game Controller"
+          className="w-full max-w-md mx-auto animate-bounce"
+        />
+      </section>
+    </main>
   );
 }

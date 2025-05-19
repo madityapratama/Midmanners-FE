@@ -25,7 +25,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<string>("");
   const [loadingData, setLoadingData] = useState(true);
+    const [profile, setProfile] = useState<User | null>(null); // Tambahkan state profile
   const router = useRouter();
+
 
   // Load data dari localStorage ketika pertama kali render
   useEffect(() => {
@@ -40,31 +42,62 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoadingData(false);
   }, []);
 
-  // Pasang axios interceptor untuk inject token
+  const fetchProfile = async () => {
+    try {
+      const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data;
+      setProfile(data);
+    } catch (error) {
+      console.error("Gagal mengambil data profil:", error);
+    }
+  };
+
+  // Load data saat pertama render
+  // Load data saat pertama render
   useEffect(() => {
-    const requestInterceptor = api.interceptors.request.use((config) => {
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    });
+    const savedToken = localStorage.getItem("token");
+    const savedUser = localStorage.getItem("user");
+    const savedRole = localStorage.getItem("role");
+    
+    if (savedToken && savedUser) {
+      setToken(savedToken);
+      setUser(JSON.parse(savedUser));
+      setRole(savedRole || "");
+      // Fetch profil terbaru setelah load data dasar
+      fetchProfile();
+    }
+    setLoadingData(false);
+  }, []);
 
-    const responseInterceptor = api.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        if (error.response?.status === 401) {
-          logout();
-          router.push("/auth/login");
-        }
-        return Promise.reject(error);
-      }
-    );
+  // Pasang axios interceptor untuk inject token
+  // useEffect(() => {
+  //   const requestInterceptor = api.interceptors.request.use((config) => {
+  //     if (token) {
+  //       config.headers.Authorization = `Bearer ${token}`;
+  //     }
+  //     return config;
+  //   });
 
-    return () => {
-      api.interceptors.request.eject(requestInterceptor);
-      api.interceptors.response.eject(responseInterceptor);
-    };
-  }, [token]);
+  //   const responseInterceptor = api.interceptors.response.use(
+  //     (response) => response,
+  //     (error) => {
+  //       if (error.response?.status === 401) {
+  //         logout();
+  //         router.push("/auth/login");
+  //       }
+  //       return Promise.reject(error);
+  //     }
+  //   );
+
+  //   return () => {
+  //     api.interceptors.request.eject(requestInterceptor);
+  //     api.interceptors.response.eject(responseInterceptor);
+  //   };
+  // }, [token]);
 
   // Saat login berhasil
   const login = (newToken: string, newUser: User) => {
@@ -90,7 +123,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, role, loadingData, setRole, login, logout }}
+      value={{ user, token, role, loadingData, setRole, login, logout,
+        profile, // Sertakan profile
+        setProfile, // Sertakan setter
+        fetchProfile, // Sertakan fungsi fetch
+         }}
     >
       {children}
     </AuthContext.Provider>

@@ -2,45 +2,23 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import {
-  Truck,
-  PackageCheck,
-  CheckCircle,
-  Pencil,
-  Store,
-  LogOut,
-} from "lucide-react";
+import { Truck, PackageCheck, CheckCircle, Pencil, Store, LogOut, } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext"; // Custom AuthContext
-import axios from "axios";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProfilBuyerViews() {
   const router = useRouter();
-  const { logout } = useAuth();
+  const { logout,profile,fetchProfile } = useAuth();
   const [loading, setLoading] = useState(true); // state loading
-  const [profile, setProfile] = useState<any>(null); // state profile
+  // const [profile, setProfile] = useState<any>(null); // state profile
 
-  // Fetch data profil saat komponen dimount
+  // Jika perlu memastikan data terbaru
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // sesuaikan jika kamu pakai Auth token
-          },
-        });
-        const data = await response.data;
-        console.log("Data profil:", data);
-        setProfile(data);
-      } catch (error) {
-        console.error("Gagal mengambil data profil:", error);
-      } finally{
-        setLoading(false); // set loading false setelah data diambil
-      }
-    };
-
-    fetchProfile();
-  }, [profile]);
+    if (!profile) {
+      fetchProfile();
+    }
+      setLoading(false);
+  }, []);
   
   const imageUrl = `${process.env.NEXT_PUBLIC_IMG_URL}${profile?.profile_image}`;
 
@@ -62,8 +40,15 @@ export default function ProfilBuyerViews() {
 
   return (
     <div className="pt-14 bg-zinc-300 min-h-screen">
-      {/* Header / Background Section */}
-      <div className="relative bg-gray-700 text-white text-center min-h-[300px] flex flex-col items-center justify-center">
+     {/* Header / Background Section */}
+      <div 
+        className="relative text-white text-center min-h-[300px] flex flex-col items-center justify-center"
+        style={{
+          backgroundImage: `url('https://via.placeholder.com/1200x300?text=Cover+Photo')`, // TODO: Ganti URL ini dengan foto sampul dari API
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
         <div className="absolute bottom-4 right-4 flex gap-2">
           <button
             className="bg-white/80 text-gray-800 px-3 py-1 rounded-full text-xs font-poppins font-medium hover:bg-white transition backdrop-blur-sm flex items-center gap-2"

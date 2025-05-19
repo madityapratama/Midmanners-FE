@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['localhost'], // <- tambahkan ini
   },
+   async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/landingPage',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

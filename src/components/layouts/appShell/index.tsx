@@ -20,6 +20,7 @@ const disableNavbar = [
   "/daftarSeller",
   "/seller/aktivitas",
   "/chat*",
+  "/landingPage",
 ];
 
 function generateTitle(path: string) {

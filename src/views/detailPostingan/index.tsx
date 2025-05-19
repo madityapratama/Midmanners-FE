@@ -5,6 +5,9 @@ import { ThumbsUp, ArrowLeft, Send } from 'lucide-react';
 import Image from 'next/image';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
+import { useAuth } from "@/context/AuthContext";
+import {CommentItem} from "@/components/CommentItem";
+import {formatDate} from "@/lib/date";
 
 type PostDetail = {
   id: number;
@@ -14,6 +17,7 @@ type PostDetail = {
   images: string[];
   seller: {
     name: string;
+    avatar?: string;
   };
   categories: string[];
   like_count: number;
@@ -21,115 +25,55 @@ type PostDetail = {
   created_at: string;
 };
 
-type Comment = {
+type User = {
   id: number;
   name: string;
-  avatar: string;
-  content: string;
+  avatar?: string;
+  profile_image?: string | null;
+};
+
+type Comment = {
+  id: number;
+  user: User;
+  comment: string;
   created_at: string;
+  replies?: Comment[];
+  parent_comment_id?: number | null;
 };
 
 export default function DetailPostinganViews() {
   const router = useRouter();
   const { id } = router.query;
-  
+  const {profile} = useAuth();
+
+
+  // STATE: Post detail
   const [post, setPost] = useState<PostDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState('');
-  const [isLiked, setIsLiked] = useState(false);
+
+  // STATE: Comments
+const [comments, setComments] = useState<Comment[]>([]);
+const [newComment, setNewComment] = useState('');
+const [replyingTo, setReplyingTo] = useState<{
+  id: number | null;
+  name: string;
+}>({ id: null, name: '' });
+const [replyText, setReplyText] = useState('');
+
+
+
+  // STATE: Like
+  const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+
+  // STATE: Lightbox
   const [openLightbox, setOpenLightbox] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  useEffect(() => {
-    if (!id) return;
+  const currentUser = profile;
 
-    const fetchPostDetail = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/detail`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
-        );
-        setPost(response.data.data);
-        setLikeCount(response.data.data.like_count);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to fetch post details');
-        setLoading(false);
-        console.error(err);
-      }
-    };
-
-    const fetchComments = async () => {
-      // You'll need to implement this API endpoint
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/comment`
-        );
-        setComments(response.data.data);
-      } catch (err) {
-        console.error('Failed to fetch comments', err);
-      }
-    };
-
-    fetchPostDetail();
-    fetchComments();
-  }, [id]);
-
-  const handleAddComment = async () => {
-    if (newComment.trim() === '') return;
-
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/comments`,
-        { content: newComment },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-
-      setComments([...comments, response.data.data]);
-      setNewComment('');
-    } catch (err) {
-      console.error('Failed to add comment', err);
-    }
-  };
-
-  const handleLike = async () => {
-    try {
-      if (isLiked) {
-        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/like`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setLikeCount(likeCount - 1);
-      } else {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/like`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
-        );
-        setLikeCount(likeCount + 1);
-      }
-      setIsLiked(!isLiked);
-    } catch (err) {
-      console.error('Failed to toggle like', err);
-    }
-  };
-
+  // Format price to IDR
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -138,14 +82,184 @@ export default function DetailPostinganViews() {
     }).format(price);
   };
 
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+  // Format date
+  // const formatDate = (dateString: string) => {
+  //   const options: Intl.DateTimeFormatOptions = {
+  //     year: 'numeric',
+  //     month: 'long',
+  //     day: 'numeric',
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //   };
+  //   return new Date(dateString).toLocaleDateString('id-ID', options);
+  // };
+
+  // Fetch post detail
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchPostDetail = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/detail`,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setLiked(response.data.data.liked_by_user);
+        setPost(response.data.data);
+        setLikeCount(response.data.data.like_count);
+        setLoading(false);
+      } catch (err) {
+        setError('Gagal memuat detail postingan');
+        setLoading(false);
+        console.error(err);
+      }
     };
-    return new Date(dateString).toLocaleDateString('id-ID', options);
+
+    const fetchComments = async () => {
+      try {
+        // const token = getAuthToken();
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/comment`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setComments(response.data.data);
+      } catch (err) {
+        console.error('Gagal memuat komentar', err);
+      }
+    };
+
+    fetchPostDetail();
+    fetchComments();
+  }, [id]);
+
+  // Handle like
+  const handleLike = async () => {
+    try {
+      // const token = getAuthToken();
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/like`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      
+      setLiked(response.data.liked);
+      setLikeCount(response.data.likes);
+    } catch (err) {
+      console.error('Gagal menyukai postingan', err);
+    }
   };
+
+  // Handle reply
+  const addReplyRecursive = (comments: Comment[], parentId: number, newReply: Comment): Comment[] => {
+  return comments.map(comment => {
+    // Jika ini komentar yang ingin dibalas
+    if (comment.id === parentId) {
+      return {
+        ...comment,
+        replies: [...(comment.replies || []), newReply],
+      };
+    }
+    
+    // Jika komentar memiliki replies, cari di dalamnya
+    if (comment.replies && comment.replies.length > 0) {
+      return {
+        ...comment,
+        replies: addReplyRecursive(comment.replies, parentId, newReply),
+      };
+    }
+    
+    // Komentar tidak memiliki replies atau bukan yang dicari
+    return comment;
+  });
+};
+
+  // Handle add comment
+  const handleAddComment = async () => {
+  const textToSend = replyingTo.id ? replyText : newComment;
+  if (!textToSend.trim()) return;
+
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/comment`,
+      {
+        comment: textToSend,
+        parent_comment_id: replyingTo.id || null,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const newCommentData = response.data.data;
+
+    if (replyingTo.id) {
+      // Tambahkan reply ke komentar yang sesuai
+      setComments(prev => addReplyRecursive(prev, replyingTo.id, newCommentData));
+      setReplyText('');
+    } else {
+      // Tambahkan komentar baru
+      setComments(prev => [
+        {
+          ...newCommentData,
+          replies: [],
+          user: {
+            id: newCommentData.user_id || 0,
+            name: newCommentData.name,
+            // avatar: null,
+          },
+        },
+        ...prev, // Komentar baru di atas
+      ]);
+      setNewComment('');
+    }
+
+    // Reset state reply
+    setReplyingTo({ id: null, name: '' });
+  } catch (err) {
+    console.error('Gagal menambahkan komentar', err);
+    // Tambahkan notifikasi error ke pengguna jika perlu
+  }
+};
+
+  // Handle delete comment
+  const handleDeleteComment = async (commentId: number) => {
+  if (!confirm('Apakah Anda yakin ingin menghapus komentar ini?')) return;
+
+  try {
+    await axios.delete(
+      `${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    // Fungsi rekursif untuk menghapus komentar
+    const removeCommentRecursive = (comments: Comment[], targetId: number): Comment[] => {
+      return comments
+        .filter(comment => comment.id !== targetId)
+        .map(comment => ({
+          ...comment,
+          replies: comment.replies 
+            ? removeCommentRecursive(comment.replies, targetId) 
+            : [],
+        }));
+    };
+    setComments(prev => removeCommentRecursive(prev, commentId));
+  } catch (err) {
+    console.error('Gagal menghapus komentar', err);
+  }
+};
 
   if (loading) {
     return (
@@ -159,12 +273,12 @@ export default function DetailPostinganViews() {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="text-center p-6 bg-white rounded-lg shadow-md">
-          <p className="text-red-500 mb-4">{error || 'Post not found'}</p>
+          <p className="text-red-500 mb-4">{error || 'Postingan tidak ditemukan'}</p>
           <button
             onClick={() => router.push('/dashboard')}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
           >
-            Back to Dashboard
+            Kembali ke Dashboard
           </button>
         </div>
       </div>
@@ -173,14 +287,15 @@ export default function DetailPostinganViews() {
 
   return (
     <div className="pt-16 px-4 md:px-8 lg:px-16 bg-gray-100 min-h-screen">
-      {/* Back Button */}
+      {/* Main Content */}
       <div className="max-w-4xl mx-auto">
+        {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="flex items-center text-blue-600 hover:text-blue-800 mb-4 transition"
+          className="flex items-center text-blue-600 hover:text-blue-800 mb-6 transition"
         >
           <ArrowLeft className="w-5 h-5 mr-1" />
-          Back
+          Kembali
         </button>
 
         {/* Post Card */}
@@ -207,7 +322,7 @@ export default function DetailPostinganViews() {
                 </div>
               </div>
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                Chat Seller
+                Chat Penjual
               </button>
             </div>
           </div>
@@ -235,8 +350,9 @@ export default function DetailPostinganViews() {
                   className="relative h-64 w-full rounded-lg overflow-hidden cursor-zoom-in"
                 >
                   <Image
-                    src={`http://localhost:8000/storage/${imgUrl}`}
+                    src={`${process.env.NEXT_PUBLIC_IMG_URL}${imgUrl}`}
                     alt={`Post Image ${index + 1}`}
+                    priority
                     fill
                     className="object-cover hover:scale-105 transition-transform"
                   />
@@ -246,10 +362,10 @@ export default function DetailPostinganViews() {
 
             {/* Post Stats */}
             <div className="flex items-center justify-between text-sm text-gray-500 border-t border-b border-gray-200 py-3 mb-4">
-              <span>Posted on {formatDate(post.created_at)}</span>
+              <span>Diposting pada {formatDate(post.created_at)}</span>
               <div className="flex space-x-4">
-                <span>{likeCount} Likes</span>
-                <span>{post.comment_count} Comments</span>
+                <span>{likeCount} Suka</span>
+                <span>{post.comment_count} Komentar</span>
               </div>
             </div>
 
@@ -258,79 +374,98 @@ export default function DetailPostinganViews() {
               <button
                 onClick={handleLike}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${
-                  isLiked ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  liked ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 <ThumbsUp className="w-5 h-5" />
-                <span>{isLiked ? 'Liked' : 'Like'}</span>
+                <span>{liked ? 'Disukai' : 'Suka'}</span>
               </button>
-              <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                Buy Now
+              <button className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                Beli Sekarang
               </button>
             </div>
           </div>
         </div>
 
-        {/* Comments Section */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Comments ({comments.length})</h3>
-          </div>
+        {/* Comments List */}
+<div className="divide-y divide-gray-200">
+  {comments.length > 0 ? (
+    comments.map((comment) => (
+      <CommentItem
+        key={comment.id}
+        comment={comment}
+        replyingTo={replyingTo}
+        onReply={setReplyingTo}
+        onDelete={handleDeleteComment}
+        replyText={replyText}
+        onReplyTextChange={setReplyText}
+        onSubmitReply={handleAddComment}
+        currentUserId={currentUser?.id} // Jika ada info user yang login
+      />
+    ))
+  ) : (
+    <div className="p-6 text-center text-gray-500">
+      Belum ada komentar. Jadilah yang pertama berkomentar!
+    </div>
+  )}
+</div>
 
-          {/* Comments List */}
-          <div className="divide-y divide-gray-200">
-            {comments.length > 0 ? (
-              comments.map((comment) => (
-                <div key={comment.id} className="p-6">
-                  <div className="flex space-x-4">
-                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                      {comment.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <h4 className="font-semibold text-gray-900">{comment.name}</h4>
-                        <span className="text-xs text-gray-500">
-                          {formatDate(comment.created_at)}
-                        </span>
-                      </div>
-                      <p className="text-gray-700 mt-1">{comment.content}</p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="p-6 text-center text-gray-500">
-                No comments yet. Be the first to comment!
-              </div>
-            )}
-          </div>
-
-          {/* Add Comment */}
-          <div className="p-6 border-t border-gray-200">
-            <div className="flex space-x-4">
-              <div className="w-10 h-10 bg-gray-200 rounded-full flex-shrink-0"></div>
-              <div className="flex-1">
-                <textarea
-                  rows={3}
-                  className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Write your comment..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                />
-                <div className="flex justify-end mt-2">
-                  <button
-                    onClick={handleAddComment}
-                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                  >
-                    <Send className="w-5 h-5" />
-                    <span>Post Comment</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+{/* Add Comment */}
+<div className="p-6 border-t border-gray-200">
+  <div className="flex space-x-4">
+    <div className="flex-shrink-0">
+      <div className="w-10 h-10 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center">
+        {currentUser?.name.charAt(0).toUpperCase() || 'Y'}
       </div>
+    </div>
+    <div className="flex-1">
+      <textarea
+        rows={3}
+        className="w-full border border-gray-300 text-black rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        placeholder={replyingTo.id ? `Balas ke ${replyingTo.name}...` : 'Tulis komentar Anda...'}
+        value={replyingTo.id ? replyText : newComment}
+        onChange={(e) => 
+          replyingTo.id 
+            ? setReplyText(e.target.value) 
+            : setNewComment(e.target.value)
+        }
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleAddComment();
+          }
+        }}
+      />
+      {replyingTo.id && (
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-sm text-gray-500">
+            Membalas <span className="font-medium">{replyingTo.name}</span>
+          </span>
+          <button
+            onClick={() => setReplyingTo({ id: null, name: '' })}
+            className="text-sm text-gray-500 hover:text-gray-700"
+          >
+            Batalkan
+          </button>
+        </div>
+      )}
+      <div className="flex justify-end mt-2">
+        <button
+          onClick={handleAddComment}
+          disabled={!(replyingTo.id ? replyText : newComment).trim()}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${
+            (replyingTo.id ? replyText : newComment).trim()
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
+        >
+          <Send className="w-5 h-5" />
+          <span>{replyingTo.id ? 'Kirim Balasan' : 'Kirim Komentar'}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
       {/* Lightbox */}
       {openLightbox && (
@@ -348,6 +483,7 @@ export default function DetailPostinganViews() {
           }}
         />
       )}
+    </div>
     </div>
   );
 }
