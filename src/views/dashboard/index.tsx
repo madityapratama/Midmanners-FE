@@ -48,7 +48,7 @@ const DashboardViews = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [posts]);
 
   const toggleLike = (postId: number) => {
     setLikedPosts((prev) =>

@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { ThumbsUp, ArrowLeft, Send } from 'lucide-react';
+import { ThumbsUp, ArrowLeft, Send, Loader,Check } from 'lucide-react';
 import Image from 'next/image';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
 import { useAuth } from "@/context/AuthContext";
 import {CommentItem} from "@/components/CommentItem";
 import {formatDate} from "@/lib/date";
+import {handleBuy} from "@/lib/handleBuy";
 
 type PostDetail = {
   id: number;
@@ -218,6 +219,20 @@ const [replyText, setReplyText] = useState('');
   }
 };
 
+const onBuyClick = async () => {
+    setLoading(true);
+    try {
+      await handleBuy(post.id); // akan redirect
+    } catch (error) {
+      console.error(error);
+      const message =
+        error.response?.data?.message || 'Terjadi kesalahan saat membeli.';
+      alert(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Handle delete comment
   const handleDeleteComment = async (commentId: number) => {
   if (!confirm('Apakah Anda yakin ingin menghapus komentar ini?')) return;
@@ -248,6 +263,8 @@ const [replyText, setReplyText] = useState('');
     console.error('Gagal menghapus komentar', err);
   }
 };
+
+// 
 
   if (loading) {
     return (
@@ -309,9 +326,10 @@ const [replyText, setReplyText] = useState('');
                   </div>
                 </div>
               </div>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+              {currentUser.id == post.seller.id ? '' : <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                 Chat Penjual
-              </button>
+              </button> }
+              
             </div>
           </div>
 
@@ -368,9 +386,10 @@ const [replyText, setReplyText] = useState('');
                 <ThumbsUp className="w-5 h-5" />
                 <span>{liked ? 'Disukai' : 'Suka'}</span>
               </button>
-              <button className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                Beli Sekarang
-              </button>
+              {currentUser.id == post.seller.id ? '' : <button  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition" onClick={onBuyClick}>
+                  Beli Sekarang
+              </button>}
+              
             </div>
           </div>
         </div>
