@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Link from 'next/link';
 
 type Order = {
   id: number;
@@ -117,6 +118,8 @@ export default function AktivitasViews() {
     }
   };
 
+  
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("id-ID", {
@@ -153,59 +156,64 @@ export default function AktivitasViews() {
 
     return (
       <div className="space-y-4">
-        {orders.map((order) => (
-          <div
-            key={order.id}
-            className="bg-indigo-950 font-poppins p-4 rounded-lg text-white"
-          >
-            <div className="flex justify-between text-sm">
-              <span>{formatDate(order.created_at)}</span>
-              <span className="font-medium capitalize">
-                {order.status.toLowerCase()}
-              </span>
+  {orders.map((order) => (
+    <div key={order.id} className="bg-indigo-950 font-poppins p-4 rounded-lg text-white">
+      <Link href={`/detailPostingan/${order.post.id}`}>
+        <div className="cursor-pointer">
+          <div className="flex justify-between text-sm">
+            <span>{formatDate(order.created_at)}</span>
+            <span className="font-medium capitalize">
+              {order.status.toLowerCase()}
+            </span>
+          </div>
+
+          <div className="flex items-center mt-3">
+            <div className="w-12 h-12 bg-white border flex items-center justify-center mr-3 rounded">
+              <span className="text-sm text-gray-400">📷</span>
             </div>
-
-            <div className="flex items-center mt-3">
-              <div className="w-12 h-12 bg-white border flex items-center justify-center mr-3 rounded">
-                <span className="text-sm text-gray-400">📷</span>
-              </div>
-              <div className="flex-1">
-                <div className="font-semibold">{order.post.title}</div>
-                <div className="text-sm">Penjual: {order.seller.name}</div>
-              </div>
-            </div>
-
-            <hr className="my-3 border-gray-400" />
-
-            <div className="flex justify-between items-center">
-              <div className="text-sm">
-                <div>Total Pembelian</div>
-                <div className="font-medium">{formatPrice(order.post.price)}</div>
-              </div>
-              
-              {activeTab === "menunggu" && (
-                <button
-                  onClick={() => handleCancelOrder(order.id)}
-                  disabled={cancellingOrder === order.id}
-                  className="flex items-center gap-1 px-3 py-1 bg-red-600 text-white text-xs rounded-full hover:bg-red-700 transition"
-                >
-                  {cancellingOrder === order.id ? (
-                    <>
-                      <RotateCw size={14} className="animate-spin" />
-                      Memproses...
-                    </>
-                  ) : (
-                    <>
-                      <X size={14} />
-                      Batalkan
-                    </>
-                  )}
-                </button>
-              )}
+            <div className="flex-1">
+              <div className="font-semibold">{order.post.title}</div>
+              <div className="text-sm">Penjual: {order.seller.name}</div>
             </div>
           </div>
-        ))}
-      </div>
+
+          <hr className="my-3 border-gray-400" />
+
+          <div className="flex justify-between items-center">
+            <div className="text-sm">
+              <div>Total Pembelian</div>
+              <div className="font-medium">{formatPrice(order.post.price)}</div>
+            </div>
+
+            {/* Tombol Batalkan hanya tampil jika status tab "menunggu" */}
+            {activeTab === "menunggu" && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault(); // agar Link tidak ikut jalan saat klik button
+                  handleCancelOrder(order.id);
+                }}
+                disabled={cancellingOrder === order.id}
+                className="flex items-center gap-1 px-3 py-1 bg-red-600 text-white text-xs rounded-full hover:bg-red-700 transition"
+              >
+                {cancellingOrder === order.id ? (
+                  <>
+                    <RotateCw size={14} className="animate-spin" />
+                    Memproses...
+                  </>
+                ) : (
+                  <>
+                    <X size={14} />
+                    Batalkan
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+      </Link>
+    </div>
+  ))}
+</div>
     );
   };
 
