@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import api from "@/lib/axios";
-import { useRouter } from "next/router";
+
 
 interface User {
   id: number;
@@ -16,6 +16,9 @@ interface AuthContextType {
   setRole: (role: string) => void;
   login: (token: string, user: User) => void;
   logout: () => void;
+  profile: User | null;
+  setProfile: (profile: User | null) => void;
+  fetchProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,7 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [role, setRole] = useState<string>("");
   const [loadingData, setLoadingData] = useState(true);
     const [profile, setProfile] = useState<User | null>(null); // Tambahkan state profile
-  const router = useRouter();
+  // const router = useRouter();
 
 
   // Load data dari localStorage ketika pertama kali render
@@ -42,6 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoadingData(false);
   }, []);
 
+
   const fetchProfile = async () => {
     try {
       const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
@@ -54,6 +58,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       console.error("Gagal mengambil data profil:", error);
     }
+  };
+
+  const updateProfile = (newData)=>{
+    setProfile((prev)=>({...prev,...newData}));
   };
 
   // Load data saat pertama render
@@ -127,6 +135,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         profile, // Sertakan profile
         setProfile, // Sertakan setter
         fetchProfile, // Sertakan fungsi fetch
+        updateProfile
          }}
     >
       {children}

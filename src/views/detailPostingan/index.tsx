@@ -82,18 +82,6 @@ const [replyText, setReplyText] = useState('');
     }).format(price);
   };
 
-  // Format date
-  // const formatDate = (dateString: string) => {
-  //   const options: Intl.DateTimeFormatOptions = {
-  //     year: 'numeric',
-  //     month: 'long',
-  //     day: 'numeric',
-  //     hour: '2-digit',
-  //     minute: '2-digit',
-  //   };
-  //   return new Date(dateString).toLocaleDateString('id-ID', options);
-  // };
-
   // Fetch post detail
   useEffect(() => {
     if (!id) return;

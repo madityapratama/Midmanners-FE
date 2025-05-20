@@ -1,7 +1,9 @@
 import React from "react";
 import { Gamepad2, Sparkles, Users2, Globe2, Info, Home } from "lucide-react";
+import { useRouter } from "next/router";
 
 export default function LandingPage() {
+  const router = useRouter();
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0e1a36] to-[#1a274e] text-white flex flex-col items-center justify-center">
       <header className="w-full max-w-6xl flex justify-between items-center py-6">
@@ -24,7 +26,7 @@ export default function LandingPage() {
           Temukan dunia game yang kompetitif dan menyenangkan bersama komunitas kami.
           Ikuti turnamen, tingkatkan skill-mu, dan jadilah legenda di dunia e-sport!
         </p>
-        <button className="text-lg px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-full shadow-lg transition">
+        <button onClick={()=>{router.push('auth/login')}} className="text-lg px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-full shadow-lg transition">
           Get Started Now
         </button>
       </section>
