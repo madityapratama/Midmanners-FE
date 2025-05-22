@@ -118,8 +118,7 @@ export default function SellerProfileViews() {
               <div className="flex items-center mt-1 gap-2">
                 <div className="flex items-center bg-indigo-950/5 px-2 py-1 rounded-full">
                   <span className="text-sm font-medium">
-                    {/* 📦 {sellerData.totalProducts} Produk */} 📦Total post yg
-                    dibuat
+                    📦 {profile?.total_posts} Produk
                   </span>
                 </div>
               </div>

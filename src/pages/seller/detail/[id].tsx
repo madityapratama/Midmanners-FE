@@ -1,17 +1,24 @@
-// pages/seller/postingan/[id].tsx
-
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import { ArrowLeft, Image as ImageIcon } from "lucide-react";
+import api from "@/lib/axios";
 
-interface Produk {
+interface PostDetail {
   id: number;
-  nama: string;
-  harga: number;
-  kategori: string;
-  gambar: string;
-  deskripsi?: string;
-  status: "menunggu" | "disetujui" | "terjual";
+  title: string;
+  caption: string;
+  price: number;
+  images: string[];
+  status_post: "pending" | "accepted" | "rejected" | "sold";
+  isAvailable: boolean;
+  seller: {
+    id: number;
+    name: string;
+  };
+  categories: string[];
+  created_at: string;
 }
 
 interface Comment {
@@ -25,218 +32,233 @@ export default function DetailPostinganSeller() {
   const router = useRouter();
   const { id } = router.query;
 
-  const [produk, setProduk] = useState<Produk | null>(null);
-
-  // State komentar dummy, nanti diganti dengan fetch API komentar produk tertentu
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      id: 1,
-      name: "Andi",
-      avatar: "/avatar1.png",
-      content: "Barangnya bagus banget! Rekomended seller!",
-    },
-    {
-      id: 2,
-      name: "Budi",
-      avatar: "/avatar2.png",
-      content: "Sudah diterima, sesuai dengan deskripsi.",
-    },
-  ]);
-
-  // State komentar baru yang diinput user
+  const [post, setPost] = useState<PostDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
     if (!id) return;
 
-    // Dummy data sementara, nanti diganti fetch API produk berdasarkan id
-    const dummyData: Produk[] = [
-      {
-        id: 1,
-        nama: "Nama Produk Jualan",
-        harga: 150000,
-        kategori: "Mobile Legends",
-        gambar: "",
-        deskripsi: "Akun ML Sultan full skin epic dan legend.",
-        status: "menunggu", // Produk yang menunggu approval
-      },
-      {
-        id: 2,
-        nama: "Nama Produk Jualan",
-        harga: 150000,
-        kategori: "Free Fire",
-        gambar: "",
-        deskripsi: "Akun FF dengan bundle lengkap.",
-        status: "disetujui", // Produk sudah disetujui
-      },
-      {
-        id: 3,
-        nama: "Nama Produk Jualan",
-        harga: 150000,
-        kategori: "Valorant",
-        gambar: "",
-        deskripsi: "Akun Valorant dengan banyak skin premium.",
-        status: "terjual", // Produk sudah terjual
-      },
-    ];
+    const fetchPostDetail = async () => {
+      try {
+        setIsLoading(true);
+        const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/detail`);
+        setPost(response.data.data);
+        
+        // Dummy comments - replace with actual API call if available
+        setComments([
+          {
+            id: 1,
+            name: "Andi",
+            avatar: "/avatar1.png",
+            content: "Barangnya bagus banget! Rekomended seller!",
+          },
+          {
+            id: 2,
+            name: "Budi",
+            avatar: "/avatar2.png",
+            content: "Sudah diterima, sesuai dengan deskripsi.",
+          },
+        ]);
+      } catch (err) {
+        console.error("Error fetching post detail:", err);
+        setError("Gagal memuat detail produk. Silakan coba lagi.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    // Cari produk berdasarkan id dari dummyData
-    const found = dummyData.find((p) => p.id === Number(id));
-    setProduk(found || null);
+    fetchPostDetail();
   }, [id]);
 
-  // Fungsi menambahkan komentar baru
   const handleAddComment = () => {
     if (newComment.trim() === "") return;
 
     const newEntry: Comment = {
-      id: comments.length + 1, // ID dummy, di API nanti pakai id dari backend
-      name: "User Baru", // Nama user dummy, nanti dari user login
-      avatar: "/avatar-placeholder.png", // Avatar user dummy
+      id: comments.length + 1,
+      name: "User Baru",
+      avatar: "/avatar-placeholder.png",
       content: newComment,
     };
 
-    setComments([...comments, newEntry]); // Update komentar state
-    setNewComment(""); // Reset textarea
+    setComments([...comments, newEntry]);
+    setNewComment("");
   };
 
-  // Fungsi mengubah status produk ke teks deskriptif
-  const getStatusText = (status: Produk["status"]) => {
+  const getStatusText = (status: string) => {
     switch (status) {
-      case "menunggu":
-        return "Menunggu Disetujui";
-      case "disetujui":
-        return "Sudah Disetujui";
-      case "terjual":
-        return "Sudah Terjual";
+      case "pending":
+        return "Menunggu Persetujuan";
+      case "accepted":
+        return "Disetujui";
+      case "rejected":
+        return "Ditolak";
+      case "sold":
+        return "Terjual";
       default:
-        return "";
+        return status;
     }
   };
 
-  if (!produk) {
-    // Loading state saat produk belum di-fetch
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "accepted":
+        return "bg-green-100 text-green-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
+      case "sold":
+        return "bg-purple-100 text-purple-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-600 font-poppins">
-        Memuat data produk...
-      </div>
+      <ProtectedRoute>
+        <div className="min-h-screen flex items-center justify-center text-gray-600 font-poppins">
+          Memuat data produk...
+        </div>
+      </ProtectedRoute>
+    );
+  }
+
+  if (error) {
+    return (
+      <ProtectedRoute>
+        <div className="min-h-screen flex flex-col items-center justify-center text-gray-600 font-poppins p-6">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      </ProtectedRoute>
+    );
+  }
+
+  if (!post) {
+    return (
+      <ProtectedRoute>
+        <div className="min-h-screen flex items-center justify-center text-gray-600 font-poppins">
+          Produk tidak ditemukan
+        </div>
+      </ProtectedRoute>
     );
   }
 
   return (
     <ProtectedRoute>
-      <div className="pt-20 px-6 bg-gray-300 min-h-screen font-poppins">
-        <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
-          {/* Tombol Kembali */}
-          <div>
-            <button
-              onClick={() => router.back()}
-              className="mb-2 text-sm text-black hover:underline"
-            >
-              ← Kembali
-            </button>
-          </div>
+      <div className="pt-20 px-4 md:px-6 bg-gray-50 min-h-screen font-poppins pb-10">
+        <div className="max-w-4xl mx-auto">
+          {/* Back button */}
+          <button
+            onClick={() => router.back()}
+            className="flex items-center mb-4 text-sm text-gray-600 hover:text-indigo-600"
+          >
+            <ArrowLeft className="mr-1" size={16} />
+            Kembali
+          </button>
 
-          {/* Header Produk */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gray-400 rounded-full flex items-center justify-center overflow-hidden">
-                {/* Avatar placeholder */}
-                <img
-                  src="/placeholder.png"
-                  alt="avatar"
-                  className="w-12 h-12 object-cover"
-                />
+          {/* Main product card */}
+          <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
+            {/* Product header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center space-x-4">
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">{post.title}</h1>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {post.categories.map((category, index) => (
+                      <span
+                        key={index}
+                        className="text-xs px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full"
+                      >
+                        {category}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
+              
+              <div className="flex flex-col items-end">
+                <span className={`text-xs px-3 py-1 rounded-full ${getStatusColor(post.status_post)}`}>
+                  {getStatusText(post.status_post)}
+                </span>
+                <span className={`text-xs px-3 py-1 rounded-full mt-2 ${
+                  post.isAvailable ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {post.isAvailable ? 'Tersedia' : 'Habis'}
+                </span>
+              </div>
+            </div>
+
+            {/* Price */}
+            <div className="bg-indigo-50 p-4 rounded-lg">
+              <p className="text-2xl font-bold text-indigo-700">
+                Rp{post.price.toLocaleString('id-ID')}
+              </p>
+            </div>
+
+            {/* Description */}
+            <div className="space-y-2">
+              <h3 className="font-semibold text-gray-900">Deskripsi</h3>
+              <p className="text-gray-700 whitespace-pre-line">
+                {post.caption || "Tidak ada deskripsi."}
+              </p>
+            </div>
+
+            {/* Images */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-900">Gambar Produk</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {post.images.length > 0 ? (
+                  post.images.map((image, index) => (
+                    <div
+                      key={index}
+                      className="aspect-square bg-gray-100 rounded-lg overflow-hidden"
+                    >
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_IMG_URL || ''}/${image}`}
+                        alt={`${post.title} ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-3 flex flex-col items-center justify-center p-8 bg-gray-100 rounded-lg">
+                    <ImageIcon className="text-gray-400 mb-2" size={32} />
+                    <p className="text-gray-500 text-sm">Tidak ada gambar</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Product info */}
+            <div className="flex justify-between gap-4 text-sm">
               <div>
-                <h2 className="text-lg text-black font-semibold">
-                  {produk.nama}
-                </h2>
-                <p className="text-sm text-gray-600">{produk.kategori}</p>
-                <p className="text-sm text-indigo-700 font-semibold">
-                  Status: {getStatusText(produk.status)}
+                <p className="text-gray-500">Dibuat pada</p>
+                <p className="font-medium text-gray-900">
+                  {new Date(post.created_at).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
                 </p>
               </div>
-            </div>
-            {/* Tombol Chat Penjual dihapus karena ini halaman seller */}
-          </div>
-
-          {/* Deskripsi */}
-          <p className="text-sm text-gray-700">
-            {produk.deskripsi || "Tidak ada deskripsi."}
-          </p>
-
-          {/* Gambar Produk */}
-          <div className="flex space-x-4 overflow-x-auto">
-            {produk.gambar ? (
-              <div className="w-32 h-28 bg-gray-400 rounded flex items-center justify-center">
-                <img
-                  src={produk.gambar}
-                  alt="gambar produk"
-                  className="w-32 h-28 object-cover rounded"
-                />
+              <div>
+                <p className="text-gray-500">Penjual</p>
+                <p className="font-medium text-gray-900">{post.seller.name}</p>
               </div>
-            ) : (
-              [1, 2, 3, 4, 5].map((item) => (
-                <div
-                  key={item}
-                  className="w-32 h-28 bg-gray-400 rounded flex items-center justify-center"
-                >
-                  <img
-                    src="/placeholder.png"
-                    alt="gambar"
-                    className="w-24 h-20"
-                  />
-                </div>
-              ))
-            )}
+            </div>
           </div>
 
-          {/* Tombol aksi like dan beli dihapus karena seller tidak bisa beli dan like produk sendiri */}
         </div>
-
-        {/* Tampilkan komentar hanya jika status produk bukan 'menunggu' */}
-        {produk.status !== "menunggu" && (
-          <div className="bg-white rounded-lg shadow-md p-6 mt-6 space-y-4">
-            <h3 className="text-lg font-semibold text-black">Komentar</h3>
-
-            {/* Daftar komentar */}
-            {comments.map((comment) => (
-              <div key={comment.id} className="flex items-start space-x-4">
-                <img
-                  src={comment.avatar}
-                  alt={comment.name}
-                  className="w-10 h-10 rounded-full bg-gray-300"
-                />
-                <div>
-                  <p className="text-sm font-semibold text-black">
-                    {comment.name}
-                  </p>
-                  <p className="text-sm text-gray-700">{comment.content}</p>
-                </div>
-              </div>
-            ))}
-
-            {/* Input komentar baru */}
-            <div className="pt-4 border-t border-gray-300">
-              <textarea
-                rows={2}
-                className="w-full border text-black border-gray-300 rounded p-2 text-sm"
-                placeholder="Tulis komentar..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-              />
-              <div className="flex justify-end mt-2">
-                <button
-                  onClick={handleAddComment}
-                  className="bg-blue-600 text-white text-sm px-4 py-2 rounded"
-                >
-                  Kirim Komentar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </ProtectedRoute>
   );

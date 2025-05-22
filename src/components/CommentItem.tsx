@@ -31,7 +31,7 @@ export const CommentItem = ({
       <div className="flex justify-between items-start">
         <div className="flex space-x-4 flex-1">
           <div className="w-10 h-10 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center">
-            {comment?.user?.name.charAt(0).toUpperCase()}
+            {comment?.user?.name?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div className="flex-1">
             <div className="flex items-center space-x-2">

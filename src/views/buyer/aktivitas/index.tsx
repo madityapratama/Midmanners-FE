@@ -206,7 +206,7 @@ export default function AktivitasViews() {
             key={order.id}
             className="bg-indigo-950 font-poppins p-4 rounded-lg text-white"
           >
-            <Link href={`/detailPostingan/${order.post.id}`}>
+            <Link href={`/seller/detail/${order.post.id}`}>
               <div className="cursor-pointer">
                 <div className="flex justify-between text-sm">
                   <span>{formatDate(order.created_at)}</span>
@@ -216,9 +216,7 @@ export default function AktivitasViews() {
                 </div>
 
                 <div className="flex items-center mt-3">
-                  <div className="w-12 h-12 bg-white border flex items-center justify-center mr-3 rounded">
-                    <span className="text-sm text-gray-400">📷</span>
-                  </div>
+                  
                   <div className="flex-1">
                     <div className="font-semibold">{order.post.title}</div>
                     <div className="text-sm">Penjual: {order.seller.name}</div>
