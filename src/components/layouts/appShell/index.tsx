@@ -17,6 +17,7 @@ const disableNavbar = [
   "/buyer/aktivitas",
   "/auth/otpRegister",
   "/buyer/edit",
+  "/seller/edit",
   "/daftarSeller",
   "/seller/aktivitas",
   "/chat*",

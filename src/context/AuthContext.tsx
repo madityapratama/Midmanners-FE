@@ -64,6 +64,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setProfile((prev)=>({...prev,...newData}));
   };
 
+  console.log(profile);
+
   // Load data saat pertama render
   // Load data saat pertama render
   useEffect(() => {
