@@ -37,7 +37,7 @@ export default function PengajuanMenjadiSellerViews() {
   ];
 
   const handleBack = () => {
-    router.push("/dashboard");
+    router.back();
   };
 
   // ✅ Kirimkan ID saat klik tombol detail

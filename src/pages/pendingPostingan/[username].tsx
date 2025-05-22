@@ -43,7 +43,7 @@ export default function PendingPostinganPage() {
 
   // Fungsi untuk kembali ke halaman sebelumnya
   const handleBack = () => {
-    router.push("/menungguPersetujuanPostingan");
+    router.back();
   };
 
   // Menampilkan nama penjual berdasarkan username dari URL

@@ -39,7 +39,7 @@ export default function menungguPersetujuanPostinganViews () {
   ]);
 
   const handleBack = () => {
-    router.push("/dashboard");
+    router.back();
   };
 
   const handleApprove = (id: number) => {

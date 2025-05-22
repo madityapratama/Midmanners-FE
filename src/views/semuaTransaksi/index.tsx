@@ -33,7 +33,7 @@ export default function semuaTransaksiViews () {
   ];
 
     const handleBack = () => {
-    router.push('/dashboard')
+    router.back()
   }
     return (
           <div className="min-h-screen bg-white px-6 pt-20 pb-10 font-poppins text-indigo-950">

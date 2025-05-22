@@ -57,7 +57,7 @@ export default function DetailPengajuan() {
   }, [id]);
 
   const handleBack = () => {
-    router.push("/pengajuanMenjadiSeller");
+    router.back();
   };
 
   const handleSetuju = () => {

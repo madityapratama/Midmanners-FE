@@ -120,7 +120,7 @@ export default function ListUserViews () {
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <button
-          onClick={() => router.push("/dashboard")}
+          onClick={() => router.back()}
           className="text-gray-700 hover:text-black"
         >
           <ArrowLeft size={24} />

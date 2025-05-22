@@ -1,4 +1,4 @@
-import { LayoutPanelTop, ThumbsUp, User, FileClock, Repeat, Clock } from "lucide-react";
+import { LayoutPanelTop, ThumbsUp, User, FileClock, Repeat, Clock, ListPlus } from "lucide-react";
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
@@ -21,7 +21,7 @@ const DashboardViews = () => {
   useEffect(() => {
     // Ganti ini sesuai cara kamu ambil role user
     const userRole = localStorage.getItem("userRole"); // contoh: "admin", "midman", "buyer"
-    setRole(userRole || "seller");
+    setRole(userRole || "admin");
   }, []);
 
   const toggleLike = (postId: number) => {
@@ -47,6 +47,7 @@ const DashboardViews = () => {
           <SidebarItem icon={<User size={20} />} text="List User" href="/listUser" />
           <SidebarItem icon={<FileClock size={20} />} text="Postingan Menunggu Persetujuan" href="/menungguPersetujuanPostingan" />
           <SidebarItem icon={<Repeat size={20} />} text="Pengajuan Menjadi Seller" href="/pengajuanMenjadiSeller" />
+          <SidebarItem icon={<ListPlus size={20} />} text="Tambah Kategori" href="" />
         </>
       );
     }
@@ -54,8 +55,8 @@ const DashboardViews = () => {
     if (role === "midman") {
       return (
         <>
-          <SidebarItem icon={<User size={20} />} text="List User" href="/midman/list-user"/>
-          <SidebarItem icon={<Clock size={20} />} text="Semua Transaksi" href="/midman/semua-transaksi" />
+          <SidebarItem icon={<User size={20} />} text="List User" href="/listUser"/>
+          <SidebarItem icon={<Clock size={20} />} text="Semua Transaksi" href="/semuaTransaksi" />
         </>
       );
     }
