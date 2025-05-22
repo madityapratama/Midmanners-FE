@@ -1,137 +1,189 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import axios from "axios";
+import { useAuth } from "@/context/AuthContext";
+import {Loader, X, Check, Image as ImageIcon ,Pencil} from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
-
-export default function DaftarSellerViews () {
-  const [jenisPembayaran, setJenisPembayaran] = useState("");
-  const [namaBank, setNamaBank] = useState("");
-  const [namaEwallet, setNamaEwallet] = useState("");
-  const [nomorRek, setNomorRek] = useState("");
-
+export default function DaftarSellerViews() {
+  const { profile, fetchProfile } = useAuth();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    nik: "",
+  });
+  const [ktpImage, setKtpImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState({
+    ktp: "",
+  });
 
-  const handleback = () => {
-    router.push('/buyer/profil')
+  useEffect(() => {
+    // Cek jika user sudah seller
+    if (profile?.role === "seller") {
+      router.push("/seller/profil");
+    }
+  }, [profile]);
+
+  const handleImageChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "ktp" | "store_icon" | "store_cover"
+  ) => {
+    const file = e.target.files?.[0];
+    if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setPreview((prev) => ({
+            ...prev,
+            [type]: reader.result as string,
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+
+      if (type === "ktp") {
+        setKtpImage(file);
+      }
+    } else {
+      toast.error("Pastikan gambar berformat .JPG/.PNG");
+    }
   };
-  
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const data = new FormData();
+      
+      // Append form data
+      data.append("nik", formData.nik);
+      
+      // Append KTP image
+      if (ktpImage) {
+        data.append("ktp", ktpImage);
+      }
+    
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/buyer/seller-request`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log(data.nik);
+      console.log(data.ktp);
+      console.log(response.data);
+
+      toast.success(response.data.message);
+      // await fetchProfile();
+      // router.push("/buyer/profil");
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message || "Gagal mengajukan menjadi seller";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-white p-6 flex items-center justify-center">
-      <div className="bg-zinc-300 p-8 rounded-lg w-full max-w-xl text-black">
+    <div className="min-h-screen bg-[#f2f2f6] flex items-center justify-center p-4">
+      <Toaster position="top-center" />
+      
+      <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6">
         <button
-          onClick={handleback} // ✅ Navigasi Next.js
-          className="mb-4 bg-indigo-950 text-white font-poppins px-4 py-2 rounded 
-            hover:bg-indigo-800 hover:scale-105 transition duration-200 ease-in-out"
+          onClick={() => router.push("/buyer/profil")}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-950 text-white rounded-full hover:bg-indigo-800 transition mb-6"
         >
+          <X size={16} />
           Kembali
         </button>
-        {/* ...lanjutan kode */}
-        {/* Upload Ikon & Sampul */}
-        <div className="flex justify-around mb-8">
-          <div className="flex flex-col items-center">
-            <div className="w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center relative">
-              <span className="absolute bottom-0 right-0 bg-black text-white text-xs p-1 rounded-full">✎</span>
-            </div>
-            <p className="mt-2 text-indigo-950 font-calsans">Ikon Toko</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="w-20 h-20 bg-zinc-800 rounded flex items-center justify-center relative">
-              <span className="absolute bottom-0 right-0 bg-black text-white text-xs p-1 rounded-full">✎</span>
-            </div>
-            <p className="mt-2 text-indigo-950 font-calsans">Sampul Toko</p>
-          </div>
-        </div>
 
-        {/* Form */}
-        <form className="space-y-4">
-          {/* Dropdown Jenis Pembayaran */}
-          <div>
-            <label className="block font-poppins text-indigo-950 font-medium mb-1">Jenis Pembayaran</label>
-            <select
-              className="w-full rounded px-3 py-2 font-poppins text-indigo-950 border border-indigo-950" // ✅ Tambahan border
-              value={jenisPembayaran}
-              onChange={(e) => {
-                setJenisPembayaran(e.target.value);
-                setNamaBank("");
-                setNamaEwallet("");
-              }}
-            >
-              <option value="">-- Pilih Jenis --</option>
-              <option value="bank">Bank</option>
-              <option value="ewallet">E-Wallet</option>
-            </select>
-          </div>
-
-          {/* Nama Bank atau E-Wallet */}
-          {jenisPembayaran === "bank" && (
-            <div>
-              <label className="block font-medium mb-1 text-indigo-950 font-poppins">Nama Bank</label>
-              <select
-                className="w-full rounded px-3 py-2 text-indigo-950 border border-indigo-950" // ✅ Tambahan border
-                value={namaBank}
-                onChange={(e) => setNamaBank(e.target.value)}
-              >
-                <option value="">-- Pilih Bank --</option>
-                <option value="BCA">BCA</option>
-                <option value="BNI">BNI</option>
-                <option value="BRI">BRI</option>
-                <option value="Mandiri">Mandiri</option>
-              </select>
-            </div>
-          )}
-
-          {jenisPembayaran === "ewallet" && (
-            <div>
-              <label className="block font-medium mb-1 text-indigo-950 font-poppins">Nama E-Wallet</label>
-              <select
-                className="w-full rounded px-3 py-2 text-indigo-950 border border-indigo-950" // ✅ Tambahan border
-                value={namaEwallet}
-                onChange={(e) => setNamaEwallet(e.target.value)}
-              >
-                <option value="">-- Pilih E-Wallet --</option>
-                <option value="OVO">OVO</option>
-                <option value="DANA">DANA</option>
-                <option value="GoPay">GoPay</option>
-                <option value="ShopeePay">ShopeePay</option>
-              </select>
-            </div>
-          )}
-
-          {/* No Rekening atau E-Wallet */}
-          {jenisPembayaran && (
-            <div>
-              <label className="block font-medium mb-1 font-poppins text-indigo-950">
-                {jenisPembayaran === "bank" ? "No Rekening" : "No E-Wallet"}
-              </label>
-              <input
-                type="text"
-                className="w-full rounded px-3 py-2 border border-indigo-950" // ✅ Tambahan border
-                value={nomorRek}
-                onChange={(e) => setNomorRek(e.target.value)}
-              />
-            </div>
-          )}
-
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* NIK */}
           <div>
-            <label className="block text-indigo-950 font-medium mb-1">NIK</label>
-            <input type="text" className="w-full rounded px-3 py-2 border border-indigo-950" /> {/* ✅ Tambahan border */}
-          </div>
-
-          {/* Upload KTP */}
-          <div>
-            <label className="block font-medium mb-1 text-indigo-950">Foto KTP</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              NIK (Nomor Induk Kependudukan)
+            </label>
             <input
-              type="file"
-              className="w-full border border-indigo-950 rounded px-3 py-2" // ✅ Tambahan border
-              accept="image/png, image/jpeg"
+              type="text"
+              name="nik"
+              value={formData.nik}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-lg border text-black border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              required
             />
-            <p className="text-xs mt-1 text-indigo-950">Pastikan Gambar Berformat .JPG/.PNG</p>
           </div>
 
-          {/* Tombol Simpan */}
-          <div className="flex justify-end pt-4">
-            <button type="submit" className="bg-indigo-950 text-white font-poppins px-6 py-2 rounded hover:bg-indigo-800 hover:scale-105 transition duration-200 ease-in-out">
-              Simpan
+          {/* KTP Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Foto KTP
+            </label>
+            <label className="relative block w-full h-32 bg-gray-200 rounded-lg overflow-hidden cursor-pointer border-2 border-dashed border-gray-400">
+              <input
+                type="file"
+                className="hidden"
+                accept="image/png, image/jpeg"
+                onChange={(e) => handleImageChange(e, "ktp")}
+                required
+              />
+              {preview.ktp ? (
+                <img
+                  src={preview.ktp}
+                  name="ktp"
+                  alt="KTP"
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center w-full h-full text-sm text-gray-500">
+                  <ImageIcon size={24} className="mb-2" />
+                  Unggah Foto KTP
+                </div>
+              )}
+              <span className="absolute bottom-2 right-2 bg-white p-1 rounded-full shadow">
+                <Pencil size={12} className="text-indigo-950" />
+              </span>
+            </label>
+            <p className="text-xs text-gray-500 mt-1">
+              Pastikan KTP terlihat jelas dan berformat .JPG/.PNG
+            </p>
+          </div>
+
+          {/* Submit Button */}
+          <div className="pt-4">
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full px-6 py-3 rounded-full font-medium text-white ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-indigo-950 hover:bg-indigo-900"
+              } transition flex items-center justify-center gap-2`}
+            >
+              {loading ? (
+                <>
+                  <Loader size={18} className="animate-spin" />
+                  Mengajukan...
+                </>
+              ) : (
+                <>
+                  <Check size={18} />
+                  Ajukan Sekarang
+                </>
+              )}
             </button>
           </div>
         </form>

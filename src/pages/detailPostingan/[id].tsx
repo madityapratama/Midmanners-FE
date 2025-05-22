@@ -1,5 +1,5 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
-import DetailPostinganViews from "../../views/detailPostingan"; // Pastikan path benar
+import DetailPostinganViews from "@/views/detailPostingan/index"; // Pastikan path benar
 
 const DetailPostinganPage = () => {
   return (

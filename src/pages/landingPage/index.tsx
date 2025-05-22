@@ -1,5 +1,4 @@
-import { Search, Gamepad2, Menu, Sword, Coins, Gem } from "lucide-react";
-import Image from "next/image"; // Import Image dari Next.js untuk optimasi gambar
+import { Menu, Sword, Coins, Gem } from "lucide-react";
 import { useRouter } from 'next/router';
 
 export default function LandingPage() {
@@ -67,7 +66,7 @@ export default function LandingPage() {
             onClick={handleSignUp}
             className="bg-zinc-950 hover:bg-indigo-500 px-6 py-3 rounded-full font-semibold transition font-poppins"
           >
-            Let's Get Started
+            Lets Get Started
           </button>
         </div>
 

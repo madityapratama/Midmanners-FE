@@ -1,5 +1,5 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
-import ProfilSellerViews from "@/views/seller/profil";
+import ProfilSellerViews from "@/views/seller/profil/SellerProfile";
 
 const profilSellerPage = () => {
   return (
