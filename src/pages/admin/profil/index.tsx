@@ -2,11 +2,17 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { User, Image as ImageIcon, FileClock, Repeat, ListPlus, Edit2, LogOut } from 'lucide-react';
+import {
+  Truck,
+  PackageCheck,
+  CheckCircle,
+} from "lucide-react";
 
 export default function AdminProfile() {
   const router = useRouter();
   const [cover, setCover] = useState(null);
   const [profile, setProfile] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
   const handleCoverChange = (e) => {
     const file = e.target.files[0];
@@ -24,9 +30,16 @@ export default function AdminProfile() {
     }
   };
 
-  const handleLogout = () => {
-    // TODO: Implementasi logout API
-    console.log('Logout clicked');
+  const handleLogout = async () => {
+    setIsLoading(true);
+    try {
+      await logout();
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 1000);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Fungsi untuk navigasi ke halaman yang sesuai
@@ -138,17 +151,66 @@ export default function AdminProfile() {
           </div>
         </div>
       </div>
+      
+      <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h3 className="text-lg mb-4 font-calsans">Aktivitas</h3>
+                <div className="grid grid-cols-4 gap-4 text-center font-poppins">
+                  {[
+                    {
+                      icon: <User size={30} className="mx-auto" />,
+                      label: "List User",
+                      hoverColor: "hover:text-blue-600",
+                    },
+                    {
+                      icon: <FileClock size={30} className="mx-auto" />,
+                      label: "Postingan Menuggu Persetujuan",
+                      hoverColor: "hover:text-green-600",
+                    },
+                    {
+                      icon: <Repeat size={30} className="mx-auto" />,
+                      label: "Pengajuan Menjadi Seller",
+                      hoverColor: "hover:text-emerald-600",
+                    },
+                    {
+                      icon: <ListPlus size={30} className="mx-auto" />,
+                      label: "Tambah Kategori",
+                      hoverColor: "hover:text-emerald-600",
+                    },
+                  ].map((item) => (
+                    <div
+                      key={item.tab}
+                      onClick={() => handleNavigateToAktivitas(item.tab)}
+                      className={`cursor-pointer p-4 rounded-lg bg-[#f2f2f6] hover:bg-indigo-950 hover:text-white transition-all group ${item.hoverColor}`}
+                    >
+                      <div className="flex flex-col items-center justify-center text-indigo-950 mb-2 group-hover:text-white">
+                        {item.icon}
+                      </div>
+                      <p className="text-xs font-medium">{item.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
       {/* Logout Button */}
       <div className="mt-10 flex justify-center">
-        <button 
-          onClick={handleLogout} 
-          className="bg-indigo-950 text-white px-6 py-2 rounded shadow hover:bg-red-500 transition flex items-center gap-2"
-        >
-          <LogOut size={18} />
-          Logout
-        </button>
-      </div>
+          <button
+            onClick={handleLogout}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-6 py-3 bg-indigo-950 text-white rounded-full hover:bg-indigo-900 transition-all shadow-md hover:shadow-lg disabled:opacity-70"
+          >
+            {isLoading ? (
+              <>
+                <Loader size={16} className="animate-spin" />
+                Memproses...
+              </>
+            ) : (
+              <>
+                <LogOut size={16} />
+                Logout
+              </>
+            )}
+          </button>
+        </div>
     </div>
   );
 }
