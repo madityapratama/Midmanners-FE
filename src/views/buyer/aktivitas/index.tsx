@@ -57,7 +57,7 @@ export default function AktivitasViews() {
     if (tab && tabs.some((t) => t.key === tab)) {
       setActiveTab(tab);
     } else {
-      setActiveTab("menunggu");
+      setActiveTab(searchParams.get("tab") || "menunggu");
     }
   }, [searchParams]);
 

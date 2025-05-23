@@ -45,8 +45,10 @@ export default function PengajuanMenjadiSellerViews() {
     fetchSellerRequests();
   }, []);
 
+  console.log(requests);
+
   const handleBack = () => {
-    router.back();
+    router.push('buyer/profil');
   };
 
   const handleDetail = (id: number) => {
@@ -119,7 +121,7 @@ export default function PengajuanMenjadiSellerViews() {
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       request.status_account === 'pending' 
                         ? 'bg-yellow-100 text-yellow-800' 
-                        : request.status_account === 'approved'
+                        : request.status_account === 'accepted'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
                     }`}>

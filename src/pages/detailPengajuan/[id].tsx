@@ -42,14 +42,14 @@ export default function DetailPengajuan() {
       }
     };
 
-    if (id) fetchData();
+   fetchData();
   }, [id]);
 
   const handleBack = () => {
     router.back();
   };
 
-  const handleSetuju = async () => {
+  const handleSetuju = async (id) => {
     if(!confirm('Yakin ingin menyetujui pengajuan ini?')) return;
     setIsSubmitting(true);
     try {
@@ -64,7 +64,7 @@ export default function DetailPengajuan() {
     }
   };
 
-  const handleTolak = async () => {
+  const handleTolak = async (id) => {
     if (!rejectionReason) {
       alert("Harap masukkan alasan penolakan");
       return;
@@ -239,39 +239,43 @@ export default function DetailPengajuan() {
                 </div>
               </div>
 
-              {/* Form Alasan Penolakan */}
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Alasan Penolakan (jika ditolak)
-                </label>
-                <textarea
-                  value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
-                  placeholder="Masukkan alasan penolakan..."
-                  rows={3}
-                  className="w-full p-3 border border-gray-300 text-black rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
+  {/* Form Alasan Penolakan */}
+  
+  {data.status_account !== "accepted" && (
+    <>
+      <div className="mt-6">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Alasan Penolakan (jika ditolak)
+        </label>
+        <textarea
+          value={rejectionReason}
+          onChange={(e) => setRejectionReason(e.target.value)}
+          placeholder="Masukkan alasan penolakan..."
+          rows={3}
+          className="w-full p-3 border border-gray-300 text-black rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        />
+      </div>
 
-              {/* Action Buttons */}
-              <div className="mt-8 flex flex-col sm:flex-row justify-end gap-3">
-                <button
-                  onClick={handleTolak}
-                  disabled={isSubmitting}
-                  className="flex items-center justify-center px-5 py-2.5 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
-                >
-                  <X className="mr-2" size={18} />
-                  {isSubmitting ? "Memproses..." : "Tolak Pengajuan"}
-                </button>
-                <button
-                  onClick={handleSetuju}
-                  disabled={isSubmitting}
-                  className="flex items-center justify-center px-5 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
-                >
-                  <Check className="mr-2" size={18} />
-                  {isSubmitting ? "Memproses..." : "Setujui Pengajuan"}
-                </button>
-              </div>
+      <div className="mt-8 flex flex-col sm:flex-row justify-end gap-3">
+        <button
+          onClick={() => handleTolak(data?.id)}
+          disabled={isSubmitting}
+          className="flex items-center justify-center px-5 py-2.5 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
+        >
+          <X className="mr-2" size={18} />
+          {isSubmitting ? "Memproses..." : "Tolak Pengajuan"}
+        </button>
+        <button
+          onClick={() => handleSetuju(data?.id)}
+          disabled={isSubmitting}
+          className="flex items-center justify-center px-5 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
+        >
+          <Check className="mr-2" size={18} />
+          {isSubmitting ? "Memproses..." : "Setujui Pengajuan"}
+        </button>
+      </div>
+    </>
+  )}
             </div>
           </div>
         </div>

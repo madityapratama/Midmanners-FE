@@ -1,33 +1,81 @@
-import Image from 'next/image';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { User, Image as ImageIcon, FileClock, Repeat, ListPlus, Edit2, LogOut } from 'lucide-react';
+import Image from "next/image";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import {
-  Truck,
-  PackageCheck,
-  CheckCircle,
+  User,
+  FileClock,
+  Repeat,
+  ListPlus,
+  Edit2,
+  LogOut,
+  Loader,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import api from "@/lib/axios";
 
 export default function AdminProfile() {
   const router = useRouter();
-  const [cover, setCover] = useState(null);
-  const [profile, setProfile] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState({
+    background: false,
+    profile: false,
+  });
+  const { profile, fetchProfile, logout } = useAuth();
+
+  useEffect(() => {
+    if (!profile) {
+      fetchProfile().finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [profile, fetchProfile]);
+
+  const handleImageUpload = async (file, type) => {
+    if (!file) return;
+
+    setUploading((prev) => ({ ...prev, [type]: true }));
+
+    try {
+      const formData = new FormData();
+
+      formData.append("_method", "PATCH");
+      if (type === "background") {
+        formData.append("background_image", file);
+      } else {
+        formData.append("profile_image", file);
+      }
+
+      const response = await api.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/profile`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log(`${type} image uploaded successfully`);
+      }
+
+      await fetchProfile();
+    } catch (error) {
+      console.error(`Error uploading ${type} image:`, error);
+    } finally {
+      setUploading((prev) => ({ ...prev, [type]: false }));
+    }
+  };
 
   const handleCoverChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setCover(URL.createObjectURL(file));
-      // TODO: Implementasi upload foto sampul ke API
-    }
+    if (file) handleImageUpload(file, "background");
   };
 
   const handleProfileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setProfile(URL.createObjectURL(file));
-      // TODO: Implementasi upload foto profil ke API
-    }
+    if (file) handleImageUpload(file, "profile");
   };
 
   const handleLogout = async () => {
@@ -42,157 +90,172 @@ export default function AdminProfile() {
     }
   };
 
-  // Fungsi untuk navigasi ke halaman yang sesuai
   const navigateTo = (page) => {
-    switch(page) {
-      case 'listUser':
-        router.push('/listUser');
+    switch (page) {
+      case "listUser":
+        router.push("/listUser");
         break;
-      case 'pending-posts':
-        router.push('/menungguPersetujuanPostingan');
+      case "pending-posts":
+        router.push("/menungguPersetujuanPostingan");
         break;
-      case 'seller-requests':
-        router.push('/pengajuanMenjadiSeller');
+      case "seller-requests":
+        router.push("/pengajuanMenjadiSeller");
         break;
-      case 'add-category':
-        router.push('/admin/add-category');
+      case "add-category":
+        router.push("/admin/add-category");
         break;
       default:
         break;
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center py-8">
+        <Loader className="animate-spin text-indigo-950" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen pt-13 bg-gray-100 text-gray-900">
-      {/* Cover Photo Section - Tombol edit di kanan bawah */}
-      <div className="relative h-48 bg-gray-700 flex items-center justify-center">
-        {cover && (
-          <Image 
-            src={cover} 
-            alt="Cover" 
-            layout="fill"
-            objectFit="cover"
-            className="absolute inset-0"
+    <div className="min-h-screen pt-13 bg-gray-100 text-indigo-950">
+      {/* Cover Photo Section */}
+      <div
+        className="relative h-[200px] sm:h-[250px] w-full overflow-hidden"
+        style={{
+          backgroundImage: profile?.background_image
+            ? `url('${process.env.NEXT_PUBLIC_IMG_URL}${profile.background_image}')`
+            : "linear-gradient(135deg, #4f46e5 0%, #312e81 100%)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <label className="absolute bottom-4 right-4">
+          <input
+            type="file"
+            className="hidden"
+            onChange={handleCoverChange}
+            accept="image/*"
+            disabled={uploading.background}
           />
-        )}
-        <label className="absolute bottom-4 right-4 bg-white/90 hover:bg-white transition p-2 rounded-full shadow-lg cursor-pointer">
-          <input type="file" className="hidden" onChange={handleCoverChange} accept="image/*" />
-          <Edit2 size={18} className="text-gray-700" />
+          <div className="bg-white/90 hover:bg-white text-indigo-950 px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 shadow-md hover:shadow-lg cursor-pointer">
+            {uploading.background ? (
+              <>
+                <Loader size={18} className="animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              <>
+                <Edit2 size={18} />
+                Edit Cover
+              </>
+            )}
+          </div>
         </label>
-        <h1 className="text-white text-2xl font-bold z-10">FOTO SAMPUL</h1>
       </div>
 
       {/* Profile Section */}
-      <div className="p-6 bg-white shadow-md relative">
-        <div className="flex items-start gap-6">
-          <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white -mt-12">
-            {profile ? (
-              <Image 
-                src={profile} 
-                alt="Profile" 
-                layout="fill"
-                objectFit="cover"
-              />
-            ) : (
-              <div className="bg-gray-300 w-full h-full flex items-center justify-center">
-                <ImageIcon className="text-gray-500" size={24} />
+      <div className="px-6 pt-6 max-w-6xl mx-auto relative mt-10">
+        <div className="flex relative flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex relative items-center gap-4">
+            <div className="relative w-24 h-24 -mt-12">
+              {/* Lingkaran Profil */}
+              <div className="w-24 h-24 border-4 border-white rounded-full bg-gray-300 flex items-center justify-center overflow-hidden shadow-lg z-20">
+                {profile?.profile_image ? (
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_IMG_URL}${profile.profile_image}`}
+                    alt="Profile"
+                    width={96}
+                    height={96}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-indigo-950/30 flex items-center justify-center text-white">
+                    <span className="text-2xl font-bold">
+                      {profile?.name?.charAt(0)?.toUpperCase() || "A"}
+                    </span>
+                  </div>
+                )}
               </div>
-            )}
-            <label className="absolute bottom-0 right-0 bg-white p-1.5 rounded-full shadow cursor-pointer hover:bg-gray-100 transition">
-              <input type="file" className="hidden" onChange={handleProfileChange} accept="image/*" />
-              <Edit2 size={16} className="text-gray-700" />
-            </label>
-          </div>
 
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold">Nama Admin</h2>
+              <label className="absolute -bottom-1 -right-1 z-30 bg-white p-1.5 rounded-full shadow cursor-pointer hover:bg-gray-100 transition">
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={handleProfileChange}
+                  accept="image/*"
+                  disabled={uploading.profile}
+                />
+                {uploading.profile ? (
+                  <Loader size={16} className="animate-spin text-indigo-600" />
+                ) : (
+                  <Edit2 size={16} className="text-gray-700" />
+                )}
+              </label>
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-bold">
+                {profile?.name || "Admin User"}
+              </h2>
+              <p className="text-sm text-indigo-950/80 mt-1">
+                {profile?.email || "admin@example.com"}
+              </p>
+              <p className="text-sm text-indigo-950/80 mt-1">
+                Role: {profile?.role || "admin"}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Activities Section */}
-      <div className="mt-6 px-6">
-        <h3 className="font-semibold mb-4">Aktivitas</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* List User */}
-          <div 
-            onClick={() => navigateTo('listUser')}
-            className="flex flex-col items-center bg-white p-4 rounded shadow hover:bg-gray-50 transition cursor-pointer hover:shadow-md"
-          >
-            <User size={32} className="mb-2" />
-            <p className="text-sm text-center">List User</p>
-          </div>
+        <hr className="my-6 border-indigo-950/20" />
 
-          {/* Postingan Menunggu Persetujuan */}
-          <div 
-            onClick={() => navigateTo('pending-posts')}
-            className="flex flex-col items-center bg-white p-4 rounded shadow hover:bg-gray-50 transition cursor-pointer hover:shadow-md"
-          >
-            <FileClock size={32} className="mb-2" />
-            <p className="text-sm text-center">Postingan Menunggu Persetujuan</p>
-          </div>
-
-          {/* Pengajuan Menjadi Seller */}
-          <div 
-            onClick={() => navigateTo('seller-requests')}
-            className="flex flex-col items-center bg-white p-4 rounded shadow hover:bg-gray-50 transition cursor-pointer hover:shadow-md"
-          >
-            <Repeat size={32} className="mb-2" />
-            <p className="text-sm text-center">Pengajuan Menjadi Seller</p>
-          </div>
-
-          {/* Tambah Kategori */}
-          <div 
-            onClick={() => navigateTo('add-category')}
-            className="flex flex-col items-center bg-white p-4 rounded shadow hover:bg-gray-50 transition cursor-pointer hover:shadow-md"
-          >
-            <ListPlus size={32} className="mb-2" />
-            <p className="text-sm text-center">Tambah Kategori</p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg mb-4 font-calsans">Aktivitas</h3>
-                <div className="grid grid-cols-4 gap-4 text-center font-poppins">
-                  {[
-                    {
-                      icon: <User size={30} className="mx-auto" />,
-                      label: "List User",
-                      hoverColor: "hover:text-blue-600",
-                    },
-                    {
-                      icon: <FileClock size={30} className="mx-auto" />,
-                      label: "Postingan Menuggu Persetujuan",
-                      hoverColor: "hover:text-green-600",
-                    },
-                    {
-                      icon: <Repeat size={30} className="mx-auto" />,
-                      label: "Pengajuan Menjadi Seller",
-                      hoverColor: "hover:text-emerald-600",
-                    },
-                    {
-                      icon: <ListPlus size={30} className="mx-auto" />,
-                      label: "Tambah Kategori",
-                      hoverColor: "hover:text-emerald-600",
-                    },
-                  ].map((item) => (
-                    <div
-                      key={item.tab}
-                      onClick={() => handleNavigateToAktivitas(item.tab)}
-                      className={`cursor-pointer p-4 rounded-lg bg-[#f2f2f6] hover:bg-indigo-950 hover:text-white transition-all group ${item.hoverColor}`}
-                    >
-                      <div className="flex flex-col items-center justify-center text-indigo-950 mb-2 group-hover:text-white">
-                        {item.icon}
-                      </div>
-                      <p className="text-xs font-medium">{item.label}</p>
-                    </div>
-                  ))}
+        {/* Activities Section */}
+        <div className="bg-white rounded-xl p-6 shadow-sm">
+          <h3 className="text-lg mb-4 font-bold">Aktivitas</h3>
+          <div className="grid grid-cols-4 gap-4 text-center">
+            {[
+              {
+                icon: <User size={30} className="mx-auto" />,
+                label: "List User",
+                tab: "listUser",
+                hoverColor: "hover:text-blue-600",
+              },
+              {
+                icon: <FileClock size={30} className="mx-auto" />,
+                label: "Postingan Menunggu Persetujuan",
+                tab: "pending-posts",
+                hoverColor: "hover:text-green-600",
+              },
+              {
+                icon: <Repeat size={30} className="mx-auto" />,
+                label: "Pengajuan Menjadi Seller",
+                tab: "seller-requests",
+                hoverColor: "hover:text-emerald-600",
+              },
+              {
+                icon: <ListPlus size={30} className="mx-auto" />,
+                label: "Tambah Kategori",
+                tab: "add-category",
+                hoverColor: "hover:text-emerald-600",
+              },
+            ].map((item) => (
+              <div
+                key={item.tab}
+                onClick={() => navigateTo(item.tab)}
+                className={`cursor-pointer p-4 rounded-lg bg-[#f2f2f6] hover:bg-indigo-950 hover:text-white transition-all group ${item.hoverColor}`}
+              >
+                <div className="flex flex-col items-center justify-center text-indigo-950 mb-2 group-hover:text-white">
+                  {item.icon}
                 </div>
+                <p className="text-xs font-medium">{item.label}</p>
               </div>
+            ))}
+          </div>
+        </div>
 
-      {/* Logout Button */}
-      <div className="mt-10 flex justify-center">
+        {/* Logout Button */}
+        <div className="mt-10 flex justify-center">
           <button
             onClick={handleLogout}
             disabled={isLoading}
@@ -211,6 +274,7 @@ export default function AdminProfile() {
             )}
           </button>
         </div>
+      </div>
     </div>
   );
 }

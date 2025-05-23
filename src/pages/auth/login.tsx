@@ -60,9 +60,7 @@ export default function Login() {
         }, 1500);
     } catch (error) {
       console.error("Login error:", error);
-      toast.error(
-        error.response?.data?.message || "Terjadi kesalahan saat login"
-      );
+      toast.error(error?.response?.data?.message || error?.message || "Terjadi kesalahan saat login");
     } finally {
       setLoading(false);
     }
