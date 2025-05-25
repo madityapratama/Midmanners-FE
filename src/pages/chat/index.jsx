@@ -1,7 +1,5 @@
-// pages/chat/[channel_url].jsx
+// pages/chat/index.jsx
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Head from 'next/head';
 import '@sendbird/uikit-react/dist/index.css';
@@ -11,16 +9,8 @@ const SendbirdApp = dynamic(() => import('@sendbird/uikit-react/App'), {
   loading: () => <div className="flex justify-center items-center h-screen">Loading chat...</div>,
 });
 
-export default function ChannelChatPage() {
-  const router = useRouter();
+export default function ChatDashboard() {
   const { profile } = useAuth();
-  const [channelUrl, setChannelUrl] = useState(null);
-
-  useEffect(() => {
-    if (router.isReady && router.query.channel_url) {
-      setChannelUrl(router.query.channel_url);
-    }
-  }, [router]);
 
   if (!profile) {
     return (
@@ -33,8 +23,8 @@ export default function ChannelChatPage() {
   return (
     <>
       <Head>
-        <title>Chat Channel | Your App Name</title>
-        <meta name="description" content="Chat with your community" />
+        <title>Chat | MidManners</title>
+        <meta name="description" content="Connect with your community" />
       </Head>
       
       <div className="h-screen pt-16">
@@ -46,7 +36,6 @@ export default function ChannelChatPage() {
           config={{
             isMessageGroupingEnabled: true,
           }}
-          {...(channelUrl && { currentChannelUrl: channelUrl })}
         />
       </div>
     </>

@@ -100,7 +100,7 @@ export default function LandingPage() {
       {/* About Section */}
       <section
         id="about"
-        className="min-h-screen flex flex-col justify-center items-center max-w-7xl mx-auto px-6 py-20 mt-20 bg-gradient-to-tr from-indigo-800 via-zinc-900 to-indigo-950 shadow-lg relative overflow-hidden text-center"
+        className="min-h-screen flex flex-col justify-center items-center mx-auto px-6 py-20 mt-20 bg-gradient-to-tr from-indigo-800 via-zinc-900 to-indigo-950 shadow-lg relative overflow-hidden text-center"
       >
         <h2 className="text-7xl font-bold font-calsans mb-6 text-indigo-200 drop-shadow-lg">
           About Us

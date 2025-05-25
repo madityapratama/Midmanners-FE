@@ -1,4 +1,4 @@
-import { ThumbsUp, Info } from "lucide-react";
+import { ThumbsUp, Info, MessageCircle } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -7,19 +7,27 @@ import axios from "axios";
 import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import { CategoryProvider } from "@/context/CategoryContext";
+import { useCategory } from "@/context/CategoryContext";
 
 type Post = {
   id: number;
   seller: {
     name: string;
+    avatar?: string;
   };
   categories: string[];
   caption: string;
   images: string[];
+  like_count: number;
+  comment_count: number;
+  created_at: string;
 };
 
 const DashboardViews = () => {
   const router = useRouter();
+  const {selectedCategory} = useCategory();
   const [posts, setPosts] = useState<Post[]>([]);
   const [likedPosts, setLikedPosts] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,17 +37,19 @@ const DashboardViews = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
+      const url = selectedCategory ? `${process.env.NEXT_PUBLIC_API_URL}/posts/category/${selectedCategory}`: `${process.env.NEXT_PUBLIC_API_URL}/posts`;
+      // console.log(url);
+      setLoading(true);
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts`,
+          url,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }
         );
-        const result = await response.data;
-        setPosts(result.data.data);
+        setPosts(response.data.data?.data || []);
       } catch (error) {
         console.error("Failed to fetch posts:", error);
       } finally {
@@ -48,14 +58,33 @@ const DashboardViews = () => {
     };
 
     fetchPosts();
-  }, [posts]);
+  }, [selectedCategory]);
 
-  const toggleLike = (postId: number) => {
-    setLikedPosts((prev) =>
-      prev.includes(postId)
-        ? prev.filter((id) => id !== postId)
-        : [...prev, postId]
-    );
+  const toggleLike = async (postId: number) => {
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/like`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setLikedPosts((prev) =>
+        prev.includes(postId)
+          ? prev.filter((id) => id !== postId)
+          : [...prev, postId]
+      );
+      setPosts(posts.map(post => 
+        post.id === postId ? { 
+          ...post, 
+          like_count: likedPosts.includes(postId) ? post.like_count - 1 : post.like_count + 1 
+        } : post
+      ));
+    } catch (error) {
+      console.error("Failed to toggle like:", error);
+    }
   };
 
   const openImageLightbox = (post: Post, index: number) => {
@@ -64,40 +93,50 @@ const DashboardViews = () => {
     setOpenLightbox(true);
   };
 
+
   return (
-    <div className="pt-16 flex bg-zinc-800 min-h-screen">
+    <div className="flex min-h-screen pt-16 bg-gray-100">
       {/* Sidebar */}
-      <div className="fixed top-0 left-0 w-64 bg-zinc-300 shadow-lg p-4 h-screen overflow-y-auto font-poppins">
+      <div className="fixed top-0 left-0 w-64 h-full bg-indigo-900 shadow-lg p-4 overflow-y-auto">
         <Sidebar />
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 space-y-6 overflow-y-auto ml-64">
+      <div className="flex-1 ml-64 p-6 space-y-6 overflow-y-auto">
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
           </div>
+        ) : posts.length === 0 ?(
+            <div className="flex justify-center items-center h-64 text-gray-500 text-lg">
+      Post tidak tersedia
+    </div>
+
         ) : (
           posts.map((post) => {
             const isLiked = likedPosts.includes(post.id);
             return (
-              <div
+              <motion.div
                 key={post.id}
-                className="bg-zinc-700 rounded-xl shadow-xl p-6 transition-all hover:shadow-2xl hover:bg-zinc-600"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
               >
-                <div className="flex items-center space-x-4 mb-6">
-                  <div className="w-12 h-12 bg-zinc-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                {/* Post Header */}
+                <div className="p-4 flex items-center space-x-4 border-b border-gray-100">
+                  <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold text-xl">
                     {post.seller.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="text-lg font-poppins text-white font-semibold">
+                    <h3 className="text-lg font-semibold text-gray-800">
                       {post.seller.name}
                     </h3>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {post.categories.map((category, i) => (
                         <span
                           key={i}
-                          className="px-2 py-1 text-xs bg-zinc-600 text-zinc-200 rounded-full"
+                          className="px-3 py-1 text-xs bg-indigo-50 text-indigo-600 rounded-full"
                         >
                           {category}
                         </span>
@@ -106,52 +145,66 @@ const DashboardViews = () => {
                   </div>
                 </div>
 
-                <p className="text-zinc-200 mb-6 leading-relaxed">
-                  {post.caption}
-                </p>
+                {/* Post Content */}
+                <div className="p-4">
+                  <p className="text-gray-700 mb-6 leading-relaxed">
+                    {post.caption}
+                  </p>
 
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                  {post.images.map((imgUrl, index) => (
-                    <div
-                      key={index}
-                      onClick={() => openImageLightbox(post, index)}
-                      className="relative h-48 w-full rounded-lg overflow-hidden group cursor-zoom-in"
-                    >
-                      <Image
-                        src={`${process.env.NEXT_PUBLIC_IMG_URL}${imgUrl}`}
-                        alt={`Post Image ${index + 1}`}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                      />
+                  {/* Images Grid */}
+                  {post.images.length > 0 && (
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                      {post.images.map((imgUrl, index) => (
+                        <div
+                          key={index}
+                          onClick={() => openImageLightbox(post, index)}
+                          className="relative h-48 w-full rounded-lg overflow-hidden group cursor-zoom-in"
+                        >
+                          <Image
+                            src={`${process.env.NEXT_PUBLIC_IMG_URL}${imgUrl}`}
+                            alt={`Post Image ${index + 1}`}
+                            fill
+                            className="object-cover group-hover:opacity-90 transition-opacity"
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                          />
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
                 </div>
 
-                <div className="flex space-x-6 text-sm border-t border-zinc-600 pt-4">
-                  <motion.button
-                    onClick={() => toggleLike(post.id)}
-                    className={`flex items-center font-poppins space-x-2 ${
-                      isLiked ? "text-blue-400" : "text-zinc-300"
-                    } hover:text-white transition-colors`}
-                    whileTap={{ scale: 1.2 }}
-                    animate={{ scale: isLiked ? 1.1 : 1 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <ThumbsUp className="w-5 h-5" />
-                    <span>{isLiked ? "Liked" : "Like"}</span>
-                  </motion.button>
+                {/* Post Footer */}
+                <div className="px-4 py-3 border-t border-gray-100 flex justify-between">
+                  <div className="flex space-x-4">
+                    <motion.button
+                      // onClick={() => toggleLike(post.id)}
+                      className={`flex items-center space-x-2 ${
+                        isLiked ? "text-indigo-600" : "text-gray-500"
+                      } hover:text-indigo-600 transition-colors`}
+                      // whileTap={{ scale: 1.1 }}
+                    >
+                      <ThumbsUp className={`w-5 h-5 ${isLiked ? 'fill-indigo-600' : ''}`} />
+                      <span>{post.like_count} Likes</span>
+                    </motion.button>
 
-                  <motion.button
-                    onClick={() => router.push(`/detailPostingan/${post.id}`)}
-                    className="flex items-center text-zinc-300 font-poppins space-x-2 hover:text-white transition-colors"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <Info className="w-5 h-5" />
-                    <span>Info Lengkap</span>
-                  </motion.button>
+                    <button className="flex items-center space-x-2 text-gray-500 hover:text-indigo-600 transition-colors">
+                      <MessageCircle className="w-5 h-5" />
+                      <span>{post.comment_count} Comments</span>
+                    </button>
+                  </div>
+
+                  <div className="flex space-x-4">
+                    <motion.button
+                      onClick={() => router.push(`/detailPostingan/${post.id}`)}
+                      className="flex items-center space-x-2 text-gray-500 hover:text-indigo-600 transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <Info className="w-5 h-5" />
+                      <span>Details</span>
+                    </motion.button>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })
         )}
@@ -166,20 +219,10 @@ const DashboardViews = () => {
           slides={currentPost.images.map((img) => ({
             src: `${process.env.NEXT_PUBLIC_IMG_URL}${img}`,
           }))}
-          on={{
-            view: ({ index }) => setCurrentImageIndex(index),
-          }}
-          controller={{
-            closeOnBackdropClick: true,
-          }}
-          animation={{
-            fade: 300,
-            swipe: 200,
-          }}
-          carousel={{
-            finite: currentPost.images.length <= 1,
-          }}
-          noScroll={{ disabled: true }}
+          plugins={[Zoom]}
+          on={{ view: ({ index }) => setCurrentImageIndex(index) }}
+          controller={{ closeOnBackdropClick: true }}
+          animation={{ fade: 300 }}
           styles={{
             container: { backgroundColor: "rgba(0, 0, 0, 0.9)" },
           }}

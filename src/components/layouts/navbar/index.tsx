@@ -1,8 +1,9 @@
+// components/layouts/Navbar.tsx
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { Bell, CircleUserRound, Home, Users, Search } from "lucide-react";
-import { useAuth } from "@/context/AuthContext"; // Custom AuthContext
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
   const { user } = useAuth();
@@ -12,81 +13,77 @@ const Navbar = () => {
   const handleProfileClick = () => {
     if (!user) return;
 
-    switch (user.role) {
-      case "buyer":
-        router.push("/buyer/profil");
-        break;
-      case "seller":
-        router.push("/seller/profil");
-        break;
-      case "midman":
-        router.push("/midman/profil");
-        break;
-      case "admin":
-        router.push("/admin/profil");
-        break;
-      default:
-        router.push("/"); // fallback
-    }
+    const profileRoutes = {
+      buyer: "/buyer/profil",
+      seller: "/seller/profil",
+      midman: "/midman/profil",
+      admin: "/admin/profil"
+    };
+
+    router.push(profileRoutes[user.role] || "/");
   };
 
-  const handleHomeClick = () => {
-    router.push("/dashboard");
-  };
+  const handleHomeClick = () => router.push("/dashboard");
+  const handleChatPage = () => router.push('/chat');
 
-  const handleGroupClick = () => {
-    // kalau mau ke page lain untuk group, bisa tambahkan router.push('/groupPage') disini
-  };
+  const iconClass = "w-6 h-6 text-zinc-200 hover:text-indigo-300 transition-colors duration-200";
+  const activeIconClass = "text-indigo-400";
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-indigo-950 shadow-md w-full">
-      <div className="flex items-center justify-between px-4 py-2">
-        {/* Search Bar */}
-        <div className="flex items-center gap-4 flex-1 w-1/3">
-          <span className="font-semibold text-lg text-zinc-200 font-calsans whitespace-nowrap">
-            MIDMANNERS
-          </span>
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full pl-10 pr-4 text-zinc-200 py-2 rounded-full border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-text-zinc-400 text-sm transition-colors duration-300 ease-in-out"
-            />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-200 w-5 h-5 transition-colors duration-300 ease-in-out" />
+    <header className="fixed top-0 left-0 right-0 z-50 bg-indigo-950 shadow-lg backdrop-blur-sm bg-opacity-90">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          
+          {/* Logo and Search */}
+          <div className="flex items-center space-x-4 flex-1">
+            <h1 className="font-semibold text-xl text-zinc-100 font-calsans tracking-tight">
+              MIDMANNERS
+            </h1>
+            <div className="relative max-w-md w-full hidden md:block">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-300 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full pl-10 pr-4 bg-indigo-900 bg-opacity-50 text-zinc-100 py-2 rounded-full border border-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-zinc-400"
+              />
+            </div>
+          </div>
+
+          {/* Navigation Icons */}
+          <nav className="flex items-center space-x-6 mx-4">
+            <button 
+              onClick={handleHomeClick}
+              className="p-2 rounded-full hover:bg-indigo-800 transition-colors"
+              aria-label="Home"
+            >
+              <Home className={`${iconClass} ${activePage === 'home' ? activeIconClass : ''}`} />
+            </button>
+            <button
+              onClick={handleChatPage}
+              className="p-2 rounded-full hover:bg-indigo-800 transition-colors"
+              aria-label="Chat"
+            >
+              <Users className={`${iconClass} ${activePage === 'chat' ? activeIconClass : ''}`} />
+            </button>
+          </nav>
+
+          {/* User Actions */}
+          <div className="flex items-center space-x-4 flex-1 justify-end">
+            {/* <button className="p-2 rounded-full hover:bg-indigo-800 transition-colors relative">
+              <Bell className={iconClass} />
+              <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
+            </button> */}
+            <button
+              onClick={handleProfileClick}
+              className="p-2 rounded-full hover:bg-indigo-800 transition-colors"
+              aria-label="Profile"
+            >
+              <CircleUserRound className={`${iconClass} ${activePage === 'profile' ? activeIconClass : ''}`} />
+            </button>
           </div>
         </div>
-
-        {/* Center Navigation Icons */}
-        <div className="flex items-center gap-8 flex-1 justify-center">
-          <span
-            onClick={handleHomeClick}
-            className={`relative cursor-pointer p-2 rounded-full`}
-          >
-            <Home className="w-6 h-6 text-zinc-200 hover:text-zinc-400 transition-colors duration-300 ease-in-out" />
-          </span>
-          <span
-            onClick={handleGroupClick}
-            className={`relative cursor-pointer p-2 rounded-full `}
-          >
-            <Users className="w-6 h-6 text-zinc-200 hover:text-zinc-400 transition-colors duration-300 ease-in-out" />
-          </span>
-        </div>
-
-        {/* Right Icons */}
-        <div className="flex items-center gap-6 flex-1 justify-end text-gray-600">
-          <Bell
-            className="w-6 h-6 cursor-pointer text-zinc-200 hover:text-zinc-400 transition-colors duration-300 ease-in-out
-"
-          />
-          <CircleUserRound
-            className={`w-6 h-6 cursor-pointer text-zinc-200 hover:text-zinc-400 transition-colors duration-300 ease-in-out${
-              activePage === "profile" ? "text-blue-500" : ""
-            }`}
-            onClick={handleProfileClick}
-          />
-        </div>
       </div>
-    </div>
+    </header>
   );
 };
 

@@ -1,13 +1,10 @@
+// components/layouts/AppShell.tsx
 import { useRouter } from "next/router";
 import Navbar from "@/components/layouts/navbar";
 import Head from "next/head";
 import { ReactNode } from "react";
 
-type AppShellProps = {
-  children: ReactNode;
-};
-
-const disableNavbar = [
+const disableNavbarPaths = [
   "/auth/login",
   "/auth/signUp",
   "/auth/resetPassword",
@@ -20,38 +17,49 @@ const disableNavbar = [
   "/seller/edit",
   "/daftarSeller",
   "/seller/aktivitas",
-  "/chat*",
   "/landingPage",
 ];
 
-function generateTitle(path: string) {
-  if (path === "/") return "Landing Page";
-  const segments = path.split("/").filter(Boolean);
-  return segments
-    .map((seg) =>
-      seg
+const generatePageTitle = (path: string) => {
+  if (path === "/") return "Welcome to MidManners";
+  
+  const segments = path.split("/")
+    .filter(Boolean)
+    .map(segment => 
+      segment
         .replace(/[-_]/g, " ")
-        .replace(/\b\w/g, (char) => char.toUpperCase())
-    )
-    .join(" | ");
-}
+        .replace(/\b\w/g, char => char.toUpperCase())
+    );
+  
+  return segments.join(" | ") + " | MidManners";
+};
 
-const AppShell = ({ children }: AppShellProps) => {
+type AppShellProps = {
+  children: ReactNode;
+  className?: string;
+};
+
+const AppShell = ({ children, className = "" }: AppShellProps) => {
   const { pathname } = useRouter();
-  const pageTitle = generateTitle(pathname);
+  const showNavbar = !disableNavbarPaths.some(path => 
+    path.endsWith("*") ? pathname.startsWith(path.slice(0, -1)) : pathname === path
+  );
+  const isChatPage = pathname.startsWith("/chat");
 
   return (
     <>
       <Head>
-        <title>{pageTitle}</title>
-        <meta
-          name="description"
-          content={`This is the ${pageTitle} page of My Website`}
-        />
+        <title>{generatePageTitle(pathname)}</title>
+        <meta name="description" content={`MidManners - ${generatePageTitle(pathname)}`} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        {!disableNavbar.includes(pathname) && <Navbar />}
-        {children}
+      
+      <main className={`min-h-screen ${className} `}>
+        {showNavbar && <Navbar />}
+        <div className={`${showNavbar ? 'pt-0' : 'pt-0'}`}>
+          {children}
+        </div>
       </main>
     </>
   );
