@@ -17,17 +17,9 @@ import { useAuth } from "@/context/AuthContext";
 export default function SellerProfileViews() {
   const router = useRouter();
   const { logout, profile, fetchProfile } = useAuth();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  // const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // const sellerData = {
-  //   name: 'Nama Penjual/Toko',
-  //   coverImage: '',
-  //   avatarImage: '',
-  //   joinDate: 'Bergabung sejak Januari 2023',
-  //   rating: 4.8,
-  //   totalProducts: 42,
-  // };
   useEffect(() => {
     if (!profile) {
       fetchProfile().finally(() => setIsLoading(false));
@@ -156,7 +148,7 @@ export default function SellerProfileViews() {
               {
                 icon: <CheckCircle size={30} className="mx-auto" />,
                 label: "Pesanan Selesai",
-                path: "/seller/aktivitas?tab=pesananSelesai",
+                path: "/seller/aktivitas?tab=selesai",
               },
               {
                 icon: <XCircle size={30} className="mx-auto" />,

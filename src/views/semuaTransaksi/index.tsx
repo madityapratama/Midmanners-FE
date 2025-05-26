@@ -82,6 +82,10 @@ export default function SemuaTransaksiViews() {
     router.back();
   };
 
+  const handleToDetailOrder = (id)=>{
+    router.push(`detailTransaksi?id=${id}`)
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -167,7 +171,7 @@ export default function SemuaTransaksiViews() {
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                      Dana Status
+                      Status Dana
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                       Aksi
@@ -216,8 +220,8 @@ export default function SemuaTransaksiViews() {
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-indigo-600 hover:text-indigo-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium ">
+                        <button className="text-indigo-600 hover:text-indigo-900 cursor-pointer " onClick={()=>handleToDetailOrder(order.id)}>
                           <FileText size={18} />
                         </button>
                       </td>

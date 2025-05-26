@@ -80,11 +80,7 @@ export default function DetailPostinganViews() {
     }).format(price);
   };
 
-  // Fetch post detail
-  useEffect(() => {
-    if (!id) return;
-
-    const fetchPostDetail = async () => {
+  const fetchPostDetail = async () => {
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/detail`,
@@ -121,6 +117,9 @@ export default function DetailPostinganViews() {
         console.error("Gagal memuat komentar", err);
       }
     };
+  // Fetch post detail
+  useEffect(() => {
+    if (!id) return;
 
     fetchPostDetail();
     fetchComments();
@@ -142,6 +141,8 @@ export default function DetailPostinganViews() {
 
       setLiked(response.data.liked);
       setLikeCount(response.data.likes);
+      fetchPostDetail();
+    fetchComments();
     } catch (err) {
       console.error("Gagal menyukai postingan", err);
     }
@@ -222,6 +223,8 @@ export default function DetailPostinganViews() {
 
       // Reset state reply
       setReplyingTo({ id: null, name: "" });
+      fetchPostDetail();
+    fetchComments();
     } catch (err) {
       console.error("Gagal menambahkan komentar", err);
       // Tambahkan notifikasi error ke pengguna jika perlu

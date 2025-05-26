@@ -1,5 +1,5 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
-import DetailTransaksiViews from "../../views/detailTransaksi";
+import DetailTransaksiViews from "../../views/detailTransaksi/[id]";
 
 const detailTransaksiPage = () => {
   return (

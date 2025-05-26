@@ -51,8 +51,10 @@ export default function AktivitasSellerViews() {
     const tab = searchParams.get("tab");
     if (tab && tabs.some((t) => t.key === tab)) {
       setActiveTab(tab);
+      fetchOrders();
     } else {
       setActiveTab("perluDiproses");
+      fetchOrders()
     }
   }, [searchParams]);
 
@@ -177,19 +179,6 @@ export default function AktivitasSellerViews() {
                 </div>
 
                 <div className="flex items-center mt-3">
-                  {/* <div className="w-12 h-12 bg-white border flex items-center justify-center mr-3 rounded overflow-hidden">
-                    {order.post.images.length > 0 ? (
-                      <img
-                        src={`${process.env.NEXT_PUBLIC_BASE_URL || ''}/${
-                          order.post.images[0]
-                        }`}
-                        alt={order.post.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-sm text-gray-400">📷</span>
-                    )}
-                  </div> */}
                   <div className="flex-1">
                     <div className="font-semibold">{order.post.title}</div>
                     <div className="text-sm">Pembeli: {order.buyer.name}</div>
