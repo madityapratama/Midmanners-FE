@@ -8,7 +8,7 @@ import {
   Clock,
   Home,
   MessageSquare,
-  Settings
+  Settings, ListPlus
 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -74,6 +74,16 @@ const AdminSidebar = () => {
           icon={<FileClock size={18} />}
           text="Postingan Menunggu Persetujuan"
           href="/menungguPersetujuanPostingan"
+        />
+        <SidebarItem
+          icon={<Repeat size={20} />}
+          text="Pengajuan Menjadi Seller"
+          href="/pengajuanMenjadiSeller"
+        />
+        <SidebarItem 
+          icon={<ListPlus size={20} />}
+          text="Tambah Kategori"
+          href="/admin/categories"
         />
       </ul>
     </nav>

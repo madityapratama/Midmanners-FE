@@ -1,9 +1,12 @@
-import { User, FileClock, Repeat } from "lucide-react";
+import { User, FileClock, Repeat, ListPlus } from "lucide-react";
 
 const AdminSidebar = () => {
   return (
     <ul>
-      <SidebarItem icon={<User size={20} />} text="List User" href="/listUser"/>
+      <SidebarItem icon={<User size={20} />} 
+        text="List User" 
+        href="/listUser"
+      />
       <SidebarItem
         icon={<FileClock size={20} />}
         text="Postingan Menunggu Persetujuan"
@@ -13,6 +16,11 @@ const AdminSidebar = () => {
         icon={<Repeat size={20} />}
         text="Pengajuan Menjadi Seller"
         href="/pengajuanMenjadiSeller"
+      />
+      <SidebarItem 
+        icon={<ListPlus size={20} />}
+        text="Tambah Kategori"
+        href="/admin/categories"
       />
     </ul>
   );
