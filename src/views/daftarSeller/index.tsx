@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
+import api from "@/lib/axios";
 import { useAuth } from "@/context/AuthContext";
 import {Loader, X, Check, Image as ImageIcon ,Pencil} from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
@@ -72,7 +72,7 @@ export default function DaftarSellerViews() {
         data.append("ktp", ktpImage);
       }
     
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/buyer/seller-request`,
         data,
         {
@@ -82,9 +82,9 @@ export default function DaftarSellerViews() {
           },
         }
       );
-      console.log(data.nik);
-      console.log(data.ktp);
-      console.log(response.data);
+      // console.log(data.nik);
+      // console.log(data.ktp);
+      // console.log(response.data);
 
       toast.success(response.data.message);
       // await fetchProfile();

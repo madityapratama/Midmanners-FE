@@ -123,9 +123,8 @@ export default function EditProfilBuyerViews() {
       data.append('background_image', fotoSampul);
     }
 
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/profile`,
-      data,
+    const response = await api.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/profile`,data,
       {
         headers: {
           'Content-Type': 'multipart/form-data',

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
+import api from "@/lib/axios";
 import { ThumbsUp, ArrowLeft, Send, Loader, Check } from "lucide-react";
 import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
@@ -82,13 +82,8 @@ export default function DetailPostinganViews() {
 
   const fetchPostDetail = async () => {
       try {
-        const response = await axios.get(
+        const response = await api.get(
           `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/detail`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
         );
         setLiked(response.data.data.liked_by_user);
         setPost(response.data.data);
@@ -104,13 +99,8 @@ export default function DetailPostinganViews() {
     const fetchComments = async () => {
       try {
         // const token = getAuthToken();
-        const response = await axios.get(
+        const response = await api.get(
           `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/comment`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
         );
         setComments(response.data.data);
       } catch (err) {
@@ -129,14 +119,9 @@ export default function DetailPostinganViews() {
   const handleLike = async () => {
     try {
       // const token = getAuthToken();
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/like`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        {}
       );
 
       setLiked(response.data.liked);
@@ -182,7 +167,7 @@ export default function DetailPostinganViews() {
     if (!textToSend.trim()) return;
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/comment`,
         {
           comment: textToSend,
@@ -250,7 +235,7 @@ export default function DetailPostinganViews() {
     if (!confirm("Apakah Anda yakin ingin menghapus komentar ini?")) return;
 
     try {
-      await axios.delete(
+      await api.delete(
         `${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}`,
         {
           headers: {
@@ -282,7 +267,7 @@ export default function DetailPostinganViews() {
   //chat ke seller
   const handleChatSeller = async()=>{
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/create-or-get-chat`, {
+      const response = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/create-or-get-chat`, {
         target_user_id: post?.seller?.id, // sesuaikan
         post_id: post?.id, // opsional, kalau mau buat pesan template
       },{

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import toast, { Toaster } from 'react-hot-toast';
 import { Pencil, X, Check, Upload, Image as ImageIcon, Loader } from 'lucide-react';
-import axios from 'axios';
+import api from '@/lib/axios';
 import { useAuth } from '@/context/AuthContext';
 
 export default function EditProfilSellerViews() {
@@ -29,11 +29,7 @@ export default function EditProfilSellerViews() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+        const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/profile`);
         
         const profileData = response.data;
         setFormData({
@@ -127,13 +123,12 @@ export default function EditProfilSellerViews() {
       data.append('background_image', fotoSampul);
     }
 
-    const response = await axios.post(
+    const response = await api.post(
       `${process.env.NEXT_PUBLIC_API_URL}/profile`,
       data,
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'multipart/form-data'
         }
       }
     );

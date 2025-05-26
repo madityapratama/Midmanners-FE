@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import axios from "axios";
+import api from "@/lib/axios";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function ResetPassword() {
@@ -21,7 +21,7 @@ export default function ResetPassword() {
     setLoading(true);
     try {
       const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/forgot-password`;
-      const response = await axios.post(apiUrl, { email });
+      const response = await api.post(apiUrl, { email });
 
       if (response.status !== 200) {
         toast.error("Gagal mengirim link reset.");

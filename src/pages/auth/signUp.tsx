@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
+import api from "@/lib/axios";
 import toast, { Toaster } from "react-hot-toast";
 
 interface FormData {
@@ -55,7 +55,7 @@ export default function SignUp() {
 
     try {
       // Perbaikan: Menghapus tipe AxiosResponse
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/register`,
         formData
       );

@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import axios from "axios";
+import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
@@ -79,14 +79,8 @@ export default function AktivitasSellerViews() {
           endpoint = "/orders/seller/perluDiproses";
       }
 
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await api.get(
+        `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`);
 
       setOrders(response.data.data || []);
     } catch (error) {
@@ -105,14 +99,9 @@ export default function AktivitasSellerViews() {
   const handleProcessOrder = async (orderId: number) => {
     setProcessingOrder(orderId);
     try {
-      await axios.patch(
+      await api.patch(
         `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/send`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        {}
       );
 
       toast.success("Pesanan berhasil diproses");

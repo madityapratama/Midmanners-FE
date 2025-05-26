@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { ArrowLeft, ImageIcon, CheckCircle, XCircle, Clock, AlertCircle, Wallet } from "lucide-react";
-// import axios from "axios";
+
 import api from "@/lib/axios";
 
 export default function DetailTransaksiViews() {

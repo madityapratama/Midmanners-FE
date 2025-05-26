@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import axios from 'axios';
+import api from "@/lib/axios";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Login() {
@@ -43,7 +43,7 @@ export default function Login() {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/login`,
         {
           email,

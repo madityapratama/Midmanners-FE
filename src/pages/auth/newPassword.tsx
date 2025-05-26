@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
+import api from "@/lib/axios";
 
 interface FormData {
   password: string;
@@ -39,7 +39,7 @@ export default function NewPasswordPage() {
     }
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/reset-password`,
         {
           ...formData,

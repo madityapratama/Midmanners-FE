@@ -1,4 +1,4 @@
-import api from './api';
+import api from "./axios";
 
 export async function handleBuy(postId) {
   try {

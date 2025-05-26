@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useSearchParams } from "next/navigation";
-import axios from "axios";
+import api from "@/lib/axios";
 import toast, {Toaster} from "react-hot-toast";
 
 export default function OTPRegisterPage() {
@@ -15,7 +15,7 @@ export default function OTPRegisterPage() {
 
   const sendOtp = async (email: string) => {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/resend-otp`, {
+      await api.post(`${process.env.NEXT_PUBLIC_API_URL}/resend-otp`, {
         email,
       });
       toast.success("OTP berhasil dikirim ulang ke email Anda.");
@@ -35,7 +35,7 @@ export default function OTPRegisterPage() {
     setLoading(true);
     try {
       const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/verify-otp`;
-      const response = await axios.post(apiUrl, { email, otp });
+      const response = await api.post(apiUrl, { email, otp });
 
       if (response.status === 200) {
         toast.success("Verifikasi OTP berhasil!");
