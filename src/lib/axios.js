@@ -12,6 +12,9 @@ api.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+
+      // Tambahkan header ngrok-skip-browser-warning
+      config.headers['ngrok-skip-browser-warning'] = 'true';
     }
     return config;
   },

@@ -1,6 +1,6 @@
 // pages/admin/categories.tsx
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '@/lib/axios';
 import { Trash2, Plus, Edit, Check, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 
@@ -25,11 +25,7 @@ const CategoriesPage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
       setCategories(response.data);
       setLoading(false);
     } catch (err) {
@@ -43,14 +39,9 @@ const CategoriesPage = () => {
     if (!newCategory.trim()) return;
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/categories`,
-        { category_name: newCategory },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
+        { category_name: newCategory }
       );
       setCategories([...categories, response.data]);
       setNewCategory('');
@@ -67,11 +58,7 @@ const CategoriesPage = () => {
     if (!window.confirm('Are you sure you want to delete this category?')) return;
 
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      await api.delete(`${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`, {});
       setCategories(categories.filter(category => category.id !== id));
       setError('');
       setSuccess('Category deleted successfully!');

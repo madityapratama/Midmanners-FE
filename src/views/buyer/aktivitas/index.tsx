@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import axios from "axios";
+import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
@@ -79,14 +79,8 @@ export default function AktivitasViews() {
           endpoint = "/orders/buyer/menungguDikirim";
       }
 
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await api.get(
+        `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`);
 
       setOrders(response.data.data || []);
     } catch (error) {
@@ -112,15 +106,8 @@ export default function AktivitasViews() {
     }
 
     try {
-      await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/batal`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await api.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/batal`,{},);
 
       toast.success("Pesanan berhasil dibatalkan");
       // Refresh orders after cancellation
@@ -143,14 +130,10 @@ export default function AktivitasViews() {
     }
 
     try {
-      await axios.patch(
+      await api.patch(
         `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/complete`,
         {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        
       );
 
       toast.success("Pesanan berhasil dikonfirmasi");

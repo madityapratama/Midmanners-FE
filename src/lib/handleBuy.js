@@ -1,18 +1,11 @@
-import axios from 'axios';
+import api from './api';
 
 export async function handleBuy(postId) {
   try {
-    const token = localStorage.getItem('token');
 
-    const response = await axios.post(
+    const response = await api.post(
       `${process.env.NEXT_PUBLIC_API_URL}/orders/${postId}`,
       {}, // body kosong
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      }
     );
 
     // Redirect ke Xendit

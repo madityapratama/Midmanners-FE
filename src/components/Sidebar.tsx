@@ -1,17 +1,3 @@
-// import { useAuth } from "@/context/AuthContext";
-// import AdminSidebar from "@/components/sidebarItems/AdminSidebar";
-// import MidmanSidebar from "@/components/sidebarItems/MidmanSidebar";
-// import DefaultSidebar from "@/components/sidebarItems/DefaultSidebar";
-
-// const Sidebar = () => {
-//   const { user } = useAuth();
-
-//   if (user?.role === "admin") return <AdminSidebar />;
-//   if (user?.role === "midman") return <MidmanSidebar />;
-//   return <DefaultSidebar />;
-// };
-
-// export default Sidebar;
 
 
 import { 
@@ -26,10 +12,10 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { CategoryProvider, useCategory } from "@/context/CategoryContext";
+import api from "@/lib/axios";
 
 
 type Category = {
@@ -122,14 +108,9 @@ const DefaultSidebar = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/categories`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const response = await api.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/categories`);
+        console.log("Category API response:", response.data);
         setCategories(response.data);
       } catch (error) {
         console.error("Failed to fetch categories:", error);

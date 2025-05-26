@@ -3,12 +3,11 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Sidebar from "@/components/Sidebar";
-import axios from "axios";
+import api from "@/lib/axios";
 import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import { CategoryProvider } from "@/context/CategoryContext";
 import { useCategory } from "@/context/CategoryContext";
 
 type Post = {
@@ -41,14 +40,7 @@ const DashboardViews = () => {
       // console.log(url);
       setLoading(true);
       try {
-        const response = await axios.get(
-          url,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const response = await api.get(url);
         setPosts(response.data.data?.data || []);
       } catch (error) {
         console.error("Failed to fetch posts:", error);
@@ -60,32 +52,32 @@ const DashboardViews = () => {
     fetchPosts();
   }, [selectedCategory]);
 
-  const toggleLike = async (postId: number) => {
-    try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/like`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setLikedPosts((prev) =>
-        prev.includes(postId)
-          ? prev.filter((id) => id !== postId)
-          : [...prev, postId]
-      );
-      setPosts(posts.map(post => 
-        post.id === postId ? { 
-          ...post, 
-          like_count: likedPosts.includes(postId) ? post.like_count - 1 : post.like_count + 1 
-        } : post
-      ));
-    } catch (error) {
-      console.error("Failed to toggle like:", error);
-    }
-  };
+  // const toggleLike = async (postId: number) => {
+  //   try {
+  //     await axios.post(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/like`,
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //         },
+  //       }
+  //     );
+  //     setLikedPosts((prev) =>
+  //       prev.includes(postId)
+  //         ? prev.filter((id) => id !== postId)
+  //         : [...prev, postId]
+  //     );
+  //     setPosts(posts.map(post => 
+  //       post.id === postId ? { 
+  //         ...post, 
+  //         like_count: likedPosts.includes(postId) ? post.like_count - 1 : post.like_count + 1 
+  //       } : post
+  //     ));
+  //   } catch (error) {
+  //     console.error("Failed to toggle like:", error);
+  //   }
+  // };
 
   const openImageLightbox = (post: Post, index: number) => {
     setCurrentPost(post);

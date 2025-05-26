@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import toast, { Toaster } from 'react-hot-toast';
 import { Pencil, X, Check, Upload, Image as ImageIcon, Loader } from 'lucide-react';
-import axios from 'axios';
+import api from '@/lib/axios';
 import { useAuth } from '@/context/AuthContext';
 
 export default function EditProfilBuyerViews() {
@@ -29,11 +29,7 @@ export default function EditProfilBuyerViews() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+        const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/profile`);
         
         const profileData = response.data;
         setFormData({
