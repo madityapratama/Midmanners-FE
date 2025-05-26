@@ -48,7 +48,7 @@ export default function PengajuanMenjadiSellerViews() {
   console.log(requests);
 
   const handleBack = () => {
-    router.push('buyer/profil');
+    router.back();
   };
 
   const handleDetail = (id: number) => {

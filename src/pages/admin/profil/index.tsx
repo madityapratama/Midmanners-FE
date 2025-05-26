@@ -102,7 +102,7 @@ export default function AdminProfile() {
         router.push("/pengajuanMenjadiSeller");
         break;
       case "add-category":
-        router.push("/admin/add-category");
+        router.push("/admin/categories");
         break;
       default:
         break;

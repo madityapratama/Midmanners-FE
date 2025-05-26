@@ -1,7 +1,6 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { ArrowLeft, Image as ImageIcon } from "lucide-react";
 import api from "@/lib/axios";
 
@@ -21,12 +20,6 @@ interface PostDetail {
   created_at: string;
 }
 
-interface Comment {
-  id: number;
-  name: string;
-  avatar: string;
-  content: string;
-}
 
 export default function DetailPostinganSeller() {
   const router = useRouter();
@@ -35,8 +28,6 @@ export default function DetailPostinganSeller() {
   const [post, setPost] = useState<PostDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -46,22 +37,6 @@ export default function DetailPostinganSeller() {
         setIsLoading(true);
         const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/detail`);
         setPost(response.data.data);
-        
-        // Dummy comments - replace with actual API call if available
-        setComments([
-          {
-            id: 1,
-            name: "Andi",
-            avatar: "/avatar1.png",
-            content: "Barangnya bagus banget! Rekomended seller!",
-          },
-          {
-            id: 2,
-            name: "Budi",
-            avatar: "/avatar2.png",
-            content: "Sudah diterima, sesuai dengan deskripsi.",
-          },
-        ]);
       } catch (err) {
         console.error("Error fetching post detail:", err);
         setError("Gagal memuat detail produk. Silakan coba lagi.");
@@ -73,19 +48,6 @@ export default function DetailPostinganSeller() {
     fetchPostDetail();
   }, [id]);
 
-  const handleAddComment = () => {
-    if (newComment.trim() === "") return;
-
-    const newEntry: Comment = {
-      id: comments.length + 1,
-      name: "User Baru",
-      avatar: "/avatar-placeholder.png",
-      content: newComment,
-    };
-
-    setComments([...comments, newEntry]);
-    setNewComment("");
-  };
 
   const getStatusText = (status: string) => {
     switch (status) {
