@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   images: {
-    domains: ['ea21-140-213-216-4.ngrok-free.app'], // <- tambahkan ini
+    domains: ['localhost'], // <- tambahkan ini
   },
    async redirects() {
     return [
