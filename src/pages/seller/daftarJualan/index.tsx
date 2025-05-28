@@ -1,5 +1,6 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 import DaftarJualanViews from "@/views/seller/daftarJualan";
+import { withRoleProtection } from "@/hoc/withRoleProtection";
 
 const daftarJualan = () => {
   return (
@@ -11,4 +12,4 @@ const daftarJualan = () => {
   );
 };
 
-export default daftarJualan;
+export default withRoleProtection(daftarJualan,["seller"]);

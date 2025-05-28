@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Image as ImageIcon } from "lucide-react";
 import api from "@/lib/axios";
+import { withRoleProtection } from "@/hoc/withRoleProtection";
 
 interface PostDetail {
   id: number;
@@ -21,7 +22,7 @@ interface PostDetail {
 }
 
 
-export default function DetailPostinganSeller() {
+const DetailPostinganSeller = () => {
   const router = useRouter();
   const { id } = router.query;
 
@@ -225,3 +226,5 @@ export default function DetailPostinganSeller() {
     </ProtectedRoute>
   );
 }
+
+export default withRoleProtection(DetailPostinganSeller, ["seller"]);

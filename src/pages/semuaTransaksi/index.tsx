@@ -1,5 +1,6 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 import SemuaTransaksiViews from "../../views/semuaTransaksi";
+import { withRoleProtection } from "@/hoc/withRoleProtection";
 
 const semuaTransaksiPage = () => {
   return (
@@ -11,4 +12,4 @@ const semuaTransaksiPage = () => {
   );
 };
 
-export default semuaTransaksiPage;
+export default withRoleProtection(semuaTransaksiPage,["admin","midman"]);

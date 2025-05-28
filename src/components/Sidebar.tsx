@@ -8,7 +8,7 @@ import {
   Clock,
   Home,
   MessageSquare,
-  Settings
+  Settings, ListPlus,Search
 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { CategoryProvider, useCategory } from "@/context/CategoryContext";
 import api from "@/lib/axios";
+import { useSearch } from "@/context/SearchContext";
 
 
 type Category = {
@@ -64,6 +65,7 @@ const SidebarItem = ({
 const AdminSidebar = () => {
   return (
     <nav className="flex-1 overflow-y-auto p-2">
+      
       <ul className="space-y-1">
         <SidebarItem
           icon={<User size={18} />}
@@ -74,6 +76,16 @@ const AdminSidebar = () => {
           icon={<FileClock size={18} />}
           text="Postingan Menunggu Persetujuan"
           href="/menungguPersetujuanPostingan"
+        />
+        <SidebarItem
+          icon={<Repeat size={20} />}
+          text="Pengajuan Menjadi Seller"
+          href="/pengajuanMenjadiSeller"
+        />
+        <SidebarItem 
+          icon={<ListPlus size={20} />}
+          text="Tambah Kategori"
+          href="/admin/categories"
         />
       </ul>
     </nav>
@@ -103,6 +115,7 @@ const DefaultSidebar = () => {
 
   const {selectedCategory,setSelectedCategory} = useCategory();
   const [categories,setCategories] = useState();
+  const {search,setSearch} = useSearch();
   const router = useRouter();
 
   useEffect(() => {
@@ -132,6 +145,15 @@ const DefaultSidebar = () => {
   return (
 
     <nav className="flex-1 overflow-y-auto p-2 ">
+      <div className="relative w-full hidden md:block">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-300 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search..."
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-10 pr-4 bg-indigo-900 bg-opacity-50 text-zinc-100 py-2 rounded-full border border-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-zinc-400"
+              />
+            </div>
       <h2 className="text-lg font-semibold text-white px-3 py-2 mb-1">Kategori</h2>
       <ul className="space-y-1">
         {categories?.map((category) => (

@@ -1,5 +1,6 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 import MenungguPersetujuanPostinganViews from "../../views/menungguPersetujuanPostingan";
+import { withRoleProtection } from "@/hoc/withRoleProtection";
 
 const menungguPersetujuanPostinganPage = () => {
   return (
@@ -11,4 +12,4 @@ const menungguPersetujuanPostinganPage = () => {
   );
 };
 
-export default menungguPersetujuanPostinganPage;
+export default withRoleProtection(menungguPersetujuanPostinganPage,["admin"]);

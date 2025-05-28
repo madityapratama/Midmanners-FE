@@ -1,4 +1,4 @@
-import { ThumbsUp, Info, MessageCircle } from "lucide-react";
+import { ThumbsUp, Info, MessageCircle,Search } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -9,6 +9,7 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import { useCategory } from "@/context/CategoryContext";
+import {useSearch} from "@/context/SearchContext";
 
 type Post = {
   id: number;
@@ -27,6 +28,7 @@ type Post = {
 const DashboardViews = () => {
   const router = useRouter();
   const {selectedCategory} = useCategory();
+  const {search} = useSearch();
   const [posts, setPosts] = useState<Post[]>([]);
   const [likedPosts, setLikedPosts] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,8 +38,18 @@ const DashboardViews = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const url = selectedCategory ? `${process.env.NEXT_PUBLIC_API_URL}/posts/category/${selectedCategory}`: `${process.env.NEXT_PUBLIC_API_URL}/posts`;
-      // console.log(url);
+      const baseUrl = `${process.env.NEXT_PUBLIC_API_URL}/posts`;
+
+      let url = baseUrl;
+
+      if(selectedCategory){
+        url = `${baseUrl}/category/${selectedCategory}`;
+      };
+
+      if(search){
+        url += selectedCategory ? `?search=${search}` : `?search=${search}`;
+      }
+      console.log(url);
       setLoading(true);
       try {
         const response = await api.get(url);
@@ -50,7 +62,7 @@ const DashboardViews = () => {
     };
 
     fetchPosts();
-  }, [selectedCategory]);
+  }, [selectedCategory,search]);
 
   // const toggleLike = async (postId: number) => {
   //   try {
@@ -89,12 +101,14 @@ const DashboardViews = () => {
   return (
     <div className="flex min-h-screen pt-16 bg-gray-100">
       {/* Sidebar */}
-      <div className="fixed top-0 left-0 w-64 h-full bg-indigo-900 shadow-lg p-4 overflow-y-auto">
+      <div className="fixed top-0 left-0 w-75 h-full bg-indigo-900 shadow-lg p-4 overflow-y-auto">
         <Sidebar />
       </div>
+    
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 p-6 space-y-6 overflow-y-auto">
+      <div className="flex-1 ml-75 p-6 space-y-6 overflow-y-auto">
+        
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
@@ -103,8 +117,8 @@ const DashboardViews = () => {
             <div className="flex justify-center items-center h-64 text-gray-500 text-lg">
       Post tidak tersedia
     </div>
-
         ) : (
+          
           posts.map((post) => {
             const isLiked = likedPosts.includes(post.id);
             return (

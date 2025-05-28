@@ -1,5 +1,6 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AktivitasViews from "@/views/seller/aktivitas";
+import { withRoleProtection } from "@/hoc/withRoleProtection";
 
 const AktivitasPage = () => {
   return (
@@ -10,4 +11,4 @@ const AktivitasPage = () => {
     </div>
   );
 };
-export default AktivitasPage;
+export default withRoleProtection(AktivitasPage,["seller"]);

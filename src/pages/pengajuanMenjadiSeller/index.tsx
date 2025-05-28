@@ -1,5 +1,6 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 import PengajuanMenjadiSellerViews from "../../views/pengajuanMenjadiSeller";
+import { withRoleProtection } from "@/hoc/withRoleProtection";
 
 const pengajuanMenjadiSellerPage = () => {
   return (
@@ -11,4 +12,4 @@ const pengajuanMenjadiSellerPage = () => {
   );
 };
 
-export default pengajuanMenjadiSellerPage;
+export default withRoleProtection(pengajuanMenjadiSellerPage,["admin"]);

@@ -146,7 +146,7 @@ export default function EditProfilSellerViews() {
 }
 
   const handleProfil = () => {
-    router.push('/buyer/profil');
+    router.back();
   };
 
   if (initialLoad) {

@@ -1,5 +1,6 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ListUserViews from "../../views/listUser";
+import { withRoleProtection } from "@/hoc/withRoleProtection";
 
 const listUserPage = () => {
   return (
@@ -11,4 +12,4 @@ const listUserPage = () => {
   );
 };
 
-export default listUserPage;
+export default withRoleProtection(listUserPage,["admin","midman"]);

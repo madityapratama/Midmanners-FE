@@ -1,5 +1,6 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 import EditProfilSellerViews from "@/views/seller/edit";
+import { withRoleProtection } from "@/hoc/withRoleProtection";
 
 const editProfilSellerPage = () => {
   return (
@@ -11,4 +12,4 @@ const editProfilSellerPage = () => {
   );
 };
 
-export default editProfilSellerPage;
+export default withRoleProtection(editProfilSellerPage, ["seller"]);

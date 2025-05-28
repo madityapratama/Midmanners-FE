@@ -12,8 +12,9 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import api from "@/lib/axios";
+import { withRoleProtection } from "@/hoc/withRoleProtection";
 
-export default function AdminProfile() {
+const AdminProfile = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -253,3 +254,5 @@ export default function AdminProfile() {
     </div>
   );
 }
+
+export default withRoleProtection(AdminProfile,["midman"]);

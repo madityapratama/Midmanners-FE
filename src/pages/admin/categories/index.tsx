@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import api from '@/lib/axios';
 import { Trash2, Plus, Edit, Check, X } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { withRoleProtection } from '@/hoc/withRoleProtection';
 
 type Category = {
   id: number;
@@ -189,4 +190,4 @@ const CategoriesPage = () => {
   );
 };
 
-export default CategoriesPage;
+export default withRoleProtection(CategoriesPage,['admin']);

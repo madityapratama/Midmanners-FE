@@ -133,7 +133,7 @@ export default function BuatJualanViews() {
       
         toast.success(response.data.message);
         setTimeout(() => {
-          router.push('/seller/daftarDagangan');
+          router.push('/seller/daftarJualan');
         }, 1500);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Terjadi kesalahan saat membuat postingan');

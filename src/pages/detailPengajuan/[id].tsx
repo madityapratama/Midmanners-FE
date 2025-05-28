@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import api from "@/lib/axios";
 import Image from "next/image";
+import { withRoleProtection } from "@/hoc/withRoleProtection";
 
 interface Pengajuan {
   id: number;
@@ -16,7 +17,7 @@ interface Pengajuan {
   status?: string;
 }
 
-export default function DetailPengajuan() {
+const DetailPengajuan = () => {
   const router = useRouter();
   const { id } = router.query;
 
@@ -283,3 +284,5 @@ export default function DetailPengajuan() {
     </ProtectedRoute>
   );
 }
+
+export default withRoleProtection(DetailPengajuan, ["admin"]);

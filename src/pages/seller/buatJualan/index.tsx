@@ -1,5 +1,6 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
 import BuatJualanViews from "@/views/seller/buatJualan";
+import { withRoleProtection } from "@/hoc/withRoleProtection";
 
 const buatJualanPage = () => {
   return (
@@ -11,4 +12,4 @@ const buatJualanPage = () => {
   );
 };
 
-export default buatJualanPage;
+export default withRoleProtection(buatJualanPage,["seller"]);
