@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import api from "@/lib/axios";
-import { ThumbsUp, ArrowLeft, Send, Loader, Check } from "lucide-react";
+import { ThumbsUp, ArrowLeft, Send, Loader, Check ,Trash2} from "lucide-react";
 import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { CommentItem } from "@/components/CommentItem";
 import { formatDate } from "@/lib/date";
 import { handleBuy } from "@/lib/handleBuy";
+import DeleteButton from "@/components/DeleteButton";
 
 type PostDetail = {
   id: number;
@@ -91,10 +92,14 @@ export default function DetailPostinganViews() {
         setLoading(false);
       } catch (err) {
         setError("Gagal memuat detail postingan");
-        setLoading(false);
+        setLoading(false);          
         console.error(err);
       }
     };
+
+        const handleDeleteSuccess = (deletedPostId: string | number) => {
+    setPost(null)
+  };
 
     const fetchComments = async () => {
       try {
@@ -313,13 +318,13 @@ export default function DetailPostinganViews() {
   }
 
   return (
-    <div className="pt-16 px-4 md:px-8 lg:px-16 bg-gray-100 min-h-screen">
+    <div className="pt-16 mt-6 px-4 md:px-8 lg:px-16 bg-gray-100 min-h-screen">
       {/* Main Content */}
       <div className="max-w-4xl mx-auto">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="flex items-center text-blue-600 hover:text-blue-800 mb-6 transition"
+          className="flex items-center text-blue-600 hover:text-blue-800 mb-6  transition"
         >
           <ArrowLeft className="w-5 h-5 mr-1" />
           Kembali
@@ -350,14 +355,22 @@ export default function DetailPostinganViews() {
                   </div>
                 </div>
               </div>
-              {currentUser && currentUser.id == post.seller.id ? (
-                ""
+              {currentUser && (currentUser?.id == post.seller.id || currentUser.role === 'admin') ? (
+                <DeleteButton 
+                  postId={post.id} 
+                  onDeleteSuccess={handleDeleteSuccess} 
+                >
+                  <button className="p-1 rounded-full hover:bg-gray-100 text-gray-500 hover:text-red-500">
+                  <Trash2 className="h-4 w-4" size={20} />
+                </button>
+                </DeleteButton>
               ) : (
                 <button onClick={handleChatSeller} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                   Chat Penjual
                 </button>
               )}
             </div>
+            
           </div>
 
           {/* Post Content */}
@@ -417,7 +430,7 @@ export default function DetailPostinganViews() {
                 <ThumbsUp className="w-5 h-5" />
                 <span>{liked ? "Disukai" : "Suka"}</span>
               </button>
-              {currentUser.id == post.seller.id ? (
+              {currentUser?.id == post.seller.id ? (
                 ""
               ) : (
                 <button

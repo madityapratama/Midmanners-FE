@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 export default function LandingPage() {
@@ -26,7 +27,7 @@ export default function LandingPage() {
       </section>
 
       <section className="mt-20">
-        <img
+        <Image
           src="/controller-illustration.png"
           alt="Game Controller"
           className="w-full max-w-md mx-auto animate-bounce"

@@ -97,6 +97,15 @@ const DashboardViews = () => {
     setOpenLightbox(true);
   };
 
+  // Format price to IDR
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
+
 
   return (
     <div className="flex min-h-screen pt-16 bg-gray-100">
@@ -153,9 +162,13 @@ const DashboardViews = () => {
 
                 {/* Post Content */}
                 <div className="p-4">
+                  <span className="text-xl font-bold text-blue-600">
+                {formatPrice(post.price)}
+              </span>
                   <p className="text-gray-700 mb-6 leading-relaxed">
                     {post.caption}
                   </p>
+                  
 
                   {/* Images Grid */}
                   {post.images.length > 0 && (

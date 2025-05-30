@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Image as ImageIcon } from "lucide-react";
 import api from "@/lib/axios";
 import { withRoleProtection } from "@/hoc/withRoleProtection";
+import Image from "next/image";
 
 interface PostDetail {
   id: number;
@@ -184,12 +185,13 @@ const DetailPostinganSeller = () => {
                   post.images.map((image, index) => (
                     <div
                       key={index}
-                      className="aspect-square bg-gray-100 rounded-lg overflow-hidden"
+                      className="aspect-square bg-gray-100 rounded-lg overflow-hidden w-full max-w-md mx-auto"
                     >
-                      <img
-                        src={`${process.env.NEXT_PUBLIC_IMG_URL || ''}/${image}`}
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_IMG_URL || ''}${image}`}
+                        width={800}
+                        height={700}
                         alt={`${post.title} ${index + 1}`}
-                        className="w-full h-full object-cover"
                       />
                     </div>
                   ))

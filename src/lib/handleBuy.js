@@ -8,8 +8,8 @@ export async function handleBuy(postId) {
       {}, // body kosong
     );
 
-    // Redirect ke Xendit
-    window.location.href = response.data.invoice_url;
+    // Redirect ke Midtrans
+    window.location.href = response.data.redirect_url;
   } catch (error) {
     console.error(error);
     const message = error.response?.data?.message || 'Terjadi kesalahan saat membuat pesanan.';

@@ -227,4 +227,4 @@ const DetailPostinganSeller = () => {
   );
 }
 
-export default withRoleProtection(DetailPostinganSeller, ["seller"]);
+export default withRoleProtection(DetailPostinganSeller, ["seller",'buyer']);
