@@ -30,7 +30,6 @@ export default function ProfilBuyerViews() {
 
   const imageUrl = `${process.env.NEXT_PUBLIC_IMG_URL}${profile?.profile_image}`;
 
-  console.log(profile);
 
   const handleNavigateToAktivitas = (tab: string) => {
     router.push(`/buyer/aktivitas?tab=${tab}`);

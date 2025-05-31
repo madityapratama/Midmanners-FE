@@ -16,7 +16,6 @@ import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
-
 type Order = {
   id: number;
   status: string;
@@ -53,19 +52,19 @@ export default function AktivitasViews() {
   ];
 
   useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab && tabs.some((t) => t.key === tab)) {
-      setActiveTab(tab);
-    } else {
-      setActiveTab(searchParams.get("tab") || "menunggu");
-    }
+    const tabParam = searchParams.get("tab");
+    const currentTab =
+      tabParam && tabs.some((t) => t.key === tabParam) ? tabParam : "menunggu";
+
+    setActiveTab(currentTab);
+    fetchOrders(currentTab);
   }, [searchParams]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (tab) => {
     setLoading(true);
     try {
       let endpoint = "";
-      switch (activeTab) {
+      switch (tab) {
         case "menunggu":
           endpoint = "/orders/buyer/menungguDikirim";
           break;
@@ -80,7 +79,8 @@ export default function AktivitasViews() {
       }
 
       const response = await api.get(
-        `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`);
+        `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`
+      );
 
       setOrders(response.data.data || []);
     } catch (error) {
@@ -92,9 +92,9 @@ export default function AktivitasViews() {
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, [activeTab]);
+  // useEffect(() => {
+  //   fetchOrders();
+  // }, [activeTab]);
 
   const handleCancelOrder = async (orderId: number) => {
     setCancellingOrder(orderId);
@@ -107,7 +107,9 @@ export default function AktivitasViews() {
 
     try {
       await api.patch(
-        `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/batal`,{},);
+        `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/batal`,
+        {}
+      );
 
       toast.success("Pesanan berhasil dibatalkan");
       // Refresh orders after cancellation
@@ -132,8 +134,7 @@ export default function AktivitasViews() {
     try {
       await api.patch(
         `${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/complete`,
-        {},
-        
+        {}
       );
 
       toast.success("Pesanan berhasil dikonfirmasi");
@@ -199,7 +200,6 @@ export default function AktivitasViews() {
                 </div>
 
                 <div className="flex items-center mt-3">
-                  
                   <div className="flex-1">
                     <div className="font-semibold">{order.post.title}</div>
                     <div className="text-sm">Penjual: {order.seller.name}</div>
@@ -271,8 +271,9 @@ export default function AktivitasViews() {
   };
 
   const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    router.push(`/buyer/aktivitas?tab=${tab}`);
+    setActiveTab(tab); // untuk styling
+    router.push(`?tab=${tab}`, undefined, { shallow: true });
+    fetchOrders(tab); // ⬅️ langsung ambil data berdasarkan tab diklik
   };
 
   return (

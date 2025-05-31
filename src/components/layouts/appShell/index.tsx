@@ -18,6 +18,7 @@ const disableNavbarPaths = [
   "/daftarSeller",
   "/seller/aktivitas",
   "/landingPage",
+  "/payment/*"
 ];
 
 const generatePageTitle = (path: string) => {

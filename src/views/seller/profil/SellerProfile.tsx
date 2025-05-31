@@ -153,7 +153,7 @@ export default function SellerProfileViews() {
               {
                 icon: <XCircle size={30} className="mx-auto" />,
                 label: "Dibatalkan",
-                path: "/seller/aktivitas?tab=dibatalkan",
+                path: "/seller/aktivitas?tab=batal",
               },
             ].map((item, index) => (
               <div

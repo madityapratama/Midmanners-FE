@@ -119,10 +119,6 @@ export default function BuatJualanViews() {
         formDataObj.append(`images[${index}]`, img.file);
       });
 
-      // Debug: Log FormData contents
-      // for (let [key, value] of formDataObj.entries()) {
-      //   console.log(key, value);
-      // }
 
       const response = await api.post('/posts', formDataObj, {
         headers: {

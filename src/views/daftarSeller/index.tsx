@@ -82,9 +82,7 @@ export default function DaftarSellerViews() {
           },
         }
       );
-      // console.log(data.nik);
-      // console.log(data.ktp);
-      // console.log(response.data);
+
 
       toast.success(response.data.message);
       // await fetchProfile();

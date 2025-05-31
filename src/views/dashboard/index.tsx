@@ -49,7 +49,6 @@ const DashboardViews = () => {
       if(search){
         url += selectedCategory ? `?search=${search}` : `?search=${search}`;
       }
-      console.log(url);
       setLoading(true);
       try {
         const response = await api.get(url);

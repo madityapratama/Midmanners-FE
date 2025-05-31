@@ -123,7 +123,6 @@ const DefaultSidebar = () => {
       try {
         const response = await api.get(
           `${process.env.NEXT_PUBLIC_API_URL}/categories`);
-        console.log("Category API response:", response.data);
         setCategories(response.data);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
@@ -134,7 +133,6 @@ const DefaultSidebar = () => {
   }, []);
 
   const handleCategoryClick = (category: string) => {
-    console.log('trigger handleCategory');
     if(selectedCategory === category){
       setSelectedCategory(null);
     } else{

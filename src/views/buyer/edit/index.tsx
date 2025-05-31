@@ -57,7 +57,6 @@ export default function EditProfilBuyerViews() {
 
       } catch (error) {
         toast.error('Gagal memuat data profil');
-        console.log(error);
       } finally {
         setInitialLoad(false);
       }

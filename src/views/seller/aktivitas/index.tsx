@@ -48,43 +48,42 @@ export default function AktivitasSellerViews() {
   ];
 
   useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab && tabs.some((t) => t.key === tab)) {
-      setActiveTab(tab);
-      fetchOrders();
-    } else {
-      setActiveTab("perluDiproses");
-      fetchOrders()
-    }
-  }, [searchParams]);
+  const tabParam = searchParams.get("tab");
+  const currentTab = tabParam && tabs.some(t => t.key === tabParam)
+    ? tabParam
+    : "perluDiproses";
 
-  const fetchOrders = async () => {
+  setActiveTab(currentTab);
+  fetchOrders(currentTab);
+}, [searchParams]);
+
+  const fetchOrders = async (tab) => {
     setLoading(true);
     try {
       let endpoint = "";
-      switch (activeTab) {
-        case "perluDiproses":
-          endpoint = "/orders/seller/perluDiproses";
-          break;
-        case "menungguKonfirmasi":
-          endpoint = "/orders/seller/menungguKonfirmasi";
-          break;
-        case "selesai":
-          endpoint = "/orders/seller/selesai";
-          break;
-        case "batal":
-          endpoint = "/orders/seller/batal";
-          break;
-        default:
-          endpoint = "/orders/seller/perluDiproses";
-      }
+
+    switch (tab) {
+      case "perluDiproses":
+        endpoint = "/orders/seller/perluDiproses";
+        break;
+      case "menungguKonfirmasi":
+        endpoint = "/orders/seller/menungguKonfirmasi";
+        break;
+      case "selesai":
+        endpoint = "/orders/seller/selesai";
+        break;
+      case "batal":
+        endpoint = "/orders/seller/batal";
+        break;
+      default:
+        endpoint = "/orders/seller/perluDiproses";
+    }
 
       const response = await api.get(
         `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`);
 
       setOrders(response.data.data || []);
     } catch (error) {
-      console.error("Error fetching orders:", error);
       toast.error("Gagal memuat pesanan");
       setOrders([]);
     } finally {
@@ -92,9 +91,9 @@ export default function AktivitasSellerViews() {
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, [activeTab]);
+  // useEffect(() => {
+  //   fetchOrders();
+  // }, [activeTab]);
 
   const handleProcessOrder = async (orderId: number) => {
     setProcessingOrder(orderId);
@@ -163,7 +162,11 @@ export default function AktivitasSellerViews() {
                 <div className="flex justify-between text-sm">
                   <span>{formatDate(order.created_at)}</span>
                   <span className="font-medium capitalize">
-                    {order.status.toLowerCase()}
+                    {order.status === 'dibatalkan' ? (
+                      <span className="font-medium capitalize text-red-500">{order.status.toLowerCase()}</span>
+                    ) : (
+                      order.status.toLowerCase()
+                    )}
                   </span>
                 </div>
 
@@ -222,8 +225,9 @@ export default function AktivitasSellerViews() {
   };
 
   const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    router.push(`/seller/aktivitas?tab=${tab}`);
+    setActiveTab(tab); // untuk styling
+  router.push(`?tab=${tab}`, undefined, { shallow: true });
+  fetchOrders(tab); // ⬅️ langsung ambil data berdasarkan tab diklik
   };
 
   return (

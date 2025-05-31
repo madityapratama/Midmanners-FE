@@ -18,7 +18,6 @@ const DefaultSidebar = () => {
         const response = await api.get(
           `${process.env.NEXT_PUBLIC_API_URL}/categories`);
         const data = await response.data;
-        // console.log("Data profil:", data);
         setCategories(data);
       } catch (error) {
         console.error("Gagal mengambil data profil:", error);
@@ -30,8 +29,6 @@ const DefaultSidebar = () => {
 
   const handleCategoryClick = (categoryName: string) => {
     setSelectedCategory(categoryName);
-    // Lakukan sesuatu seperti filter produk atau navigasi
-    console.log("Selected:", categoryName);
   };
 
   return (

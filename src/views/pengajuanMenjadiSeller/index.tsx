@@ -45,7 +45,6 @@ export default function PengajuanMenjadiSellerViews() {
     fetchSellerRequests();
   }, []);
 
-  console.log(requests);
 
   const handleBack = () => {
     router.back();

@@ -57,9 +57,6 @@ const  AdminProfile = () => {
         }
       );
 
-      if (response.status === 200) {
-        console.log(`${type} image uploaded successfully`);
-      }
 
       await fetchProfile();
     } catch (error) {
