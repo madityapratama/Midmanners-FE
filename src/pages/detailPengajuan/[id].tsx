@@ -5,6 +5,8 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import api from "@/lib/axios";
 import Image from "next/image";
 import { withRoleProtection } from "@/hoc/withRoleProtection";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import toast,{Toaster} from "react-hot-toast";
 
 interface Pengajuan {
   id: number;
@@ -51,15 +53,15 @@ const DetailPengajuan = () => {
   };
 
   const handleSetuju = async (id) => {
-    if(!confirm('Yakin ingin menyetujui pengajuan ini?')) return;
     setIsSubmitting(true);
     try {
        const response=  await api.post(`/admin/seller-request/${id}/approve`);
-      alert(response.data.message || "Pengajuan berhasil disetujui!");
-      router.push("/pengajuanMenjadiSeller");
+      toast.success(response.data.message || "Pengajuan berhasil disetujui!");
+      setTimeout(()=>{
+        router.push("/pengajuanMenjadiSeller");
+      },1800)
     } catch (error) {
-      console.error("Error approving request:", error);
-      alert("Gagal menyetujui pengajuan");
+      toast.error("Gagal menyetujui pengajuan");
     } finally {
       setIsSubmitting(false);
     }
@@ -67,20 +69,19 @@ const DetailPengajuan = () => {
 
   const handleTolak = async (id) => {
     if (!rejectionReason) {
-      alert("Harap masukkan alasan penolakan");
+      toast.error("Harap masukkan alasan penolakan!");
       return;
     }
-
-    if(!confirm('Yakin ingin menolak pengajuan ini?')) return;
 
     setIsSubmitting(true);
     try {
       const response =  await api.post(`/admin/seller-request/${id}/reject`, { alasan: rejectionReason });
-      alert(response.data.message || "Pengajuan berhasil ditolak!");
-      router.push("/pengajuanMenjadiSeller");
+      toast.success(response.data.message || "Pengajuan berhasil ditolak!");
+      setTimeout(()=>{
+        router.push("/pengajuanMenjadiSeller");
+      },1800)
     } catch (error) {
-      console.error("Error rejecting request:", error);
-      alert("Gagal menolak pengajuan");
+      toast.error("Gagal menolak pengajuan");
     } finally {
       setIsSubmitting(false);
     }
@@ -101,6 +102,7 @@ const DetailPengajuan = () => {
 
   return (
     <ProtectedRoute>
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="min-h-screen bg-gray-50 p-4 md:p-8">
         <div className="max-w-3xl mx-auto">
           <button
@@ -258,22 +260,35 @@ const DetailPengajuan = () => {
       </div>
 
       <div className="mt-8 flex flex-col sm:flex-row justify-end gap-3">
+        <ConfirmDialog
+        onConfirm={()=>handleTolak(data?.id)}
+        title="Pengajuan Menjadi Seller"
+        description="Yakin ingin menolak pengajuan?"
+        confirmText="Ya, tolak pengajuan"
+        >
         <button
-          onClick={() => handleTolak(data?.id)}
-          disabled={isSubmitting}
+        disabled={isSubmitting}
           className="flex items-center justify-center px-5 py-2.5 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
         >
           <X className="mr-2" size={18} />
           {isSubmitting ? "Memproses..." : "Tolak Pengajuan"}
         </button>
+        </ConfirmDialog>
+
+        <ConfirmDialog
+        onConfirm={()=>handleSetuju(data?.id)}
+        title="Pengajuan Menjadi Seller"
+        description="Yakin ingin menyutujui pengajuan?"
+        confirmText="Ya, setujui pengajuan"
+        >
         <button
-          onClick={() => handleSetuju(data?.id)}
           disabled={isSubmitting}
           className="flex items-center justify-center px-5 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
         >
           <Check className="mr-2" size={18} />
           {isSubmitting ? "Memproses..." : "Setujui Pengajuan"}
         </button>
+        </ConfirmDialog>
       </div>
     </>
   )}

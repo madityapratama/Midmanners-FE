@@ -3,21 +3,20 @@ import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import api from "@/lib/axios";
 import { useAuth } from "@/context/AuthContext";
+import { Loader } from "lucide-react";
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login,loadingData,user } = useAuth();
+  const { login, loadingData, user } = useAuth();
 
-   useEffect(() => {
+  useEffect(() => {
     if (!loadingData && user) {
       router.push("/dashboard"); // arahkan ke dashboard jika sudah login
     }
-  }, [user, loadingData,router]);
-
-
+  }, [user, loadingData, router]);
 
   useEffect(() => {
     const queryEmail =
@@ -29,7 +28,6 @@ export default function Login() {
       setPassword(queryPassword);
     }
   }, [router.query]);
-
 
   const handleSignUp = () => {
     router.push("/auth/signUp");
@@ -51,16 +49,19 @@ export default function Login() {
         }
       );
 
-        const data = response.data;
-        login(data.access_token, data.data); // Pakai context login
+      const data = response.data;
+      login(data.access_token, data.data); // Pakai context login
 
-        toast.success(data.message || "Login berhasil!");
-        setTimeout(() => {
-          router.push("/dashboard");
-        }, 1500);
+      toast.success(data.message || "Login berhasil!");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1500);
     } catch (error) {
-      console.error("Login error:", error);
-      toast.error(error?.response?.data?.message || error?.message || "Terjadi kesalahan saat login");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Terjadi kesalahan saat login"
+      );
     } finally {
       setLoading(false);
     }
@@ -113,10 +114,19 @@ export default function Login() {
             />
             <button
               type="submit"
-              className="bg-indigo-950 text-white font-poppins py-2 rounded hover:bg-zinc-900 transition"
+              className={`w-full py-2 font-poppins rounded font-medium text-white ${
+                loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-950 hover:bg-indigo-900'
+              } transition flex items-center justify-center gap-2`}
               disabled={loading}
             >
-              {loading ? "Login..." : "Login"}
+              {loading ? (
+                <>
+                  <Loader className="animate-spin" />
+                  Proses
+                </>
+              ) : (
+                "Login"
+              )}
             </button>
             <button
               type="button"

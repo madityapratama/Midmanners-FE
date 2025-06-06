@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import api from "@/lib/axios";
 
-
 interface User {
   id: number;
   email: string;
@@ -28,23 +27,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<string>("");
   const [loadingData, setLoadingData] = useState(true);
-    const [profile, setProfile] = useState<User | null>(null); // Tambahkan state profile
-  // const router = useRouter();
+  const [profile, setProfile] = useState<User | null>(null);
 
-
-  // Load data dari localStorage ketika pertama kali render
+  // Load token & user dari localStorage dan fetch profile
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     const savedUser = localStorage.getItem("user");
     const savedRole = localStorage.getItem("role");
+
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
       setRole(savedRole || "");
+
+      // Fetch profile langsung di sini
+      api.get(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${savedToken}`,
+        },
+      })
+        .then((res) => setProfile(res.data))
+        .catch((err) => console.error("Gagal mengambil data profil:", err))
+        .finally(() => setLoadingData(false));
+    } else {
+      setLoadingData(false);
     }
-    setLoadingData(false);
   }, []);
 
+  // Update role saat profile.role berubah
+  useEffect(() => {
+    if (profile?.role) {
+      setRole(profile.role);
+      localStorage.setItem("user", profile.role);
+    }
+  }, [profile?.role]);
 
   const fetchProfile = async () => {
     try {
@@ -53,62 +69,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = response.data;
-      setProfile(data);
+      setProfile(response.data);
     } catch (error) {
       console.error("Gagal mengambil data profil:", error);
     }
   };
 
-  const updateProfile = (newData)=>{
-    setProfile((prev)=>({...prev,...newData}));
+  const updateProfile = (newData: Partial<User>) => {
+    setProfile((prev) => (prev ? { ...prev, ...newData } : null));
   };
 
-
-  // Load data saat pertama render
-  // Load data saat pertama render
-  useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
-    const savedRole = localStorage.getItem("role");
-    
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-      setRole(savedRole || "");
-      // Fetch profil terbaru setelah load data dasar
-      fetchProfile();
-    }
-    setLoadingData(false);
-  }, []);
-
-  // Pasang axios interceptor untuk inject token
-  // useEffect(() => {
-  //   const requestInterceptor = api.interceptors.request.use((config) => {
-  //     if (token) {
-  //       config.headers.Authorization = `Bearer ${token}`;
-  //     }
-  //     return config;
-  //   });
-
-  //   const responseInterceptor = api.interceptors.response.use(
-  //     (response) => response,
-  //     (error) => {
-  //       if (error.response?.status === 401) {
-  //         logout();
-  //         router.push("/auth/login");
-  //       }
-  //       return Promise.reject(error);
-  //     }
-  //   );
-
-  //   return () => {
-  //     api.interceptors.request.eject(requestInterceptor);
-  //     api.interceptors.response.eject(responseInterceptor);
-  //   };
-  // }, [token]);
-
-  // Saat login berhasil
   const login = (newToken: string, newUser: User) => {
     localStorage.setItem("token", newToken);
     localStorage.setItem("user", JSON.stringify(newUser));
@@ -132,12 +102,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, role, loadingData, setRole, login, logout,
-        profile, // Sertakan profile
-        setProfile, // Sertakan setter
-        fetchProfile, // Sertakan fungsi fetch
-        updateProfile
-         }}
+      value={{
+        user,
+        token,
+        role,
+        loadingData,
+        setRole,
+        login,
+        logout,
+        profile,
+        setProfile,
+        fetchProfile,
+        updateProfile,
+      }}
     >
       {children}
     </AuthContext.Provider>

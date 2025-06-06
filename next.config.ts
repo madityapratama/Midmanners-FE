@@ -1,10 +1,11 @@
 import type { NextConfig } from "next";
+import withFlowbiteReact from "flowbite-react/plugin/nextjs";
 
 const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   images: {
-    domains: ['c4c3-140-213-216-4.ngrok-free.app'], // <- tambahkan ini
+    domains: ['localhost'], // <- tambahkan ini
   },
    async redirects() {
     return [
@@ -17,4 +18,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withFlowbiteReact(nextConfig);

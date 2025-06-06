@@ -1,0 +1,14 @@
+@media (max-width: 768px) {
+  .hide-sidebar .sendbird-app__channellist,
+  .hide-sidebar .sendbird-app__settingspanel {
+    display: none !important;
+  }
+
+  .hide-sidebar .sendbird-app__conversation {
+    width: 100% !important;
+  }
+
+  .hide-sidebar .sendbird-app__conversation-wrap {
+    width: 100% !important;
+  }
+}

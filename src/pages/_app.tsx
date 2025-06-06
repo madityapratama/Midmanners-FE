@@ -6,6 +6,8 @@ import AppShell from "@/components/layouts/appShell";
 import { AuthProvider } from "@/context/AuthContext";
 import { CategoryProvider } from "@/context/CategoryContext";
 import { SearchProvider } from "@/context/SearchContext";
+import '@/styles/sendbird.css'; // custom halaman chat
+
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -13,7 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <SearchProvider>
       <CategoryProvider>
       <AppShell>
-        <Component className='pt-16' {...pageProps} />
+        <Component  {...pageProps} />
       </AppShell>
       </CategoryProvider>
       </SearchProvider>

@@ -15,6 +15,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 type Order = {
   id: number;
@@ -92,18 +93,9 @@ export default function AktivitasViews() {
     }
   };
 
-  // useEffect(() => {
-  //   fetchOrders();
-  // }, [activeTab]);
 
   const handleCancelOrder = async (orderId: number) => {
     setCancellingOrder(orderId);
-    const confirmed = window.confirm("Yakin ingin membatalkan pesanan ini?");
-
-    if (!confirmed) {
-      setCancellingOrder(null);
-      return;
-    }
 
     try {
       await api.patch(
@@ -124,12 +116,6 @@ export default function AktivitasViews() {
 
   const handleConfirmOrder = async (orderId: number) => {
     setConfirmOrder(orderId);
-    const confirmed = window.confirm("Sudah menerima Orderan?");
-
-    if (!confirmed) {
-      setConfirmOrder(null);
-      return;
-    }
 
     try {
       await api.patch(
@@ -190,8 +176,8 @@ export default function AktivitasViews() {
             key={order.id}
             className="bg-indigo-950 font-poppins p-4 rounded-lg text-white"
           >
-            <Link href={`/seller/detail/${order.post.id}`}>
-              <div className="cursor-pointer">
+            <div className="cursor-pointer">
+              <Link href={`/seller/detail/${order.post.id}`}>
                 <div className="flex justify-between text-sm">
                   <span>{formatDate(order.created_at)}</span>
                   <span className="font-medium capitalize">
@@ -207,24 +193,28 @@ export default function AktivitasViews() {
                 </div>
 
                 <hr className="my-3 border-gray-400" />
+              </Link>
 
-                <div className="flex justify-between items-center">
-                  <div className="text-sm">
-                    <div>Total Pembelian</div>
-                    <div className="font-medium">
-                      {formatPrice(order.post.price)}
-                    </div>
+              <div className="flex justify-between items-center">
+                <div className="text-sm">
+                  <div>Total Pembelian</div>
+                  <div className="font-medium">
+                    {formatPrice(order.post.price)}
                   </div>
+                </div>
 
-                  {/* Tombol Batalkan hanya tampil jika status tab "menunggu" */}
-                  {activeTab === "menunggu" && (
+                {/* Tombol aksi */}
+                {activeTab === "menunggu" && (
+                  <ConfirmDialog
+                    onConfirm={() => handleCancelOrder(order.id)}
+                    loading={cancellingOrder === order.id}
+                    title="Batalkan Pesanan"
+                    description="Yakin ingin membatalkan pesanan ini?"
+                    confirmText="Ya, Batalkan"
+                  >
                     <button
-                      onClick={(e) => {
-                        e.preventDefault(); // agar Link tidak ikut jalan saat klik button
-                        handleCancelOrder(order.id);
-                      }}
+                      className="flex items-center gap-1 px-3 py-1 bg-red-600 text-white text-xs rounded-full hover:bg-red-700 transition-colors disabled:opacity-50"
                       disabled={cancellingOrder === order.id}
-                      className="flex items-center gap-1 px-3 py-1 bg-red-600 text-white text-xs rounded-full hover:bg-red-700 transition"
                     >
                       {cancellingOrder === order.id ? (
                         <>
@@ -238,15 +228,20 @@ export default function AktivitasViews() {
                         </>
                       )}
                     </button>
-                  )}
-                  {activeTab === "terkirim" && (
+                  </ConfirmDialog>
+                )}
+
+                {activeTab === "terkirim" && (
+                  <ConfirmDialog
+                    onConfirm={() => handleConfirmOrder(order.id)}
+                    loading={confirmOrder === order.id}
+                    title="Konfirmasi Penerimaan"
+                    description="Apakah Anda yakin sudah menerima pesanan ini?"
+                    confirmText="Ya, Konfirmasi"
+                  >
                     <button
-                      onClick={(e) => {
-                        e.preventDefault(); // agar Link tidak ikut jalan saat klik button
-                        handleConfirmOrder(order.id);
-                      }}
+                      className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white text-xs rounded-full hover:bg-green-700 transition-colors disabled:opacity-50"
                       disabled={confirmOrder === order.id}
-                      className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white text-xs rounded-full hover:bg-green-700 transition"
                     >
                       {confirmOrder === order.id ? (
                         <>
@@ -260,10 +255,10 @@ export default function AktivitasViews() {
                         </>
                       )}
                     </button>
-                  )}
-                </div>
+                  </ConfirmDialog>
+                )}
               </div>
-            </Link>
+            </div>
           </div>
         ))}
       </div>
