@@ -54,13 +54,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  // Update role saat profile.role berubah
   useEffect(() => {
-    if (profile?.role) {
-      setRole(profile.role);
-      localStorage.setItem("user", profile.role);
-    }
-  }, [profile?.role]);
+  if (profile?.role) {
+    setRole(profile.role);
+    setUser(profile);
+    localStorage.setItem("user", JSON.stringify(profile));
+    localStorage.setItem("role", profile.role);
+  }
+}, [profile?.role]);
 
   const fetchProfile = async () => {
     try {
@@ -70,6 +71,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       });
       setProfile(response.data);
+      setUser(response.data);
+      setRole(response.data.role);
+
+      localStorage.setItem("user", JSON.stringify(data));
+    localStorage.setItem("role", data.role);
     } catch (error) {
       console.error("Gagal mengambil data profil:", error);
     }
