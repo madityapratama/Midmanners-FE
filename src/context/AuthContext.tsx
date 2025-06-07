@@ -74,8 +74,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(response.data);
       setRole(response.data.role);
 
-      localStorage.setItem("user", JSON.stringify(data));
-    localStorage.setItem("role", data.role);
+      localStorage.setItem("user", JSON.stringify(response.data));
+    localStorage.setItem("role", response.data.role);
     } catch (error) {
       console.error("Gagal mengambil data profil:", error);
     }
