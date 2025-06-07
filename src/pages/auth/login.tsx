@@ -76,8 +76,8 @@ export default function Login() {
             MIDMANNERS
           </h1>
           <p className="text-sm text-indigo-950 font-poppins">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vel
-            egestas dolor, nec dignissim metus.
+            Platform terpercaya untuk jual beli item game online. Transaksi aman, cepat, 
+            dan dengan harga terbaik di pasar.
           </p>
         </div>
 
