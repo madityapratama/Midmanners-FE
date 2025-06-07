@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { ArrowLeft, FileText, Check, X, Search } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import api from "@/lib/axios";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface Post {
   id: number;
@@ -109,7 +110,7 @@ const fetchPendingPosts = async () => {
           <input
             type="text"
             placeholder="Cari postingan..."
-            className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full md:w-64"
+            className="pl-10 pr-4 py-2 border text-black border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-full md:w-64"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -207,17 +208,30 @@ const fetchPendingPosts = async () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 flex items-center gap-2">
+                      <ConfirmDialog
+                      onConfirm={()=> handleApprove(post.id)}
+                      title="Setujui Postingan"
+                      description="Yakin ingin menyetujui postingan?"
+                      confirmText="Ya, Setuju"
+                      >
                       <button
-                        onClick={() => handleApprove(post.id)}
                         className="flex items-center gap-1 px-3 py-1 bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors"
                         title="Setujui"
                         disabled={post.status !== 'pending'}
                       >
                         <Check size={16} />
                         <span className="hidden md:inline">Setujui</span>
+
                       </button>
+                      </ConfirmDialog>
+
+                      <ConfirmDialog
+                      onConfirm={()=> handleReject(post.id)}
+                      title="Tolak Postingan"
+                      description="Yakin ingin menolak postingan?"
+                      confirmText="Ya, Tolak"
+                      >
                       <button
-                        onClick={() => handleReject(post.id)}
                         className="flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 rounded-md hover:bg-red-100 transition-colors"
                         title="Tolak"
                         disabled={post.status !== 'pending'}
@@ -225,6 +239,9 @@ const fetchPendingPosts = async () => {
                         <X size={16} />
                         <span className="hidden md:inline">Tolak</span>
                       </button>
+                      </ConfirmDialog>
+
+
                       <FileText
                         size={18}
                         className="text-indigo-600 hover:text-indigo-800 cursor-pointer ml-2"

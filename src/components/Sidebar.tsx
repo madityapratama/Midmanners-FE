@@ -1,23 +1,23 @@
-
-
-import { 
-  User, 
-  FileClock, 
-  Repeat, 
-  LayoutPanelTop, 
+import {
+  User,
+  FileClock,
+  Repeat,
+  LayoutPanelTop,
   Clock,
   Home,
   MessageSquare,
-  Settings, ListPlus,Search
+  Settings,
+  ListPlus,
+  Search,
+  X
 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
-import { CategoryProvider, useCategory } from "@/context/CategoryContext";
+import { useCategory } from "@/context/CategoryContext";
 import api from "@/lib/axios";
 import { useSearch } from "@/context/SearchContext";
-
 
 type Category = {
   id: number;
@@ -38,15 +38,16 @@ const SidebarItem = ({
   const router = useRouter();
   const isActive = router.pathname === href;
 
-
   return (
     <li>
       <Link href={href} legacyBehavior>
-        <a className={`flex items-center justify-between px-3 py-2.5 rounded-md transition-colors ${
-          isActive
-            ? 'bg-indigo-700 text-white'
-            : 'text-indigo-100 hover:bg-indigo-800 hover:text-white'
-        }`}>
+        <a
+          className={`flex items-center justify-between px-3 py-2.5 rounded-md transition-colors ${
+            isActive
+              ? "bg-indigo-700 text-white"
+              : "text-indigo-100 hover:bg-indigo-800 hover:text-white"
+          }`}
+        >
           <div className="flex items-center gap-3">
             <span className="text-indigo-300">{icon}</span>
             <span>{text}</span>
@@ -65,7 +66,6 @@ const SidebarItem = ({
 const AdminSidebar = () => {
   return (
     <nav className="flex-1 overflow-y-auto p-2">
-      
       <ul className="space-y-1">
         <SidebarItem
           icon={<User size={18} />}
@@ -82,7 +82,7 @@ const AdminSidebar = () => {
           text="Pengajuan Menjadi Seller"
           href="/pengajuanMenjadiSeller"
         />
-        <SidebarItem 
+        <SidebarItem
           icon={<ListPlus size={20} />}
           text="Tambah Kategori"
           href="/admin/categories"
@@ -112,17 +112,18 @@ const MidmanSidebar = () => {
 };
 
 const DefaultSidebar = () => {
-
-  const {selectedCategory,setSelectedCategory} = useCategory();
-  const [categories,setCategories] = useState();
-  const {search,setSearch} = useSearch();
+  const { selectedCategory, setSelectedCategory } = useCategory();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const { search, setSearch } = useSearch();
   const router = useRouter();
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await api.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/categories`);
+          `${process.env.NEXT_PUBLIC_API_URL}/categories`
+        );
         setCategories(response.data);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
@@ -133,35 +134,63 @@ const DefaultSidebar = () => {
   }, []);
 
   const handleCategoryClick = (category: string) => {
-    if(selectedCategory === category){
+    if (selectedCategory === category) {
       setSelectedCategory(null);
-    } else{
+    } else {
       setSelectedCategory(category);
     }
   };
 
   return (
+    <nav className="flex-1 overflow-y-auto p-2">
+      {/* Mobile Search */}
+      <div className="md:hidden mb-4">
+        {mobileSearchOpen ? (
+          <div className="relative w-full">
+            <button
+              onClick={() => setMobileSearchOpen(false)}
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-300 w-5 h-5"
+            >
+              <X size={20} />
+            </button>
+            <input
+              type="text"
+              placeholder="Search..."
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 bg-indigo-900 bg-opacity-50 text-zinc-100 py-2 rounded-full border border-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-zinc-400"
+            />
+          </div>
+        ) : (
+          <button
+            onClick={() => setMobileSearchOpen(true)}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-md bg-indigo-800 text-zinc-200"
+          >
+            <Search size={18} />
+            <span>Search...</span>
+          </button>
+        )}
+      </div>
 
-    <nav className="flex-1 overflow-y-auto p-2 ">
+      {/* Desktop Search */}
       <div className="relative w-full hidden md:block">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-300 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search..."
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 bg-indigo-900 bg-opacity-50 text-zinc-100 py-2 rounded-full border border-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-zinc-400"
-              />
-            </div>
-      <h2 className="text-lg font-semibold text-white px-3 py-2 mb-1">Kategori</h2>
-      <ul className="space-y-1">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-300 w-5 h-5" />
+        <input
+          type="text"
+          placeholder="Search..."
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full pl-10 pr-4 bg-indigo-900 bg-opacity-50 text-zinc-100 py-2 rounded-full border border-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-zinc-400"
+        />
+      </div>
+
+      <ul className="space-y-1 mt-4">
         {categories?.map((category) => (
           <li key={category.id}>
             <button
               onClick={() => handleCategoryClick(category.id)}
               className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                 selectedCategory === category.id
-                  ? 'bg-indigo-700 text-white'
-                  : 'text-indigo-100 hover:bg-indigo-800 hover:text-white'
+                  ? "bg-indigo-700 text-white"
+                  : "text-indigo-100 hover:bg-indigo-800 hover:text-white"
               }`}
             >
               <LayoutPanelTop className="w-5 h-5 text-indigo-300" />
@@ -182,7 +211,9 @@ const Sidebar = () => {
       {/* Logo/Header */}
       <div className="p-4 border-b border-indigo-700">
         <h1 className="text-xl font-bold text-white flex items-center gap-2">
-          <span className="bg-white text-indigo-800 rounded-md px-2 py-1">MID</span>
+          <span className="bg-white text-indigo-800 rounded-md px-2 py-1">
+            MID
+          </span>
           MANNERS
         </h1>
       </div>
@@ -195,7 +226,6 @@ const Sidebar = () => {
       ) : (
         <DefaultSidebar />
       )}
-
     </div>
   );
 };

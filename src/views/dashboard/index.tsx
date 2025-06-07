@@ -10,6 +10,7 @@ import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import { useCategory } from "@/context/CategoryContext";
 import {useSearch} from "@/context/SearchContext";
+import{Button} from "flowbite-react";
 
 type Post = {
   id: number;
@@ -63,33 +64,6 @@ const DashboardViews = () => {
     fetchPosts();
   }, [selectedCategory,search]);
 
-  // const toggleLike = async (postId: number) => {
-  //   try {
-  //     await axios.post(
-  //       `${process.env.NEXT_PUBLIC_API_URL}/posts/${postId}/like`,
-  //       {},
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //         },
-  //       }
-  //     );
-  //     setLikedPosts((prev) =>
-  //       prev.includes(postId)
-  //         ? prev.filter((id) => id !== postId)
-  //         : [...prev, postId]
-  //     );
-  //     setPosts(posts.map(post => 
-  //       post.id === postId ? { 
-  //         ...post, 
-  //         like_count: likedPosts.includes(postId) ? post.like_count - 1 : post.like_count + 1 
-  //       } : post
-  //     ));
-  //   } catch (error) {
-  //     console.error("Failed to toggle like:", error);
-  //   }
-  // };
-
   const openImageLightbox = (post: Post, index: number) => {
     setCurrentPost(post);
     setCurrentImageIndex(index);
@@ -107,15 +81,10 @@ const DashboardViews = () => {
 
 
   return (
-    <div className="flex min-h-screen pt-16 bg-gray-100">
-      {/* Sidebar */}
-      <div className="fixed top-0 left-0 w-75 h-full bg-indigo-900 shadow-lg p-4 overflow-y-auto">
-        <Sidebar />
-      </div>
-    
+    <div className="flex min-h-screen pt-25 md:pt-16 bg-gray-100">
 
       {/* Main Content */}
-      <div className="flex-1 ml-75 p-6 space-y-6 overflow-y-auto">
+      <div className="flex-1  p-6 space-y-6 overflow-y-auto">
         
         {loading ? (
           <div className="flex justify-center items-center h-64">

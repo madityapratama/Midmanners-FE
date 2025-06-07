@@ -83,7 +83,7 @@ export default function PengajuanMenjadiSellerViews() {
   }
 
   return (
-    <div className="min-h-screen bg-white p-6 font-poppins mt-10">
+    <div className="min-h-screen bg-white p-6 font-poppins mt-12">
       <div className="flex items-center gap-4 mb-6">
         <button onClick={handleBack} className="text-gray-700 hover:text-black">
           <ArrowLeft size={24} />

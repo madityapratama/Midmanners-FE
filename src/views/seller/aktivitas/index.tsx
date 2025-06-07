@@ -15,6 +15,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/axios";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 type Order = {
   id: number;
@@ -157,8 +158,8 @@ export default function AktivitasSellerViews() {
             key={order.id}
             className="bg-indigo-950 font-poppins p-4 rounded-lg text-white"
           >
-            <Link href={`/seller/detail/${order.post.id}`}>
               <div className="cursor-pointer">
+            <Link href={`/seller/detail/${order.post.id}`}>
                 <div className="flex justify-between text-sm">
                   <span>{formatDate(order.created_at)}</span>
                   <span className="font-medium capitalize">
@@ -178,6 +179,7 @@ export default function AktivitasSellerViews() {
                 </div>
 
                 <hr className="my-3 border-gray-400" />
+            </Link>
 
                 <div className="flex justify-between items-center">
                   <div className="text-sm">
@@ -188,12 +190,13 @@ export default function AktivitasSellerViews() {
                   </div>
 
                   {activeTab === "perluDiproses" && (
+                    <ConfirmDialog
+                    onConfirm={()=> handleProcessOrder(order.id)}
+                    title="Proses Pengiriman ke buyer"
+                    description="Pesanan sudah diproses?"
+                    confirmText="Ya, sudah diproses"
+                    >
                     <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleProcessOrder(order.id);
-                      }}
-                      disabled={processingOrder === order.id}
                       className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white text-xs rounded-full hover:bg-green-700 transition"
                     >
                       {processingOrder === order.id ? (
@@ -208,6 +211,7 @@ export default function AktivitasSellerViews() {
                         </>
                       )}
                     </button>
+                    </ConfirmDialog>
                   )}
 
                   {activeTab === "selesai" && (
@@ -217,7 +221,6 @@ export default function AktivitasSellerViews() {
                   )}
                 </div>
               </div>
-            </Link>
           </div>
         ))}
       </div>

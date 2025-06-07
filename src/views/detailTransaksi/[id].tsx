@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { ArrowLeft, ImageIcon, CheckCircle, XCircle, Clock, AlertCircle, Wallet } from "lucide-react";
-
+import ConfirmDialog from "@/components/ConfirmDialog";
+import toast,{Toaster} from "react-hot-toast";
 import api from "@/lib/axios";
 
 export default function DetailTransaksiViews() {
@@ -34,7 +35,6 @@ export default function DetailTransaksiViews() {
 
   // Handle status change for dana terkirim
   const handleDanaTerkirim = async () => {
-    if(!confirm('Anda Yakin?')) return;
     try {
       await api.patch(`/orders/${id}/midman/danaTerkirim`);
       setTransaction((prev: any) => ({
@@ -42,15 +42,15 @@ export default function DetailTransaksiViews() {
         status: "selesai",
         status_dana: "sudah dikirim"
       }));
+      toast.success("Data berhasil diupdate");
     } catch (err) {
       setError("Gagal mengupdate status dana terkirim");
-      console.error("Error updating dana terkirim:", err);
+      toast.error("Ada kesalahan,",err);
     }
   };
 
   // Handle status change for dana refund
   const handleDanaRefund = async () => {
-    if(!confirm('Anda Yakin?')) return;
     try {
       await api.patch(`/orders/${id}/midman/danaRefund`);
       setTransaction((prev: any) => ({
@@ -58,9 +58,10 @@ export default function DetailTransaksiViews() {
         status: "dibatalkan",
         refund_status: "sudah refund"
       }));
+      toast.success("Data berhasil diupdate");
     } catch (err) {
       setError("Gagal mengupdate status refund");
-      console.error("Error updating refund:", err);
+      toast.error("Ada kesalahan,",err);
     }
   };
 
@@ -130,6 +131,7 @@ export default function DetailTransaksiViews() {
 
   return (
     <div className="min-h-screen pt-17 bg-gray-50 px-4 md:px-8 py-8">
+      <Toaster position="top-center" reverseOrder={false} />
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <button 
@@ -272,27 +274,39 @@ export default function DetailTransaksiViews() {
           {/* Action Buttons */}
           {transaction.status_dana === 'perlu dikirim' && (
             <div className="p-6 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
+              <ConfirmDialog
+        onConfirm={handleDanaTerkirim}
+        title="Kirim dana ke seller"
+        description="Dana sudah di kirim?"
+        confirmText="Ya, konfirmasi pengiriman dana"
+        >
               <button
-                onClick={handleDanaTerkirim}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none flex-1 flex items-center justify-center gap-2"
                 disabled={transaction.status_dana === 'sudah dikirim'}
               >
                 <CheckCircle size={18} />
                 Konfirmasi Dana Terkirim ke Seller
               </button>
+              </ConfirmDialog>
             </div>
           )}
           {transaction.refund_status ==='belum refund' &&(
 
           <div className="p-6 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
+            <ConfirmDialog
+        onConfirm={handleDanaRefund}
+        title="Refund dana ke buyer"
+        description="Dana sudah di refund?"
+        confirmText="Ya, konfirmasi pengembalian dana"
+        >
               <button
-                onClick={handleDanaRefund}
                 className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none flex-1 flex items-center justify-center gap-2"
                 disabled={transaction.refund_status === 'sudah refund'}
               >
                 <XCircle size={18} />
                 Konfirmasi Dana Refund ke Buyer
               </button>
+              </ConfirmDialog>
             </div>
           )}
         </div>
