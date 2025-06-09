@@ -1,8 +1,16 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { ArrowLeft, ImageIcon, CheckCircle, XCircle, Clock, AlertCircle, Wallet } from "lucide-react";
+import {
+  ArrowLeft,
+  ImageIcon,
+  CheckCircle,
+  XCircle,
+  Clock,
+  AlertCircle,
+  Wallet,
+} from "lucide-react";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import toast,{Toaster} from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import api from "@/lib/axios";
 
 export default function DetailTransaksiViews() {
@@ -40,12 +48,12 @@ export default function DetailTransaksiViews() {
       setTransaction((prev: any) => ({
         ...prev,
         status: "selesai",
-        status_dana: "sudah dikirim"
+        status_dana: "sudah dikirim",
       }));
       toast.success("Data berhasil diupdate");
     } catch (err) {
       setError("Gagal mengupdate status dana terkirim");
-      toast.error("Ada kesalahan,",err);
+      toast.error("Ada kesalahan,", err);
     }
   };
 
@@ -56,12 +64,12 @@ export default function DetailTransaksiViews() {
       setTransaction((prev: any) => ({
         ...prev,
         status: "dibatalkan",
-        refund_status: "sudah refund"
+        refund_status: "sudah refund",
       }));
       toast.success("Data berhasil diupdate");
     } catch (err) {
       setError("Gagal mengupdate status refund");
-      toast.error("Ada kesalahan,",err);
+      toast.error("Ada kesalahan,", err);
     }
   };
 
@@ -72,32 +80,46 @@ export default function DetailTransaksiViews() {
   // Format date to Indonesian format
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Asia/Makassar'
-    }) + ' WITA';
+    return (
+      date.toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "Asia/Makassar",
+      }) + " WITA"
+    );
   };
 
   // Format price to IDR
   const formatPrice = (price: string) => {
-    return `Rp${parseFloat(price).toLocaleString('id-ID')}`;
+    return `Rp${parseFloat(price).toLocaleString("id-ID")}`;
   };
 
   // Get status icon and color
   const getStatusInfo = (status: string) => {
     switch (status) {
-      case 'selesai':
-        return { icon: <CheckCircle className="text-green-500" />, color: 'text-green-600' };
-      case 'dibatalkan':
-        return { icon: <XCircle className="text-red-500" />, color: 'text-red-600' };
-      case 'proses':
-        return { icon: <Clock className="text-yellow-500" />, color: 'text-yellow-600' };
+      case "selesai":
+        return {
+          icon: <CheckCircle className="text-green-500" />,
+          color: "text-green-600",
+        };
+      case "dibatalkan":
+        return {
+          icon: <XCircle className="text-red-500" />,
+          color: "text-red-600",
+        };
+      case "proses":
+        return {
+          icon: <Clock className="text-yellow-500" />,
+          color: "text-yellow-600",
+        };
       default:
-        return { icon: <AlertCircle className="text-gray-500" />, color: 'text-gray-600' };
+        return {
+          icon: <AlertCircle className="text-gray-500" />,
+          color: "text-gray-600",
+        };
     }
   };
 
@@ -115,7 +137,9 @@ export default function DetailTransaksiViews() {
         <div className="text-center p-6 bg-white rounded-lg shadow-md max-w-md">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
           <h3 className="mt-2 text-lg font-medium text-gray-900">Error</h3>
-          <p className="mt-1 text-sm text-gray-500">{error || 'Transaksi tidak ditemukan'}</p>
+          <p className="mt-1 text-sm text-gray-500">
+            {error || "Transaksi tidak ditemukan"}
+          </p>
           <button
             onClick={handleBack}
             className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none"
@@ -134,8 +158,8 @@ export default function DetailTransaksiViews() {
       <Toaster position="top-center" reverseOrder={false} />
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <button 
-          onClick={handleBack} 
+        <button
+          onClick={handleBack}
           className="flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-sm hover:bg-gray-100 transition-colors"
         >
           <ArrowLeft size={20} className="text-indigo-950" />
@@ -152,7 +176,9 @@ export default function DetailTransaksiViews() {
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-start gap-4">
               <div>
-                <h2 className="text-lg font-bold text-indigo-950">{transaction.post.title}</h2>
+                <h2 className="text-lg font-bold text-indigo-950">
+                  {transaction.post.title}
+                </h2>
                 <p className="text-lg font-semibold text-green-600 mt-1">
                   {formatPrice(transaction.post.price)}
                 </p>
@@ -170,15 +196,21 @@ export default function DetailTransaksiViews() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Nama</span>
-                  <span className="font-medium text-black">{transaction.buyer.name}</span>
+                  <span className="font-medium text-black">
+                    {transaction.buyer.name}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Metode Pembayaran</span>
-                  <span className="font-medium text-black ">{transaction.buyer.akun_bank}</span>
+                  <span className="font-medium text-black ">
+                    {transaction.buyer.akun_bank}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Nomor Rekening/EWallet</span>
-                  <span className="font-medium text-black">{transaction.buyer.no_rek}</span>
+                  <span className="font-medium text-black">
+                    {transaction.buyer.no_rek}
+                  </span>
                 </div>
               </div>
             </div>
@@ -192,15 +224,21 @@ export default function DetailTransaksiViews() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Nama</span>
-                  <span className="font-medium text-black">{transaction.seller.name}</span>
+                  <span className="font-medium text-black">
+                    {transaction.seller.name}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Metode Pembayaran</span>
-                  <span className="font-medium text-black">{transaction.seller.akun_bank}</span>
+                  <span className="font-medium text-black">
+                    {transaction.seller.akun_bank}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Nomor Rekening/EWallet</span>
-                  <span className="font-medium text-black">{transaction.seller.no_rek}</span>
+                  <span className="font-medium text-black">
+                    {transaction.seller.no_rek}
+                  </span>
                 </div>
               </div>
             </div>
@@ -228,7 +266,9 @@ export default function DetailTransaksiViews() {
                 )}
                 <div className="flex justify-between">
                   <span className="text-gray-600">Status</span>
-                  <span className={`font-medium flex items-center gap-1 ${statusInfo.color}`}>
+                  <span
+                    className={`font-medium flex items-center gap-1 ${statusInfo.color}`}
+                  >
                     {statusInfo.icon}
                     {transaction.status}
                   </span>
@@ -236,7 +276,7 @@ export default function DetailTransaksiViews() {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Status Dana</span>
                   <span className="font-medium">
-                    {transaction.status_dana === 'sudah dikirim' ? (
+                    {transaction.status_dana === "sudah dikirim" ? (
                       <span className="text-green-600 flex items-center gap-1">
                         <CheckCircle size={16} />
                         Dana sudah dikirim
@@ -253,7 +293,7 @@ export default function DetailTransaksiViews() {
                   <div className="flex justify-between">
                     <span className="text-gray-600">Status Refund</span>
                     <span className="font-medium">
-                      {transaction.refund_status === 'sudah refund' ? (
+                      {transaction.refund_status === "sudah refund" ? (
                         <span className="text-green-600 flex items-center gap-1">
                           <CheckCircle size={16} />
                           Sudah refund
@@ -272,40 +312,39 @@ export default function DetailTransaksiViews() {
           </div>
 
           {/* Action Buttons */}
-          {transaction.status_dana === 'perlu dikirim' && (
+          {transaction.status_dana === "perlu dikirim" && (
             <div className="p-6 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
               <ConfirmDialog
-        onConfirm={handleDanaTerkirim}
-        title="Kirim dana ke seller"
-        description="Dana sudah di kirim?"
-        confirmText="Ya, konfirmasi pengiriman dana"
-        >
-              <button
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none flex-1 flex items-center justify-center gap-2"
-                disabled={transaction.status_dana === 'sudah dikirim'}
+                onConfirm={handleDanaTerkirim}
+                title="Kirim dana ke seller"
+                description="Dana sudah di kirim?"
+                confirmText="Ya, konfirmasi pengiriman dana"
               >
-                <CheckCircle size={18} />
-                Konfirmasi Dana Terkirim ke Seller
-              </button>
+                <button
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none flex-1 flex items-center justify-center gap-2"
+                  disabled={transaction.status_dana === "sudah dikirim"}
+                >
+                  <CheckCircle size={18} />
+                  Konfirmasi Dana Terkirim ke Seller
+                </button>
               </ConfirmDialog>
             </div>
           )}
-          {transaction.refund_status ==='belum refund' &&(
-
-          <div className="p-6 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
-            <ConfirmDialog
-        onConfirm={handleDanaRefund}
-        title="Refund dana ke buyer"
-        description="Dana sudah di refund?"
-        confirmText="Ya, konfirmasi pengembalian dana"
-        >
-              <button
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none flex-1 flex items-center justify-center gap-2"
-                disabled={transaction.refund_status === 'sudah refund'}
+          {transaction.refund_status === "belum refund" && (
+            <div className="p-6 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
+              <ConfirmDialog
+                onConfirm={handleDanaRefund}
+                title="Refund dana ke buyer"
+                description="Dana sudah di refund?"
+                confirmText="Ya, konfirmasi pengembalian dana"
               >
-                <XCircle size={18} />
-                Konfirmasi Dana Refund ke Buyer
-              </button>
+                <button
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none flex-1 flex items-center justify-center gap-2"
+                  disabled={transaction.refund_status === "sudah refund"}
+                >
+                  <XCircle size={18} />
+                  Konfirmasi Dana Refund ke Buyer
+                </button>
               </ConfirmDialog>
             </div>
           )}
