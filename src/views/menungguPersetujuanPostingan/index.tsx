@@ -46,7 +46,7 @@ const fetchPendingPosts = async () => {
   }, []);
 
   const handleBack = () => {
-    router.push('/admin/profil');
+    router.back();
   };
 
   const handleApprove = async (id: number) => {
