@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import api from "@/lib/axios";
-import { ThumbsUp, ArrowLeft, Send, Loader, Check ,Trash2} from "lucide-react";
+import { ThumbsUp, ArrowLeft, Send, Loader, Check, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
@@ -70,6 +70,8 @@ export default function DetailPostinganViews() {
   const [openLightbox, setOpenLightbox] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  const [isChatLoading, setIsChatLoading] = useState(false);
+
   const currentUser = profile;
 
   // Format price to IDR
@@ -82,36 +84,36 @@ export default function DetailPostinganViews() {
   };
 
   const fetchPostDetail = async () => {
-      try {
-        const response = await api.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/detail`,
-        );
-        setLiked(response.data.data.liked_by_user);
-        setPost(response.data.data);
-        setLikeCount(response.data.data.like_count);
-        setLoading(false);
-      } catch (err) {
-        setError("Gagal memuat detail postingan");
-        setLoading(false);          
-        console.error(err);
-      }
-    };
-
-        const handleDeleteSuccess = (deletedPostId: string | number) => {
-    setPost(null)
+    try {
+      const response = await api.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/detail`
+      );
+      setLiked(response.data.data.liked_by_user);
+      setPost(response.data.data);
+      setLikeCount(response.data.data.like_count);
+      setLoading(false);
+    } catch (err) {
+      setError("Gagal memuat detail postingan");
+      setLoading(false);
+      console.error(err);
+    }
   };
 
-    const fetchComments = async () => {
-      try {
-        // const token = getAuthToken();
-        const response = await api.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/comment`,
-        );
-        setComments(response.data.data);
-      } catch (err) {
-        console.error("Gagal memuat komentar", err);
-      }
-    };
+  const handleDeleteSuccess = (deletedPostId: string | number) => {
+    setPost(null);
+  };
+
+  const fetchComments = async () => {
+    try {
+      // const token = getAuthToken();
+      const response = await api.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/comment`
+      );
+      setComments(response.data.data);
+    } catch (err) {
+      console.error("Gagal memuat komentar", err);
+    }
+  };
   // Fetch post detail
   useEffect(() => {
     if (!id) return;
@@ -132,7 +134,7 @@ export default function DetailPostinganViews() {
       setLiked(response.data.liked);
       setLikeCount(response.data.likes);
       fetchPostDetail();
-    fetchComments();
+      fetchComments();
     } catch (err) {
       console.error("Gagal menyukai postingan", err);
     }
@@ -214,7 +216,7 @@ export default function DetailPostinganViews() {
       // Reset state reply
       setReplyingTo({ id: null, name: "" });
       fetchPostDetail();
-    fetchComments();
+      fetchComments();
     } catch (err) {
       console.error("Gagal menambahkan komentar", err);
       // Tambahkan notifikasi error ke pengguna jika perlu
@@ -270,17 +272,21 @@ export default function DetailPostinganViews() {
   };
 
   //chat ke seller
-  const handleChatSeller = async()=>{
+  const handleChatSeller = async () => {
+    setIsChatLoading(true);
     try {
-      const response = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/create-or-get-chat`, {
-        target_user_id: post?.seller?.id, // sesuaikan
-        post_id: post?.id, // opsional, kalau mau buat pesan template
-      },{
-        headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-      }
-    );
+      const response = await api.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/create-or-get-chat`,
+        {
+          target_user_id: post?.seller?.id, // sesuaikan
+          post_id: post?.id, // opsional, kalau mau buat pesan template
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       const channelUrl = response.data.channel_url;
 
@@ -288,8 +294,10 @@ export default function DetailPostinganViews() {
     } catch (error) {
       console.error("Gagal memulai chat:", error);
       alert("Gagal memulai chat");
+    } finally {
+      setIsChatLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -355,22 +363,40 @@ export default function DetailPostinganViews() {
                   </div>
                 </div>
               </div>
-              {currentUser && (currentUser?.id == post.seller.id || currentUser.role === 'admin') ? (
-                <DeleteButton 
-                  postId={post.id} 
-                  onDeleteSuccess={handleDeleteSuccess} 
+              {currentUser &&
+              (currentUser?.id == post.seller.id ||
+                currentUser.role === "admin") ? (
+                <DeleteButton
+                  postId={post.id}
+                  onDeleteSuccess={handleDeleteSuccess}
                 >
                   <button className="p-1 rounded-full hover:bg-gray-100 text-gray-500 hover:text-red-500">
-                  <Trash2 className="h-4 w-4" size={20} />
-                </button>
+                    <Trash2 className="h-4 w-4" size={20} />
+                  </button>
                 </DeleteButton>
               ) : (
-                <button onClick={handleChatSeller} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                  Chat Penjual
+                <button
+                  onClick={handleChatSeller}
+                  disabled={isChatLoading}
+                  className={`flex items-center gap-2 px-4 py-2 text-white rounded-lg transition
+    ${
+      isChatLoading
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-indigo-950 hover:bg-indigo-900"
+    }
+  `}
+                >
+                  {isChatLoading ? (
+                    <>
+                      <Loader className="w-4 h-4 animate-spin" />
+                      <span>Memproses...</span>
+                    </>
+                  ) : (
+                    "Chat Penjual"
+                  )}
                 </button>
               )}
             </div>
-            
           </div>
 
           {/* Post Content */}

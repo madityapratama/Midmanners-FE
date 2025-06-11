@@ -10,7 +10,6 @@ import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import { useCategory } from "@/context/CategoryContext";
 import {useSearch} from "@/context/SearchContext";
-import{Button} from "flowbite-react";
 
 type Post = {
   id: number;

@@ -71,18 +71,18 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center bg-white px-4">
       <Toaster position="top-center" reverseOrder={false} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 w-full max-w-4xl shadow-md">
-        <div className="hidden md:flex flex-col justify-center p-10 bg-white text-black">
-          <h1 className="text-5xl font-calsans mb-4 text-indigo-950 font-semibold">
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full md:max-w-4xl shadow-md">
+        <div className="md:flex flex-col justify-center p-10 bg-white text-black">
+          <h1 className=" md:block flex justify-center text-5xl font-calsans mb-4 text-indigo-950 font-semibold">
             MIDMANNERS
           </h1>
-          <p className="text-sm text-indigo-950 font-poppins">
+          <p className="md:block hidden text-sm text-indigo-950 font-poppins  ">
             Platform terpercaya untuk jual beli item game online. Transaksi aman, cepat, 
             dan dengan harga terbaik di pasar.
           </p>
         </div>
 
-        <div className="bg-zinc-400 p-10 rounded-lg">
+        <div className="bg-zinc-400 p-6 md:p-10 rounded-lg">
           <form onSubmit={handleLogin} className="flex flex-col gap-3">
             <label
               htmlFor="email"
