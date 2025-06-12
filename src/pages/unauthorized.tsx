@@ -21,7 +21,7 @@ export default function UnauthorizedPage() {
           Silakan hubungi administrator jika ini sebuah kesalahan.
         </p>
         
-        <Link href="/landingPage">
+        <Link href="/">
           <span className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl active:scale-95">
             Kembali ke Beranda
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">

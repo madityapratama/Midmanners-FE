@@ -17,16 +17,7 @@ const nextConfig: NextConfig = {
       pathname: '/storage/**',
     },
   ],
-},
-   async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/landingPage',
-        permanent: false,
-      },
-    ];
-  },
+}
 };
 
 export default nextConfig;

@@ -103,7 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(null);
     setUser(null);
     setRole("");
-    window.location.href = "/landingPage";
+    window.location.href = "/";
   };
 
   return (

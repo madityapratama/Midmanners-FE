@@ -567,7 +567,7 @@ export default function DetailPostinganViews() {
             close={() => setOpenLightbox(false)}
             index={currentImageIndex}
             slides={post.images.map((img) => ({
-              src: `http://localhost:8000/storage/${img}`,
+              src: `${process.env.NEXT_PUBLIC_IMG_URL}${img}`,
             }))}
             controller={{ closeOnBackdropClick: true }}
             noScroll={{ disabled: true }}

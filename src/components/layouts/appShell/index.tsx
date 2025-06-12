@@ -17,7 +17,6 @@ const disableNavbarPaths = [
   "/seller/edit",
   "/daftarSeller",
   "/seller/aktivitas",
-  "/landingPage",
   "/payment/*"
 ];
 
