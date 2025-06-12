@@ -90,8 +90,8 @@ export default function ChatDashboard() {
 
         <SendbirdApp
           appId={process.env.NEXT_PUBLIC_SENDBIRD_APP_ID}
-          userId={`user_${profile.id}`}
-          nickname={profile.name}
+          userId={`user_${profile?.id}`}
+          nickname={profile?.name}
           theme="light"
           config={{
             isMessageGroupingEnabled: true,

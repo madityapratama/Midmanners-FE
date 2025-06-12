@@ -1,6 +1,22 @@
 // components/CommentItem.tsx
 import { X, Send } from 'lucide-react';
 import {formatDate} from "@/lib/date";
+import ConfirmDialog from "@/components/ConfirmDialog";
+
+
+
+interface User {
+  id: number;
+  name: string;
+}
+
+interface Comment {
+  id: number;
+  user: User;
+  comment: string;
+  created_at: string;
+  replies?: Comment[];
+}
 
 interface CommentItemProps {
   comment: Comment;
@@ -116,13 +132,20 @@ export const CommentItem = ({
         
         {/* Delete Button (only show if user is author) */}
         {isAuthor && (
+          <ConfirmDialog
+          onConfirm={() => onDelete(comment.id)}
+                        title="Hapus Komentar"
+                        description="Yakin ingin menghapus komentar?"
+                        confirmText="Ya, hapus komentar"
+          >
+
           <button
-            onClick={() => onDelete(comment.id)}
             className="text-gray-400 hover:text-red-500"
             aria-label="Hapus komentar"
-          >
+            >
             <X size={14} />
           </button>
+            </ConfirmDialog>
         )}
       </div>
     </div>

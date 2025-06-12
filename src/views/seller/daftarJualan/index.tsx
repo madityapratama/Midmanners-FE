@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, Image as ImageIcon, Trash2 } from "lucide-react";
 import { useRouter } from "next/router";
 import api from "@/lib/axios";
-import toast, { Toaster } from "react-hot-toast";
+import  { Toaster } from "react-hot-toast";
 import DeleteButton from "@/components/DeleteButton";
 
 interface Post {

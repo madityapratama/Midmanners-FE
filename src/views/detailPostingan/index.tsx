@@ -10,6 +10,8 @@ import { CommentItem } from "@/components/CommentItem";
 import { formatDate } from "@/lib/date";
 import { handleBuy } from "@/lib/handleBuy";
 import DeleteButton from "@/components/DeleteButton";
+import toast, { Toaster } from "react-hot-toast";
+
 
 type PostDetail = {
   id: number;
@@ -84,6 +86,9 @@ export default function DetailPostinganViews() {
   };
 
   const fetchPostDetail = async () => {
+
+   
+
     try {
       const response = await api.get(
         `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/detail`
@@ -91,11 +96,12 @@ export default function DetailPostinganViews() {
       setLiked(response.data.data.liked_by_user);
       setPost(response.data.data);
       setLikeCount(response.data.data.like_count);
+
       setLoading(false);
     } catch (err) {
       setError("Gagal memuat detail postingan");
-      setLoading(false);
       console.error(err);
+      setLoading(false);
     }
   };
 
@@ -124,6 +130,16 @@ export default function DetailPostinganViews() {
 
   // Handle like
   const handleLike = async () => {
+
+     const prevLiked = liked;
+    const prevLikeCount = likeCount;
+
+    const newLiked = !liked;
+    const newLikeCount = newLiked ? likeCount + 1 : likeCount - 1 ;
+
+    setLiked(newLiked);
+    setLikeCount(newLikeCount);
+
     try {
       // const token = getAuthToken();
       const response = await api.post(
@@ -131,12 +147,14 @@ export default function DetailPostinganViews() {
         {}
       );
 
-      setLiked(response.data.liked);
-      setLikeCount(response.data.likes);
+      // setLiked(response.data.liked);
+      // setLikeCount(response.data.likes);
       fetchPostDetail();
       fetchComments();
     } catch (err) {
       console.error("Gagal menyukai postingan", err);
+      setLiked(prevLiked);
+    setLikeCount(prevLikeCount);
     }
   };
 
@@ -239,7 +257,6 @@ export default function DetailPostinganViews() {
 
   // Handle delete comment
   const handleDeleteComment = async (commentId: number) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus komentar ini?")) return;
 
     try {
       await api.delete(
@@ -266,8 +283,10 @@ export default function DetailPostinganViews() {
           }));
       };
       setComments((prev) => removeCommentRecursive(prev, commentId));
+      toast.success("Komentar  berhasil dihapus!");
     } catch (err) {
       console.error("Gagal menghapus komentar", err);
+      toast.error("Gagal menghapus komentar!");
     }
   };
 
@@ -327,6 +346,7 @@ export default function DetailPostinganViews() {
 
   return (
     <div className="pt-16 mt-6 px-4 md:px-8 lg:px-16 bg-gray-100 min-h-screen">
+      <Toaster position="top-center" reverseOrder={false} />
       {/* Main Content */}
       <div className="max-w-4xl mx-auto">
         {/* Back Button */}
@@ -506,15 +526,11 @@ export default function DetailPostinganViews() {
                 rows={3}
                 className="w-full border border-gray-300 text-black rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder={
-                  replyingTo.id
-                    ? `Balas ke ${replyingTo.name}...`
-                    : "Tulis komentar Anda..."
+                  "Tulis komentar Anda..."
                 }
-                value={replyingTo.id ? replyText : newComment}
+                value={newComment}
                 onChange={(e) =>
-                  replyingTo.id
-                    ? setReplyText(e.target.value)
-                    : setNewComment(e.target.value)
+                   setNewComment(e.target.value)
                 }
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
@@ -523,20 +539,7 @@ export default function DetailPostinganViews() {
                   }
                 }}
               />
-              {replyingTo.id && (
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-sm text-gray-500">
-                    Membalas{" "}
-                    <span className="font-medium">{replyingTo.name}</span>
-                  </span>
-                  <button
-                    onClick={() => setReplyingTo({ id: null, name: "" })}
-                    className="text-sm text-gray-500 hover:text-gray-700"
-                  >
-                    Batalkan
-                  </button>
-                </div>
-              )}
+              
               <div className="flex justify-end mt-2">
                 <button
                   onClick={handleAddComment}

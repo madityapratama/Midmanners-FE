@@ -2,7 +2,6 @@ import { ThumbsUp, Info, MessageCircle,Search } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import Sidebar from "@/components/Sidebar";
 import api from "@/lib/axios";
 import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
