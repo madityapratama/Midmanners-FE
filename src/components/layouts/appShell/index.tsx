@@ -4,6 +4,7 @@ import Head from "next/head";
 import { ReactNode, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 
+
 const disableNavbarPaths = [
   "/auth/login",
   "/auth/signUp",

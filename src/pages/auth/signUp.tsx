@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import api from "@/lib/axios";
 import toast, { Toaster } from "react-hot-toast";
+import { Eye, EyeOff } from 'lucide-react';
 
 interface FormData {
   name: string;
@@ -19,6 +20,8 @@ export default function SignUp() {
     password_confirmation: "",
   });
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+   const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Handler perubahan input
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,24 +145,42 @@ export default function SignUp() {
             onChange={handleChange}
             className="w-full p-3 rounded border font-poppins border-indigo-950 focus:outline-none focus:ring-2 focus:ring-black text-indigo-950 placeholder:text-zinc-350"
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password..."
-            required
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full p-3 rounded border font-poppins border-indigo-950 focus:outline-none focus:ring-2 focus:ring-black text-indigo-950 placeholder:text-zinc-350"
-          />
-          <input
-            type="password"
-            name="password_confirmation"
-            placeholder="Konfirmasi Password..."
-            required
-            value={formData.password_confirmation}
-            onChange={handleChange}
-            className="w-full p-3 rounded border font-poppins border-indigo-950 focus:outline-none focus:ring-2 focus:ring-black text-indigo-950 placeholder:text-zinc-350"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password..."
+              required
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full p-3 rounded border font-poppins border-indigo-950 focus:outline-none focus:ring-2 focus:ring-black text-indigo-950 placeholder:text-zinc-350 pr-10" // Added pr-10 for icon spacing
+            />
+            <span
+              className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-indigo-950"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={20}/> : <Eye size={20}/>}
+            </span>
+          </div>
+
+          {/* Confirm Password Input with Toggle */}
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="password_confirmation"
+              placeholder="Konfirmasi Password..."
+              required
+              value={formData.password_confirmation}
+              onChange={handleChange}
+              className="w-full p-3 rounded border font-poppins border-indigo-950 focus:outline-none focus:ring-2 focus:ring-black text-indigo-950 placeholder:text-zinc-350 pr-10" // Added pr-10 for icon spacing
+            />
+            <span
+              className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-indigo-950"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? <EyeOff size={20}/> : <Eye size={20} />}
+            </span>
+          </div>
 
           <button
             type="submit"

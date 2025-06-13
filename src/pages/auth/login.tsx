@@ -14,7 +14,7 @@ export default function Login() {
 
   useEffect(() => {
     if (!loadingData && user) {
-      router.push("/dashboard"); // arahkan ke dashboard jika sudah login
+      router.push("/dashboard");
     }
   }, [user, loadingData, router]);
 
@@ -50,17 +50,18 @@ export default function Login() {
       );
 
       const data = response.data;
-      login(data.access_token, data.data); // Pakai context login
+      login(data.access_token, data.data);
 
       toast.success(data.message || "Login berhasil!");
       setTimeout(() => {
         router.push("/dashboard");
-      }, 1500);
-    } catch (error) {
+      }, 2000);
+    } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
-          "Terjadi kesalahan saat login"
+          "Terjadi kesalahan saat login",
+        { duration: 5000 } // Set duration for error toast
       );
     } finally {
       setLoading(false);
@@ -68,20 +69,29 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white px-4">
+    <div className="flex min-h-screen items-center justify-center bg-white px-4 py-8 sm:py-0">
       <Toaster position="top-center" reverseOrder={false} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 w-full md:max-w-4xl shadow-md">
-        <div className="md:flex flex-col justify-center p-10 bg-white text-black">
-          <h1 className=" md:block flex justify-center text-5xl font-calsans mb-4 text-indigo-950 font-semibold">
+      <div className="grid grid-cols-1 md:grid-cols-2 w-full max-w-4xl shadow-md">
+        {/* Left Side - Branding (Hidden on mobile) */}
+        <div className="hidden md:flex flex-col justify-center p-10 bg-white text-black">
+          <h1 className="text-5xl font-calsans mb-4 text-indigo-950 font-semibold">
             MIDMANNERS
           </h1>
-          <p className="md:block hidden text-sm text-indigo-950 font-poppins  ">
+          <p className="text-sm text-indigo-950 font-poppins">
             Platform terpercaya untuk jual beli item game online. Transaksi aman, cepat, 
             dan dengan harga terbaik di pasar.
           </p>
         </div>
 
+        {/* Mobile Header (Only shown on mobile) */}
+        <div className="md:hidden p-6 bg-white">
+          <h1 className="text-3xl font-calsans text-center text-indigo-950 font-semibold">
+            MIDMANNERS
+          </h1>
+        </div>
+
+        {/* Right Side - Login Form */}
         <div className="bg-zinc-400 p-6 md:p-10 rounded-lg">
           <form onSubmit={handleLogin} className="flex flex-col gap-3">
             <label
