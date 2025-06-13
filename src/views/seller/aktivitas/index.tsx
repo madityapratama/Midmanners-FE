@@ -134,143 +134,145 @@ export default function AktivitasSellerViews() {
   };
 
   const renderContent = () => {
-    if (loading) {
-      return (
-        <div className="flex justify-center py-8">
-          <RotateCw className="animate-spin text-indigo-950" />
-        </div>
-      );
-    }
-
-    if (orders.length === 0) {
-      return (
-        <div className="bg-indigo-50 p-4 rounded-lg text-center text-indigo-950 font-poppins">
-          Tidak ada pesanan{" "}
-          {tabs.find((t) => t.key === activeTab)?.label.toLowerCase()}
-        </div>
-      );
-    }
-
+  if (loading) {
     return (
-      <div className="space-y-4">
-        {orders.map((order) => (
-          <div
-            key={order.id}
-            className="bg-indigo-950 font-poppins p-4 rounded-lg text-white"
-          >
-              <div className="cursor-pointer">
-            <Link href={`/seller/detail/${order.post.id}`}>
-                <div className="flex justify-between text-sm">
-                  <span>{formatDate(order.created_at)}</span>
-                  <span className="font-medium capitalize">
-                    {order.status === 'dibatalkan' ? (
-                      <span className="font-medium capitalize text-red-500">{order.status.toLowerCase()}</span>
-                    ) : (
-                      order.status.toLowerCase()
-                    )}
-                  </span>
-                </div>
-
-                <div className="flex items-center mt-3">
-                  <div className="flex-1">
-                    <div className="font-semibold">{order.post.title}</div>
-                    <div className="text-sm">Pembeli: {order.buyer.name}</div>
-                  </div>
-                </div>
-
-                <hr className="my-3 border-gray-400" />
-            </Link>
-
-                <div className="flex justify-between items-center">
-                  <div className="text-sm">
-                    <div>Total Penjualan</div>
-                    <div className="font-medium">
-                      {formatPrice(order.post.price)}
-                    </div>
-                  </div>
-
-                  {activeTab === "perluDiproses" && (
-                    <ConfirmDialog
-                    onConfirm={()=> handleProcessOrder(order.id)}
-                    title="Proses Pengiriman ke buyer"
-                    description="Pesanan sudah diproses?"
-                    confirmText="Ya, sudah diproses"
-                    >
-                    <button
-                      className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white text-xs rounded-full hover:bg-green-700 transition"
-                    >
-                      {processingOrder === order.id ? (
-                        <>
-                          <RotateCw size={14} className="animate-spin" />
-                          Memproses...
-                        </>
-                      ) : (
-                        <>
-                          <Truck size={14} />
-                          Proses Pesanan
-                        </>
-                      )}
-                    </button>
-                    </ConfirmDialog>
-                  )}
-
-                  {activeTab === "selesai" && (
-                    order.status_dana === "perlu dikirim" ? <div className="text-sm text-red-500">
-                      Belum di ditransfer
-                    </div> : <div className="text-sm text-green-500">Sudah di transfer</div>
-                  )}
-                </div>
-              </div>
-          </div>
-        ))}
+      <div className="flex justify-center py-8">
+        <RotateCw className="animate-spin text-indigo-950" />
       </div>
     );
-  };
+  }
 
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab); // untuk styling
-  router.push(`?tab=${tab}`, undefined, { shallow: true });
-  fetchOrders(tab); // ⬅️ langsung ambil data berdasarkan tab diklik
-  };
+  if (orders.length === 0) {
+    return (
+      <div className="bg-indigo-50 p-4 rounded-lg text-center text-indigo-950 font-poppins">
+        Tidak ada pesanan{" "}
+        {tabs.find((t) => t.key === activeTab)?.label.toLowerCase()}
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen font-calsans bg-[#f2f2f6] p-4">
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <div className="flex items-center border-b px-4 py-3">
-          <button
-            className="text-indigo-950"
-            onClick={() => router.push("/seller/profil")}
-            type="button"
-          >
-            <MoveLeft size={20} />
-          </button>
-          <h1 className="text-lg text-indigo-950 font-calsans ml-2">
-            Aktivitas Penjualan
-          </h1>
-        </div>
+    <div className="space-y-3 sm:space-y-4">
+      {orders.map((order) => (
+        <div
+          key={order.id}
+          className="bg-indigo-950 font-poppins p-3 sm:p-4 rounded-lg text-white"
+        >
+          <div className="cursor-pointer">
+            <Link href={`/seller/detail/${order.post.id}`}>
+              <div className="flex justify-between text-xs sm:text-sm">
+                <span>{formatDate(order.created_at)}</span>
+                <span className="font-medium capitalize">
+                  {order.status === 'dibatalkan' ? (
+                    <span className="font-medium capitalize text-red-500">{order.status.toLowerCase()}</span>
+                  ) : (
+                    order.status.toLowerCase()
+                  )}
+                </span>
+              </div>
 
-        <div className="flex border-b">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.key}
-                onClick={() => handleTabChange(tab.key)}
-                className={`flex-1 py-3 font-medium text-sm flex flex-col items-center ${
-                  activeTab === tab.key
-                    ? "text-indigo-950 border-b-2 border-indigo-950"
-                    : "text-gray-500"
-                }`}
-              >
-                <Icon size={18} className="mb-1" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
+              <div className="flex items-center mt-2 sm:mt-3">
+                <div className="flex-1">
+                  <div className="font-semibold text-sm sm:text-base">{order.post.title}</div>
+                  <div className="text-xs sm:text-sm">Pembeli: {order.buyer.name}</div>
+                </div>
+              </div>
 
-        <div className="p-4">{renderContent()}</div>
-      </div>
+              <hr className="my-2 sm:my-3 border-gray-400" />
+            </Link>
+
+            <div className="flex justify-between items-center">
+              <div className="text-xs sm:text-sm">
+                <div>Total Penjualan</div>
+                <div className="font-medium">
+                  {formatPrice(order.post.price)}
+                </div>
+              </div>
+
+              {activeTab === "perluDiproses" && (
+                <ConfirmDialog
+                  onConfirm={() => handleProcessOrder(order.id)}
+                  title="Proses Pengiriman ke buyer"
+                  description="Pesanan sudah diproses?"
+                  confirmText="Ya, sudah diproses"
+                >
+                  <button
+                    className="flex items-center gap-1 px-2 sm:px-3 py-1 bg-green-600 text-white text-xs rounded-full hover:bg-green-700 transition"
+                  > Sudah diproses
+                    {processingOrder === order.id ? (
+                      <>
+                        <RotateCw size={14} className="animate-spin" />
+                        <span className="hidden xs:inline">Memproses...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Truck size={14} />
+                        <span className="hidden xs:inline">Proses Pesanan</span>
+                      </>
+                    )}
+                  </button>
+                </ConfirmDialog>
+              )}
+
+              {activeTab === "selesai" && (
+                order.status_dana === "perlu dikirim" ? 
+                <div className="text-xs sm:text-sm text-red-500">
+                  Belum di ditransfer
+                </div> : 
+                <div className="text-xs sm:text-sm text-green-500">Sudah di transfer</div>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
-}
+};
+
+const handleTabChange = (tab: string) => {
+  setActiveTab(tab);
+  router.push(`?tab=${tab}`, undefined, { shallow: true });
+  fetchOrders(tab);
+};
+
+return (
+  <div className="min-h-screen font-calsans bg-[#f2f2f6] p-2 sm:p-4">
+    <div className="bg-white shadow-md rounded-lg overflow-hidden">
+      <div className="flex items-center border-b px-3 sm:px-4 py-2 sm:py-3">
+        <button
+          className="text-indigo-950"
+          onClick={() => router.push("/seller/profil")}
+          type="button"
+        >
+          <MoveLeft size={20} />
+        </button>
+        <h1 className="text-base sm:text-lg text-indigo-950 font-calsans ml-2">
+          Aktivitas Penjualan
+        </h1>
+      </div>
+
+      <div className="flex border-b overflow-x-auto no-scrollbar">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => handleTabChange(tab.key)}
+              className={`flex-1 min-w-[100px] py-2 sm:py-3 font-medium text-xs sm:text-sm flex flex-col items-center ${
+                activeTab === tab.key
+                  ? "text-indigo-950 border-b-2 border-indigo-950"
+                  : "text-gray-500"
+              }`}
+            >
+              <Icon size={18} className="mb-1" />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="p-2 sm:p-4">{renderContent()}</div>
+    </div>
+  </div>
+);
+};
