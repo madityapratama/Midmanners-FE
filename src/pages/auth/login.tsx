@@ -37,36 +37,40 @@ export default function Login() {
     router.push("/auth/resetPassword");
   };
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      const response = await api.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/login`,
-        {
-          email,
-          password,
-        }
-      );
+ const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setLoading(true);
 
-      const data = response.data;
-      login(data.access_token, data.data);
+  try {
+    const response = await api.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/login`,
+      { email, password }
+    );
 
-      toast.success(data.message || "Login berhasil!");
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 2000);
-    } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message ||
-          error?.message ||
-          "Terjadi kesalahan saat login",
-        { duration: 5000 } // Set duration for error toast
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+    const data = response.data;
+    login(data.access_token, data.data);
+
+    toast.success(data.message || "Login berhasil!");
+    setTimeout(() => {
+      router.push("/dashboard");
+    }, 1000);
+  } catch (error: any) {
+    const msg =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Terjadi kesalahan saat login";
+
+    toast.error(msg, { duration: 5000 });
+
+    // Delay sebelum reload
+    setTimeout(() => {
+      router.reload();
+    }, 7000); // 6 detik
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-white px-4 py-8 sm:py-0">

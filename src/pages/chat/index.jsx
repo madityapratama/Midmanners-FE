@@ -132,18 +132,17 @@ export default function ChatDashboard() {
         {isMobile && (
           <>
             <button
-              className={`fixed z-50 bottom-25 right-6 p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 transition-all ${
-                showChannelList ? 'rotate-90' : ''
-              }`}
+              className={`fixed z-50 bottom-25 right-6 p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 transition-all ${showChannelList ? 'rotate-90' : ''
+                }`}
               onClick={() => setShowChannelList(!showChannelList)}
               aria-label={showChannelList ? "Hide channel list" : "Show channel list"}
             >
               {showChannelList ? <X size={24} /> : <MessageSquare size={24} />}
             </button>
-            
+
             {/* Backdrop when channel list is open */}
             {showChannelList && (
-              <div 
+              <div
                 className="fixed inset-0 z-40 bg-opacity-50 md:hidden"
                 onClick={() => setShowChannelList(false)}
               />
