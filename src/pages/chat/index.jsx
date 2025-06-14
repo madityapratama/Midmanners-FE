@@ -43,6 +43,8 @@ export default function ChatDashboard() {
     );
   }
 
+  const NAVBAR_HEIGHT = '4rem'; // Pastikan ini sesuai dengan tinggi navbar Anda (64px)
+
   return (
     <>
       <Head>
@@ -50,42 +52,82 @@ export default function ChatDashboard() {
         <meta name="description" content="Connect with your community" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <style>{`
+          /* Ensure the root HTML and body are full height */
+          html, body, #__next {
+            height: 100%;
+            overflow: hidden; /* Prevent body scroll if Sendbird manages its own scroll */
+          }
+
+          /* General styling for the Sendbird App container */
+          .sendbird-app__wrap {
+            height: calc(100vh - ${NAVBAR_HEIGHT}) !important; /* Take full viewport height minus navbar */
+            margin-top: ${NAVBAR_HEIGHT} !important; /* Push it down by navbar height */
+            box-sizing: border-box; /* Include padding/border in height calculation */
+          }
+
+          /* --- START: Solusi untuk Expanded Image/File Viewer --- */
+          /* Sendbird's main modal/lightbox for file viewing */
+          .sendbird-image-file-viewer__modal,
+          .sendbird-fileviewer { /* sendbird-fileviewer might also be used for other files */
+            position: fixed !important; /* Pastikan posisi fixed */
+            top: ${NAVBAR_HEIGHT} !important; /* Dorong ke bawah setinggi navbar */
+            left: 0 !important;
+            width: 100% !important;
+            height: calc(100vh - ${NAVBAR_HEIGHT}) !important; /* Sesuaikan tinggi yang tersisa */
+            z-index: 1001 !important; /* Pastikan ini di atas z-index navbar Anda dan sendbird-app__channellist-wrap */
+            display: flex !important;
+            flex-direction: column !important; /* Untuk konten di dalamnya agar bisa diatur */
+            background-color: rgba(255, 255, 255, ) !important; /* Background overlay */
+          }
+
+          /* Jika ada tombol close atau header di dalam modal yang juga tertutup */
+          .sendbird-image-file-viewer__header {
+              padding-top: 1rem !important; /* Beri sedikit padding di atas */
+          }
+          .sendbird-fileviewer__close {
+              top: calc(1rem + ${NAVBAR_HEIGHT}) !important; /* Sesuaikan posisi tombol close */
+          }
+          /* END: Solusi untuk Expanded Image/File Viewer --- */
+          
+
           /* Mobile Optimization */
           @media (max-width: 767px) {
             .sendbird-app__wrap {
               flex-direction: column !important;
-              height: calc(100vh - 4rem) !important;
+              /* On mobile, if a fixed navbar is present, adjust height and margin-top accordingly */
+              height: calc(100vh - ${NAVBAR_HEIGHT}) !important;
+              margin-top: ${NAVBAR_HEIGHT} !important;
             }
 
             .sendbird-channel-settings {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      z-index: 50 !important;
-      background-color: white !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-    }
+              position: fixed !important;
+              top: 0 !important;
+              left: 0 !important;
+              width: 100vw !important;
+              height: 100vh !important;
+              z-index: 50 !important;
+              background-color: white !important;
+              border-radius: 0 !important;
+              box-shadow: none !important;
+            }
 
-    .sendbird-channel-settings__panel {
-      padding: 1rem !important;
-      overflow-y: auto !important;
-      height: 100% !important;
-    }
+            .sendbird-channel-settings__panel {
+              padding: 1rem !important;
+              overflow-y: auto !important;
+              height: 100% !important;
+            }
 
-    .sendbird-channel-settings__close-icon {
-      top: 1rem !important;
-      right: 1rem !important;
-    }
+            .sendbird-channel-settings__close-icon {
+              top: 1rem !important;
+              right: 1rem !important;
+            }
             
             .sendbird-app__channellist-wrap {
               position: fixed !important;
-              top: 4rem !important;
+              top: ${NAVBAR_HEIGHT} !important; /* Position below navbar */
               left: 0 !important;
               width: 100% !important;
-              height: calc(100% - 4rem) !important;
+              height: calc(100% - ${NAVBAR_HEIGHT}) !important; /* Take remaining height */
               transform: ${showChannelList ? 'translateX(0)' : 'translateX(-100%)'} !important;
               transition: transform 0.3s ease !important;
               z-index: 100 !important;
@@ -107,6 +149,14 @@ export default function ChatDashboard() {
               padding: 8px !important;
               margin-right: 8px !important;
             }
+            
+            .sendbird-thumbnail-message-item-body{
+            min-width: 260px
+            }
+
+            .sendbird-message-input .sendbird-message-input--attach {
+           right: 50px !important;
+          }
           }
 
           /* Tablet Optimization */
@@ -124,20 +174,22 @@ export default function ChatDashboard() {
           .sendbird-message-input {
             padding-bottom: env(safe-area-inset-bottom) !important;
           }
+          
+            
         `}</style>
       </Head>
 
-      <div className="h-screen pt-16 bg-gray-50">
+      <div className="h-screen bg-gray-50">
         {/* Mobile Toggle Buttons */}
         {isMobile && (
           <>
             <button
-              className={`fixed z-50 bottom-25 right-6 p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 transition-all ${showChannelList ? 'rotate-90' : ''
+              className={`fixed z-50 bottom-9 right-7 p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 transition-all ${showChannelList ? 'rotate-90' : ''
                 }`}
               onClick={() => setShowChannelList(!showChannelList)}
               aria-label={showChannelList ? "Hide channel list" : "Show channel list"}
             >
-              {showChannelList ? <X size={24} /> : <MessageSquare size={24} />}
+              {showChannelList ? <X size={20} /> : <MessageSquare size={20} />}
             </button>
 
             {/* Backdrop when channel list is open */}
@@ -163,34 +215,32 @@ export default function ChatDashboard() {
             },
             enableEmojiReactions: true,
             enableMention: true,
-            enableOGTag: true,
+            enableOGTag: false, // Nonaktifkan OG Tag
             enableTypingIndicator: true,
+            enableMultipleFilesMessage: false,
+            enableDocumentMessage: false,
+            enablePhotoMessage: false,
+            enableVideoMessage: false,
+            enableVoiceMessage: false // Tambahkan ini
           }}
           uikitOptions={{
             groupChannel: {
-              enableOgtag: true,
+              enableFileUpload: false,
+              showFileViewer: false,
+              enableOgtag: false,
               enableReactions: true,
               enableMention: true,
+              //untuk menampilkan tombol kirim file hapus/coment code input dibawah
+              input: {
+                enableDocument: false,
+                enableImage: false,
+                enableVoice: false
+              } 
             },
             groupChannelList: {
               enableTypingIndicator: true,
-              enableMessageReceiptStatus: true,
-              renderChannelPreview: ({ channel, onLeaveChannel }) => (
-                <div className="sendbird-channel-preview">
-                  <div className="sendbird-channel-preview__content">
-                    <div className="sendbird-channel-preview__title">
-                      {channel.name || 'Group Chat'}
-                    </div>
-                    <div className="sendbird-channel-preview__last-message">
-                      {channel.lastMessage?.message || 'No messages yet'}
-                    </div>
-                  </div>
-                </div>
-              ),
-            },
-            groupChannelSettings: {
-              enableMention: true,
-            },
+              enableMessageReceiptStatus: true
+            }
           }}
           mobileView={isMobile}
         />

@@ -24,8 +24,12 @@ export default function Login() {
     const msg = localStorage.getItem("loginError");
     if (msg) {
       setErrorMsg(msg);
-      localStorage.removeItem("loginError");
     }
+    setTimeout(()=>{
+      localStorage.removeItem("loginError");
+      setErrorMsg('');
+    },2000)
+    
   }, []);
 
   const handleSignUp = () => {
@@ -62,10 +66,6 @@ export default function Login() {
       // toast.error(msg, { duration: 5000 });
       localStorage.setItem("loginError", msg);
 
-      // Delay sebelum reload
-      setTimeout(() => {
-        router.reload();
-      }, 6000); // 6 detik
     } finally {
       setLoading(false);
     }
