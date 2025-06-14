@@ -62,8 +62,9 @@ export default function Login() {
         error?.response?.data?.message ||
         error?.message ||
         "Terjadi kesalahan saat login";
-
-      // toast.error(msg, { duration: 5000 });
+        if(error.response?.status !== 401){
+          toast.error(msg, { duration: 5000 });
+        }
       localStorage.setItem("loginError", msg);
 
     } finally {

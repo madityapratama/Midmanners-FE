@@ -79,7 +79,7 @@ export default function SemuaTransaksiViews() {
   };
 
   const handleBack = () => {
-    router.back();
+    router.push('/dashboard');
   };
 
   const handleToDetailOrder = (id)=>{
@@ -98,7 +98,7 @@ export default function SemuaTransaksiViews() {
   }
 
   return (
-    <div className="min-h-screen mt-10 bg-gray-50 p-4 md:p-8 font-poppins">
+    <div className="min-h-screen mt-16 bg-gray-50 p-4 md:p-8 font-poppins">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
