@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { Menu, X, MessageSquare } from 'lucide-react';
 import '@sendbird/uikit-react/dist/index.css';
+import { useRouter } from "next/router";
 
 const SendbirdApp = dynamic(() => import('@sendbird/uikit-react/App'), {
   ssr: false,
@@ -15,10 +16,12 @@ const SendbirdApp = dynamic(() => import('@sendbird/uikit-react/App'), {
 });
 
 export default function ChatDashboard() {
+  const router = useRouter();
   const { profile } = useAuth();
   const [isMobile, setIsMobile] = useState(false);
   const [showChannelList, setShowChannelList] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
+  const { channelUrl } = router.query;
 
   useEffect(() => {
     setHasMounted(true);
@@ -87,6 +90,10 @@ export default function ChatDashboard() {
           .sendbird-fileviewer__close {
               top: calc(1rem + ${NAVBAR_HEIGHT}) !important; /* Sesuaikan posisi tombol close */
           }
+              .sendbird-theme--light .sendbird-link-label .sendbird-label--color-oncontent-1 {
+              color: #56DFCF !important;
+              }
+
           /* END: Solusi untuk Expanded Image/File Viewer --- */
           
 
@@ -151,12 +158,18 @@ export default function ChatDashboard() {
             }
             
             .sendbird-thumbnail-message-item-body{
-            min-width: 260px
+            min-width: 260px;
             }
 
-            .sendbird-message-input .sendbird-message-input--attach {
-           right: 50px !important;
+          .sendbird-message-input .sendbird-message-input--attach {
+           right: 60px !important;
           }
+
+          .sendbird-text-message-item-body,.sendbird-label--body-1 {
+          font-size:12px !important;
+          }
+
+
           }
 
           /* Tablet Optimization */
@@ -175,7 +188,6 @@ export default function ChatDashboard() {
             padding-bottom: env(safe-area-inset-bottom) !important;
           }
           
-            
         `}</style>
       </Head>
 
@@ -184,7 +196,7 @@ export default function ChatDashboard() {
         {isMobile && (
           <>
             <button
-              className={`fixed z-50 bottom-9 right-7 p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 transition-all ${showChannelList ? 'rotate-90' : ''
+              className={`fixed z-50 bottom-9 right-9 p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 transition-all ${showChannelList ? 'rotate-90' : ''
                 }`}
               onClick={() => setShowChannelList(!showChannelList)}
               aria-label={showChannelList ? "Hide channel list" : "Show channel list"}
@@ -206,13 +218,14 @@ export default function ChatDashboard() {
           appId={process.env.NEXT_PUBLIC_SENDBIRD_APP_ID}
           userId={`user_${profile?.id}`}
           nickname={profile?.name}
-          profileUrl={profile?.avatar || ''}
+          profileUrl={`${process.env.NEXT_PUBLIC_IMG_URL}${profile?.profile_image || ''}`}
           theme="light"
           config={{
             isMessageGroupingEnabled: true,
             onChannelSelect: () => {
               if (isMobile) setShowChannelList(false);
             },
+            channelUrl: typeof channelUrl === "string" ? channelUrl : undefined,
             enableEmojiReactions: true,
             enableMention: true,
             enableOGTag: false, // Nonaktifkan OG Tag
@@ -222,6 +235,7 @@ export default function ChatDashboard() {
             enablePhotoMessage: false,
             enableVideoMessage: false,
             enableVoiceMessage: false // Tambahkan ini
+
           }}
           uikitOptions={{
             groupChannel: {
@@ -243,6 +257,7 @@ export default function ChatDashboard() {
             }
           }}
           mobileView={isMobile}
+          showChannelList={!(channelUrl && isMobile)}
         />
       </div>
     </>

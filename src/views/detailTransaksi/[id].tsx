@@ -154,7 +154,7 @@ export default function DetailTransaksiViews() {
   const statusInfo = getStatusInfo(transaction.status);
 
   return (
-    <div className="min-h-screen pt-17 bg-gray-50 px-4 md:px-8 py-8">
+    <div className="min-h-screen pt-17 mt-5 bg-gray-50 px-4 md:px-8 py-8">
       <Toaster position="top-center" reverseOrder={false} />
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">

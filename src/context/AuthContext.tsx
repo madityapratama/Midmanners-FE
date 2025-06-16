@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import api from "@/lib/axios";
+import { useRouter } from "next/router";
 
 interface User {
   id: number;
@@ -23,6 +24,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<string>("");
@@ -40,15 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(JSON.parse(savedUser));
       setRole(savedRole || "");
 
-      // Fetch profile langsung di sini
-      api.get(`${process.env.NEXT_PUBLIC_API_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${savedToken}`,
-        },
-      })
-        .then((res) => setProfile(res.data))
-        .catch((err) => console.error("Gagal mengambil data profil:", err))
-        .finally(() => setLoadingData(false));
+      fetchProfile().finally(() => setLoadingData(false));
     } else {
       setLoadingData(false);
     }
@@ -74,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(response.data);
       setRole(response.data.role);
 
-      localStorage.setItem("user", JSON.stringify(response.data));
+    localStorage.setItem("user", JSON.stringify(response.data));
     localStorage.setItem("role", response.data.role);
     } catch (error) {
       console.error("Gagal mengambil data profil:", error);
@@ -93,6 +87,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(newToken);
     setUser(newUser);
     setRole(newUser.role);
+
+    fetchProfile();
   };
 
   const logout = () => {
@@ -103,7 +99,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(null);
     setUser(null);
     setRole("");
-    window.location.href = "/";
+    router.push('/');
   };
 
   return (

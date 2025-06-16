@@ -39,7 +39,7 @@ export default function SellerProfileViews() {
     try {
       await logout();
       setTimeout(() => {
-        router.push("/auth/login");
+        router.push("/");
       }, 1000);
     } finally {
       setIsLoading(false);

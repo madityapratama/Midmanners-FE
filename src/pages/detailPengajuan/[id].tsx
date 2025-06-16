@@ -30,6 +30,7 @@ const DetailPengajuan = () => {
   const [isZoomed, setIsZoomed] = useState(false);
 
   useEffect(() => {
+     if (!id) return;
     // Ganti dengan API call sebenarnya
     const fetchData = async () => {
       try {
@@ -119,7 +120,7 @@ const DetailPengajuan = () => {
               <h2 className="text-xl font-semibold text-white">
                 Detail Pengajuan Seller
               </h2>
-              {data.status && (
+              {data?.status && (
                 <span
                   className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium ${
                     data.status === "pending"
@@ -144,7 +145,7 @@ const DetailPengajuan = () => {
                       Nama User
                     </label>
                     <div className="p-3 bg-gray-50 rounded-lg border text-black border-gray-200">
-                      {data.user.name}
+                      {data?.user?.name}
                     </div>
                   </div>
 
@@ -153,7 +154,7 @@ const DetailPengajuan = () => {
                       Metode Pembayaran
                     </label>
                     <div className="p-3 bg-gray-50 rounded-lg border text-black border-gray-200">
-                      {data.user.jenis_pembayaran}
+                      {data?.user?.jenis_pembayaran}
                     </div>
                   </div>
 
@@ -162,7 +163,7 @@ const DetailPengajuan = () => {
                       Nama Bank / E-Wallet
                     </label>
                     <div className="p-3 bg-gray-50 rounded-lg border text-black border-gray-200">
-                      {data.user.akun_bank}
+                      {data?.user?.akun_bank}
                     </div>
                   </div>
                 </div>
@@ -174,7 +175,7 @@ const DetailPengajuan = () => {
                       No Rekening / E-Wallet
                     </label>
                     <div className="p-3 bg-gray-50 rounded-lg border text-black border-gray-200">
-                      {data.user.no_rek}
+                      {data?.user?.no_rek}
                     </div>
                   </div>
 
@@ -183,7 +184,7 @@ const DetailPengajuan = () => {
                       NIK
                     </label>
                     <div className="p-3 bg-gray-50 rounded-lg border text-black border-gray-200">
-                      {data.nik}
+                      {data?.nik}
                     </div>
                   </div>
 
@@ -198,7 +199,7 @@ const DetailPengajuan = () => {
                           className="cursor-pointer hover:shadow-md transition-shadow"
                         >
                           <Image
-                            src={`${process.env.NEXT_PUBLIC_IMG_URL}${data.ktp}`}
+                            src={`${process.env.NEXT_PUBLIC_IMG_URL}${data?.ktp}`}
                             alt="Foto KTP"
                             width={300}
                             height={200}
@@ -227,7 +228,7 @@ const DetailPengajuan = () => {
                             </button>
                             <div className="h-full w-full flex justify-center">
                               <Image
-                                src={`${process.env.NEXT_PUBLIC_IMG_URL}${data.ktp}`}
+                                src={`${process.env.NEXT_PUBLIC_IMG_URL}${data?.ktp}`}
                                 alt="Foto KTP (Zoom)"
                                 width={800}
                                 height={600}
@@ -244,7 +245,7 @@ const DetailPengajuan = () => {
 
   {/* Form Alasan Penolakan */}
   
-  {data.status_account !== "accepted" && (
+  {data?.status_account !== "accepted" && (
     <>
       <div className="mt-6">
         <label className="block text-sm font-medium text-gray-700 mb-1">

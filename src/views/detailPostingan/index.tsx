@@ -12,7 +12,6 @@ import { handleBuy } from "@/lib/handleBuy";
 import DeleteButton from "@/components/DeleteButton";
 import toast, { Toaster } from "react-hot-toast";
 
-
 type PostDetail = {
   id: number;
   title: string;
@@ -49,6 +48,7 @@ export default function DetailPostinganViews() {
   const router = useRouter();
   const { id } = router.query;
   const { profile } = useAuth();
+  console.log(profile);
 
   // STATE: Post detail
   const [post, setPost] = useState<PostDetail | null>(null);
@@ -75,6 +75,8 @@ export default function DetailPostinganViews() {
   const [isChatLoading, setIsChatLoading] = useState(false);
 
   const currentUser = profile;
+  console.log(currentUser);
+  console.log("wia");
 
   // Format price to IDR
   const formatPrice = (price: number) => {
@@ -84,11 +86,9 @@ export default function DetailPostinganViews() {
       minimumFractionDigits: 0,
     }).format(price);
   };
+  console.log(post);
 
   const fetchPostDetail = async () => {
-
-   
-
     try {
       const response = await api.get(
         `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}/detail`
@@ -130,12 +130,11 @@ export default function DetailPostinganViews() {
 
   // Handle like
   const handleLike = async () => {
-
-     const prevLiked = liked;
+    const prevLiked = liked;
     const prevLikeCount = likeCount;
 
     const newLiked = !liked;
-    const newLikeCount = newLiked ? likeCount + 1 : likeCount - 1 ;
+    const newLikeCount = newLiked ? likeCount + 1 : likeCount - 1;
 
     setLiked(newLiked);
     setLikeCount(newLikeCount);
@@ -154,7 +153,7 @@ export default function DetailPostinganViews() {
     } catch (err) {
       console.error("Gagal menyukai postingan", err);
       setLiked(prevLiked);
-    setLikeCount(prevLikeCount);
+      setLikeCount(prevLikeCount);
     }
   };
 
@@ -257,7 +256,6 @@ export default function DetailPostinganViews() {
 
   // Handle delete comment
   const handleDeleteComment = async (commentId: number) => {
-
     try {
       await api.delete(
         `${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}`,
@@ -299,13 +297,12 @@ export default function DetailPostinganViews() {
         {
           target_user_id: post?.seller?.id, // sesuaikan
           post_id: post?.id, // opsional, kalau mau buat pesan template
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
         }
       );
+
+      // console.log("Response dari chat:", response.data);
+      // console.log("CHannel url:", response.data.channel_url); 
+      
 
       const channelUrl = response.data.channel_url;
 
@@ -359,136 +356,140 @@ export default function DetailPostinganViews() {
         </button>
 
         {/* Post Card */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-          {/* Seller Info */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xl">
-                  {post.seller.name.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    {post.seller.name}
-                  </h2>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {post.categories.map((category, i) => (
-                      <span
-                        key={i}
-                        className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full"
-                      >
-                        {category}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              {currentUser &&
-              (currentUser?.id == post.seller.id ||
-                currentUser.role === "admin") ? (
-                <DeleteButton
-                  postId={post.id}
-                  onDeleteSuccess={handleDeleteSuccess}
-                >
-                  <button className="p-1 rounded-full hover:bg-gray-100 text-gray-500 hover:text-red-500">
-                    <Trash2 className="h-4 w-4" size={20} />
-                  </button>
-                </DeleteButton>
-              ) : (
-                <button
-                  onClick={handleChatSeller}
-                  disabled={isChatLoading}
-                  className={`flex items-center gap-2 px-4 py-2 text-white rounded-lg transition
+        {/* Post Card */}
+<div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+  {/* Seller Info - Tidak diubah */}
+  <div className="p-6 border-b border-gray-200">
+    <div className="flex justify-between items-center">
+      <div className="flex items-center space-x-4">
+        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xl">
+          {post.seller.name.charAt(0).toUpperCase()}
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">
+            {post.seller.name}
+          </h2>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {post.categories.map((category, i) => (
+              <span
+                key={i}
+                className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded-full"
+              >
+                {category}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+      {currentUser &&
+      (currentUser?.id == post.seller.id ||
+        currentUser.role === "admin") ? (
+        <DeleteButton
+          postId={post.id}
+          onDeleteSuccess={handleDeleteSuccess}
+        >
+          <button className="p-1 rounded-full hover:bg-gray-100 text-gray-500 hover:text-red-500">
+            <Trash2 className="h-4 w-4" size={20} />
+          </button>
+        </DeleteButton>
+      ) : (
+        <button
+          onClick={handleChatSeller}
+          disabled={isChatLoading}
+          className={`flex items-center gap-2 px-4 py-2 text-white rounded-lg transition
     ${
       isChatLoading
         ? "bg-gray-400 cursor-not-allowed"
         : "bg-indigo-950 hover:bg-indigo-900"
     }
   `}
-                >
-                  {isChatLoading ? (
-                    <>
-                      <Loader className="w-4 h-4 animate-spin" />
-                      <span>Memproses...</span>
-                    </>
-                  ) : (
-                    "Chat Penjual"
-                  )}
-                </button>
-              )}
-            </div>
-          </div>
+        >
+          {isChatLoading ? (
+            <>
+              <Loader className="w-4 h-4 animate-spin" />
+              <span>Memproses...</span>
+            </>
+          ) : (
+            "Chat Penjual"
+          )}
+        </button>
+      )}
+    </div>
+  </div>
 
-          {/* Post Content */}
-          <div className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              {post.title}
-            </h1>
-            <p className="text-gray-700 mb-4">{post.caption}</p>
+  {/* Post Content */}
+  <div className="p-6">
+    {/* Judul & Deskripsi - Responsive Text */}
+    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+      {post.title}
+    </h1>
+    <p className="text-sm sm:text-base text-gray-700 mb-4">{post.caption}</p>
 
-            <div className="mb-4">
-              <span className="text-xl font-bold text-blue-600">
-                {formatPrice(post.price)}
-              </span>
-            </div>
+    {/* Harga - Responsive Text */}
+    <div className="mb-4">
+      <span className="text-lg sm:text-xl font-bold text-blue-600">
+        {formatPrice(post.price)}
+      </span>
+    </div>
 
-            {/* Images */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-              {post.images.map((imgUrl, index) => (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setCurrentImageIndex(index);
-                    setOpenLightbox(true);
-                  }}
-                  className="relative h-64 w-full rounded-lg overflow-hidden cursor-zoom-in"
-                >
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_IMG_URL}${imgUrl}`}
-                    alt={`Post Image ${index + 1}`}
-                    priority
-                    fill
-                    className="object-cover hover:scale-105 transition-transform"
-                  />
-                </div>
-              ))}
-            </div>
-
-            {/* Post Stats */}
-            <div className="flex items-center justify-between text-sm text-gray-500 border-t border-b border-gray-200 py-3 mb-4">
-              <span>Diposting pada {formatDate(post.created_at)}</span>
-              <div className="flex space-x-4">
-                <span>{likeCount} Suka</span>
-                <span>{post.comment_count} Komentar</span>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex space-x-4">
-              <button
-                onClick={handleLike}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${
-                  liked
-                    ? "bg-blue-100 text-blue-600"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                <ThumbsUp className="w-5 h-5" />
-                <span>{liked ? "Disukai" : "Suka"}</span>
-              </button>
-              {currentUser?.id == post.seller.id ? (
-                ""
-              ) : (
-                <button
-                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                  onClick={onBuyClick}
-                >
-                  Beli Sekarang
-                </button>
-              )}
-            </div>
-          </div>
+    {/* Gambar - Responsive Grid & Ukuran */}
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-4 mb-6">
+      {post.images.map((imgUrl, index) => (
+        <div
+          key={index}
+          onClick={() => {
+            setCurrentImageIndex(index);
+            setOpenLightbox(true);
+          }}
+          className="relative h-48 sm:h-64 w-full rounded-lg overflow-hidden cursor-zoom-in"
+        >
+          <Image
+            src={`${process.env.NEXT_PUBLIC_IMG_URL}${imgUrl}`}
+            alt={`Post Image ${index + 1}`}
+            priority
+            fill
+            className="object-cover hover:scale-105 transition-transform"
+          />
         </div>
+      ))}
+    </div>
+
+    {/* Post Stats - Tidak diubah */}
+    <div className="flex items-center justify-between text-sm text-gray-500 border-t border-b border-gray-200 py-3 mb-4">
+      <span className="text-xs md:text-sm">Diposting pada {formatDate(post.created_at)}</span>
+      <div className="flex space-x-4">
+        <span className="text-xs md:text-sm">{likeCount} Suka</span>
+        <span className="text-xs md:text-sm">{post.comment_count} Komentar</span>
+      </div>
+    </div>
+
+    {/* Action Buttons - Tidak diubah */}
+    <div className="flex space-x-3">
+      <button
+        onClick={handleLike}
+        className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${
+          liked
+            ? "bg-blue-100 text-blue-600"
+            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        }`}
+      >
+        <ThumbsUp className="w-5 h-5" />
+        <span>{liked ? "Disukai" : "Suka"}</span>
+      </button>
+      {currentUser?.id == post.seller.id ||
+      currentUser?.role === "seller" ? (
+        ""
+      ) : (
+        <button
+          className=" px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          onClick={onBuyClick}
+        >
+          Beli Sekarang
+        </button>
+      )}
+    </div>
+  </div>
+</div>
 
         {/* Comments List */}
         <div className="divide-y divide-gray-200">
@@ -525,13 +526,9 @@ export default function DetailPostinganViews() {
               <textarea
                 rows={3}
                 className="w-full border border-gray-300 text-black rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder={
-                  "Tulis komentar Anda..."
-                }
+                placeholder={"Tulis komentar Anda..."}
                 value={newComment}
-                onChange={(e) =>
-                   setNewComment(e.target.value)
-                }
+                onChange={(e) => setNewComment(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -539,7 +536,7 @@ export default function DetailPostinganViews() {
                   }
                 }}
               />
-              
+
               <div className="flex justify-end mt-2">
                 <button
                   onClick={handleAddComment}

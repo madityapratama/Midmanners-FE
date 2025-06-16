@@ -43,7 +43,7 @@ export default function ProfilBuyerViews() {
     setIsLoggingOut(true);
     try {
       await logout();
-      router.push("/auth/login");
+      router.push("/");
     } finally {
       setIsLoggingOut(false);
     }

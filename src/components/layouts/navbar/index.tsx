@@ -2,13 +2,14 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { Bell, CircleUserRound, Home, Users, Search } from "lucide-react";
+import { Bell, CircleUserRound, Home, Users, Search ,Loader2} from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 
 const Navbar = () => {
   const { user } = useAuth();
   const [activePage] = useState("");
+  const [chatLoading,setChatLoading] = useState(false);
 const router = useRouter();
 
 
@@ -26,7 +27,15 @@ const router = useRouter();
   };
 
   const handleHomeClick = () => router.push("/dashboard");
-  const handleChatPage = () => router.push("/chat");
+  const handleChatPage = async () => {
+    setChatLoading(true);
+    try {
+   await  router.push("/chat");
+      
+    } finally{
+      setChatLoading(false);
+    }
+  }
 
   
 
@@ -61,14 +70,18 @@ const router = useRouter();
               </button>
               <button
                 onClick={handleChatPage}
-                className="p-2 rounded-full hover:bg-indigo-800 transition-colors"
+                className="p-2 rounded-full hover:bg-indigo-800 transition-colors relative"
                 aria-label="Chat"
+                disabled={chatLoading}
               >
-                <Users
+                {chatLoading ? (
+                  <Loader2 className="animate-spin w-5 h-5 text-white" />
+                ) : (
+                  <Users
                   className={`${iconClass} ${
-                    activePage === "chat" ? activeIconClass : ""
-                  }`}
-                />
+                    activePage === "chat" ? activeIconClass : ""}`}/>)
+                    }
+                
               </button>
             </nav>
 
