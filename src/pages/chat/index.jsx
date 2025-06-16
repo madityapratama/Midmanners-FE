@@ -90,10 +90,25 @@ export default function ChatDashboard() {
           .sendbird-fileviewer__close {
               top: calc(1rem + ${NAVBAR_HEIGHT}) !important; /* Sesuaikan posisi tombol close */
           }
-              .sendbird-theme--light .sendbird-link-label .sendbird-label--color-oncontent-1 {
-              color: #56DFCF !important;
-              }
 
+          .sendbird-theme--light .sendbird-text-message-item-body.outgoing{
+          background-color: #c4b5fd !important;
+          }
+
+          div.sendbird-text-message-item-body{
+          color:black !important;
+          }
+
+          /*pengirim*/
+          .sendbird-theme--light .sendbird-link-label .sendbird-label--color-oncontent-1 {
+            color: #0000FF !important;
+          }
+          
+          /*penerima*/
+          .sendbird-theme--light .sendbird-link-label .sendbird-label--color-onbackground-1{
+          color: #0000FF !important;
+          }
+          
           /* END: Solusi untuk Expanded Image/File Viewer --- */
           
 
@@ -158,7 +173,7 @@ export default function ChatDashboard() {
             }
             
             .sendbird-thumbnail-message-item-body{
-            min-width: 260px;
+            min-width: 160px;
             }
 
           .sendbird-message-input .sendbird-message-input--attach {
@@ -168,8 +183,7 @@ export default function ChatDashboard() {
           .sendbird-text-message-item-body,.sendbird-label--body-1 {
           font-size:12px !important;
           }
-
-
+          
           }
 
           /* Tablet Optimization */
