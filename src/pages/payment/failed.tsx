@@ -45,25 +45,14 @@ export default function PaymentFailed() {
         </div>
 
         <div className="flex flex-col space-y-3">
-          {/* <button
-            onClick={() => window.location.reload()}
-            className="w-full bg-indigo-950 text-white py-3 px-4 rounded-lg hover:bg-indigo-900 transition flex items-center justify-center gap-2"
-          >
-            <RotateCw size={18} />
-            Coba Lagi
-          </button> */}
-          <Link href="/" className="w-full">
+
+          <Link href="/dashboard" className="w-full">
             <button className="w-full border border-indigo-950 bg-indigo-900 text-white hover:text-indigo-900  py-3 px-4 rounded-lg hover:bg-indigo-50 transition flex items-center justify-center gap-2">
               <Home size={18} />
               Kembali ke Beranda
             </button>
           </Link>
-          {/* <Link href="/support" className="w-full">
-            <button className="w-full text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-100 transition flex items-center justify-center gap-2">
-              <CreditCard size={18} />
-              Butuh Bantuan?
-            </button>
-          </Link> */}
+
         </div>
       </div>
     </div>
