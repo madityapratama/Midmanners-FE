@@ -12,6 +12,7 @@ import {
 import ConfirmDialog from "@/components/ConfirmDialog";
 import toast, { Toaster } from "react-hot-toast";
 import api from "@/lib/axios";
+import Loading from "@/components/Loading";
 
 export default function DetailTransaksiViews() {
   const router = useRouter();
@@ -124,11 +125,7 @@ export default function DetailTransaksiViews() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-      </div>
-    );
+    return <Loading/>
   }
 
   if (error || !transaction) {

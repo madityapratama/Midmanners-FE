@@ -5,6 +5,7 @@ import { ArrowLeft, Image as ImageIcon } from "lucide-react";
 import api from "@/lib/axios";
 import { withRoleProtection } from "@/hoc/withRoleProtection";
 import Image from "next/image";
+import Loading from "@/components/Loading";
 
 interface PostDetail {
   id: number;
@@ -82,13 +83,7 @@ const DetailPostinganSeller = () => {
   };
 
   if (isLoading) {
-    return (
-      <ProtectedRoute>
-        <div className="min-h-screen flex items-center justify-center text-gray-600 font-poppins">
-          Memuat data produk...
-        </div>
-      </ProtectedRoute>
-    );
+    return <Loading/>
   }
 
   if (error) {

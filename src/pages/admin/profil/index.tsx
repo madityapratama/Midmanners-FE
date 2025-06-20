@@ -77,16 +77,15 @@ const  AdminProfile = () => {
   };
 
   const handleLogout = async () => {
-    setIsLoading(true);
-    try {
-      await logout();
-      setTimeout(() => {
-        router.push("/");
-      }, 1000);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  setIsLoading(true);
+  try {
+    await logout(); // Logout function (clear token, session, dsb)
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // efek delay (opsional)
+    router.push("/");
+  } finally {
+    setIsLoading(false); // baru false setelah selesai semuanya
+  }
+};
 
   const navigateTo = (page) => {
     switch (page) {
@@ -116,41 +115,41 @@ const  AdminProfile = () => {
   }
 
   return (
-  <div className="min-h-screen pt-13 bg-gray-100 text-indigo-950">
+  <div className="min-h-screen pt-13 bg-[#f2f2f6] font-poppins text-indigo-950 pb-10">
     {/* Cover Photo Section */}
     <div
-      className="relative h-[150px] sm:h-[200px] md:h-[250px] w-full overflow-hidden"
-      style={{
-        backgroundImage: profile?.background_image
-          ? `url('${process.env.NEXT_PUBLIC_IMG_URL}${profile.background_image}')`
-          : "linear-gradient(135deg, #4f46e5 0%, #312e81 100%)",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <label className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4">
-        <input
-          type="file"
-          className="hidden"
-          onChange={handleCoverChange}
-          accept="image/*"
-          disabled={uploading.background}
-        />
-        <div className="bg-white/90 hover:bg-white text-indigo-950 px-3 py-1 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center gap-1 sm:gap-2 shadow-md hover:shadow-lg cursor-pointer">
-          {uploading.background ? (
-            <>
-              <Loader size={16} className="animate-spin" />
-              <span className="hidden xs:inline">Uploading...</span>
-            </>
-          ) : (
-            <>
-              <Edit2 size={16} />
-              <span className="hidden xs:inline">Edit Cover</span>
-            </>
-          )}
-        </div>
-      </label>
-    </div>
+        className="relative h-[200px] sm:h-[250px] w-full overflow-hidden"
+        style={{
+          backgroundImage: profile?.background_image
+            ? `url('${process.env.NEXT_PUBLIC_IMG_URL}${profile.background_image}')`
+            : "linear-gradient(135deg, #4f46e5 0%, #312e81 100%)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <label className="absolute bottom-4 right-4">
+          <input
+            type="file"
+            className="hidden"
+            onChange={handleCoverChange}
+            accept="image/*"
+            disabled={uploading.background}
+          />
+          <div className="bg-white/90 hover:bg-white text-indigo-950 px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 shadow-md hover:shadow-lg cursor-pointer">
+            {uploading.background ? (
+              <>
+                <Loader size={18} className="animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              <>
+                <Edit2 size={18} />
+                Edit Cover
+              </>
+            )}
+          </div>
+        </label>
+      </div>
 
     {/* Profile Section */}
     <div className="px-4 sm:px-6 pt-4 sm:pt-6 max-w-6xl mx-auto relative mt-8 sm:mt-10">
@@ -210,7 +209,7 @@ const  AdminProfile = () => {
 
       {/* Activities Section */}
       <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm">
-        <h3 className="text-base sm:text-lg mb-3 sm:mb-4 font-bold">Aktivitas</h3>
+        <h3 className="text-lg sm:text-lg mb-3 sm:mb-4 font-bold">Aktivitas</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-center">
           {[
             {
@@ -253,25 +252,25 @@ const  AdminProfile = () => {
       </div>
 
       {/* Logout Button */}
-      <div className="mt-6 sm:mt-10 flex justify-center">
-        <button
-          onClick={handleLogout}
-          disabled={isLoading}
-          className="flex items-center gap-1 sm:gap-2 px-4 py-2 sm:px-6 sm:py-3 bg-indigo-950 text-white rounded-full hover:bg-indigo-900 transition-all shadow-md hover:shadow-lg disabled:opacity-70 text-sm sm:text-base"
-        >
-          {isLoading ? (
-            <>
-              <Loader size={14} className="animate-spin" />
-              <span className="hidden xs:inline">Memproses...</span>
-            </>
-          ) : (
-            <>
-              <LogOut size={14} />
-              <span>Logout</span>
-            </>
-          )}
-        </button>
-      </div>
+      <div className="mt-10 flex justify-center">
+          <button
+            onClick={handleLogout}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-6 py-3 bg-indigo-950 text-white rounded-full hover:bg-indigo-900 transition-all shadow-md hover:shadow-lg disabled:opacity-70"
+          >
+            {isLoading ? (
+              <>
+                <Loader size={16} className="animate-spin" />
+                Memproses...
+              </>
+            ) : (
+              <>
+                <LogOut size={16} />
+                Logout
+              </>
+            )}
+          </button>
+        </div>
     </div>
   </div>
 );

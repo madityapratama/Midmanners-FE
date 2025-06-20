@@ -71,17 +71,16 @@ const AdminProfile = () => {
     if (file) handleImageUpload(file, "profile");
   };
 
-  const handleLogout = async () => {
-    setIsLoading(true);
-    try {
-      await logout();
-      setTimeout(() => {
-        router.push("/");
-      }, 1000);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const handleLogout = async () => {
+  setIsLoading(true);
+  try {
+    await logout(); // Logout function (clear token, session, dsb)
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // efek delay (opsional)
+    router.push("/");
+  } finally {
+    setIsLoading(false); // baru false setelah selesai semuanya
+  }
+};
 
   const navigateTo = (page) => {
     switch (page) {
@@ -105,7 +104,7 @@ const AdminProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f2f2f6] font-poppins text-indigo-950 pb-10">
+    <div className="min-h-screen bg-[#f2f2f6] font-poppins text-indigo-950 pb-10 ">
       {/* Cover Photo Section */}
       <div
         className="relative h-[200px] sm:h-[250px] w-full overflow-hidden"

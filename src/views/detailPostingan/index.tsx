@@ -382,8 +382,7 @@ export default function DetailPostinganViews() {
         </div>
       </div>
       {currentUser &&
-      (currentUser?.id == post.seller.id ||
-        currentUser.role === "admin") ? (
+      (currentUser?.id == post.seller.id || currentUser.role === "admin" ) ? (
         <DeleteButton
           postId={post.id}
           onDeleteSuccess={handleDeleteSuccess}
@@ -392,7 +391,7 @@ export default function DetailPostinganViews() {
             <Trash2 className="h-4 w-4" size={20} />
           </button>
         </DeleteButton>
-      ) : (
+      ) : (currentUser?.role ==="midman") ? " " : (
         <button
           onClick={handleChatSeller}
           disabled={isChatLoading}
@@ -476,8 +475,7 @@ export default function DetailPostinganViews() {
         <ThumbsUp className="w-5 h-5" />
         <span>{liked ? "Disukai" : "Suka"}</span>
       </button>
-      {currentUser?.id == post.seller.id ||
-      currentUser?.role === "seller" ? (
+      {currentUser?.id == post.seller.id || currentUser?.role === "seller" || currentUser?.role === "midman" || currentUser?.role === "admin" ? (
         ""
       ) : (
         <button

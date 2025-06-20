@@ -17,7 +17,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function SellerProfileViews() {
   const router = useRouter();
   const { logout, profile, fetchProfile } = useAuth();
-  // const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -34,17 +34,17 @@ export default function SellerProfileViews() {
     router.push(path);
   };
 
-  const handleLogout = async () => {
-    setIsLoading(true);
-    try {
-      await logout();
-      setTimeout(() => {
-        router.push("/");
-      }, 1000);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const handleLogout = async () => {
+  setIsLoggingOut(true);
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // 🔧 beri waktu render ulang
+    await logout();
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // Efek "memproses"
+    router.push("/");
+  } finally {
+    setIsLoggingOut(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#f2f2f6] font-poppins text-indigo-950 pb-10">
@@ -174,10 +174,10 @@ export default function SellerProfileViews() {
         <div className="mt-10 flex justify-center">
           <button
             onClick={handleLogout}
-            disabled={isLoading}
+            disabled={isLoggingOut}
             className="flex items-center gap-2 px-6 py-3 bg-indigo-950 text-white rounded-full hover:bg-indigo-900 transition-all shadow-md hover:shadow-lg disabled:opacity-70"
           >
-            {isLoading ? (
+            {isLoggingOut ? (
               <>
                 <Loader size={16} className="animate-spin" />
                 Memproses...

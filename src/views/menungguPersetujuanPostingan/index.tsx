@@ -4,6 +4,7 @@ import { ArrowLeft, FileText, Check, X, Search } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import api from "@/lib/axios";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import Loading from "@/components/Loading";
 
 interface Post {
   id: number;
@@ -90,6 +91,10 @@ const fetchPendingPosts = async () => {
   )
 );
 
+if(isLoading){
+  return <Loading/>
+}
+
   return (
     <div className="min-h-screen bg-gray-50 px-4 md:px-8 py-6">
       <Toaster position="top-center" reverseOrder={false} />
@@ -123,13 +128,6 @@ const fetchPendingPosts = async () => {
 
       {/* Table Container */}
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        {/* Loading State */}
-        {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-          </div>
-        ) : (
-          /* Table */
           <div className="overflow-x-auto">
             <table className="min-w-full font-poppins text-sm">
               <thead className="bg-indigo-50">
@@ -167,8 +165,7 @@ const fetchPendingPosts = async () => {
                       {index + 1}
                     </td>
                     <td 
-                      className="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:text-indigo-800 cursor-pointer"
-                      onClick={() => goToSellerPending(post.id.toString())}
+                      className="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:text-indigo-800"
                     >
                       {post.seller}
                     </td>
@@ -266,7 +263,6 @@ const fetchPendingPosts = async () => {
               </tbody>
             </table>
           </div>
-        )}
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
   useEffect(() => {
     if (!loadingData && !user) {
-      router.push("/auth/login");
+      router.push("/");
     }
   }, [user, loadingData, router]);
 

@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { ArrowLeft, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import api from "@/lib/axios"; // Sesuaikan dengan path ke service API Anda
+import Loading from "@/components/Loading";
 
 interface SellerRequest {
   id: number;
@@ -55,17 +56,7 @@ export default function PengajuanMenjadiSellerViews() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white p-6 font-poppins mt-10">
-        <div className="flex items-center gap-4 mb-6">
-          <button onClick={handleBack} className="text-gray-700 hover:text-black">
-            <ArrowLeft size={24} />
-          </button>
-          <h1 className="text-2xl font-semibold text-indigo-950">Pengajuan Menjadi Seller</h1>
-        </div>
-        <div className="text-center text-black py-10">Memuat data...</div>
-      </div>
-    );
+    return <Loading/>
   }
 
   if (error) {

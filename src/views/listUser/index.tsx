@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { ArrowLeft, Loader, Search, User } from "lucide-react";
 import api from "@/lib/axios";
 import { useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 
 export default function ListUserViews() {
   const router = useRouter();
@@ -43,14 +44,7 @@ export default function ListUserViews() {
     });
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="flex flex-col items-center gap-4 p-8 bg-white rounded-lg shadow-md">
-          <Loader className="animate-spin text-indigo-600 w-8 h-8" />
-          <p className="text-gray-600">Loading user data...</p>
-        </div>
-      </div>
-    );
+    return <Loading/>
   }
 
   return (
@@ -110,7 +104,7 @@ export default function ListUserViews() {
                       User
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Contact
+                      Email
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Payment Info

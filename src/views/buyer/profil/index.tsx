@@ -39,15 +39,17 @@ export default function ProfilBuyerViews() {
     router.push("/daftarSeller");
   };
 
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    try {
-      await logout();
-      router.push("/");
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
+const handleLogout = async () => {
+  setIsLoggingOut(true);
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // 🔧 beri waktu render ulang
+    await logout();
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // Efek "memproses"
+    router.push("/");
+  } finally {
+    setIsLoggingOut(false);
+  }
+};
 
   if (loading) {
     return (

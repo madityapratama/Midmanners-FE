@@ -61,6 +61,10 @@ export default function ChatDashboard() {
             overflow: hidden; /* Prevent body scroll if Sendbird manages its own scroll */
           }
 
+          .sendbird-channel-profile .sendbird-channel-profile__edit{
+          display: none !important;
+          }
+
           /* General styling for the Sendbird App container */
           .sendbird-app__wrap {
             height: calc(100vh - ${NAVBAR_HEIGHT}) !important; /* Take full viewport height minus navbar */
@@ -143,6 +147,19 @@ export default function ChatDashboard() {
               top: 1rem !important;
               right: 1rem !important;
             }
+
+            .sendbird-modal__content{
+            width: 350px !important;
+            }
+
+            .sendbird-add-channel__rectangle{
+            width: 300px !important;
+            }
+
+            .sendbird-user-list-item{
+            width: 315px !important;
+            }
+            
             
             .sendbird-app__channellist-wrap {
               position: fixed !important;
@@ -182,6 +199,11 @@ export default function ChatDashboard() {
 
           .sendbird-text-message-item-body,.sendbird-label--body-1 {
           font-size:12px !important;
+          }
+
+          .sendbird-channel-profile .sendbird-channel-profile__title{
+          max-width:1000px !important;
+          
           }
           
           }
