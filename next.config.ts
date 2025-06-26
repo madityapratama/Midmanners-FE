@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
     {
       protocol: 'https',
       hostname: 'api.midmanners.store',
+      // port: '8000',
       pathname: '/storage/**',
     },
   ],

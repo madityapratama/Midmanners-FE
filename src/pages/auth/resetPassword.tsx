@@ -81,7 +81,7 @@ export default function ResetPassword() {
               disabled={loading}
               className="bg-gray-800 text-white px-6 py-2 rounded hover:bg-black transition"
             >
-              {loading ? "Mengirim..." : "Kirim Kode"}
+              {loading ? "Mengirim..." : "Kirim"}
             </button>
           </div>
         </form>

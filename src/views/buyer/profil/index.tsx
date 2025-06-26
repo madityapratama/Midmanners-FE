@@ -122,7 +122,7 @@ const handleLogout = async () => {
 
     {/* Start Selling Button */}
     {profile?.role === "buyer" && (
-      <div className="flex flex-col items-end gap-2">
+      <div className="md:flex md:flex-col grid grid-cols-1 items-end gap-2 ">
         <div>
           {profile?.status_pengajuan_seller === null && (
             <span className="text-xs">belum ada pengajuan</span>
@@ -136,6 +136,7 @@ const handleLogout = async () => {
             <p className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pengajuan Anda sedang diperiksa</p>
           )}
         </div>
+        <div className="col-start-1">
         <button
           onClick={handleDaftarSeller}
           className="flex items-center gap-2 bg-white border border-indigo-950 rounded-full px-4 py-2 text-indigo-950 text-sm font-semibold hover:bg-indigo-50 hover:shadow-md transition-all"
@@ -143,6 +144,7 @@ const handleLogout = async () => {
           <Store size={16} />
           Mulai Jualan
         </button>
+        </div>
       </div>
     )}
   </div>

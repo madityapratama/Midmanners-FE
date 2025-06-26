@@ -53,13 +53,20 @@ export default function ChatDashboard() {
       <Head>
         <title>Chat | MidManners</title>
         <meta name="description" content="Connect with your community" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <style>{`
           /* Ensure the root HTML and body are full height */
           html, body, #__next {
             height: 100%;
             overflow: hidden; /* Prevent body scroll if Sendbird manages its own scroll */
           }
+
+          /* gambar */
+          // .sendbird-thumbnail-message-item-body{
+          // left:120px !important;    
+          // }
+
+
 
           .sendbird-channel-profile .sendbird-channel-profile__edit{
           display: none !important;
@@ -118,12 +125,15 @@ export default function ChatDashboard() {
 
           /* Mobile Optimization */
           @media (max-width: 767px) {
+          
             .sendbird-app__wrap {
               flex-direction: column !important;
               /* On mobile, if a fixed navbar is present, adjust height and margin-top accordingly */
               height: calc(100vh - ${NAVBAR_HEIGHT}) !important;
               margin-top: ${NAVBAR_HEIGHT} !important;
+              padding-bottom: calc(50px + env(safe-area-inset-bottom));
             }
+
 
             .sendbird-channel-settings {
               position: fixed !important;
@@ -169,7 +179,7 @@ export default function ChatDashboard() {
               height: calc(100% - ${NAVBAR_HEIGHT}) !important; /* Take remaining height */
               transform: ${showChannelList ? 'translateX(0)' : 'translateX(-100%)'} !important;
               transition: transform 0.3s ease !important;
-              z-index: 100 !important;
+              z-index: 49 !important;
               background: white !important;
               box-shadow: ${showChannelList ? '2px 0 10px rgba(0,0,0,0.1)' : 'none'} !important;
             }
@@ -204,6 +214,10 @@ export default function ChatDashboard() {
           .sendbird-channel-profile .sendbird-channel-profile__title{
           max-width:1000px !important;
           
+          }
+
+          .sendbird-message-content .sendbird-message-content__middle{
+              max-width:250px !important;
           }
           
           }
@@ -281,11 +295,11 @@ export default function ChatDashboard() {
               enableReactions: true,
               enableMention: true,
               //untuk menampilkan tombol kirim file hapus/coment code input dibawah
-              input: {
-                enableDocument: false,
-                enableImage: false,
-                enableVoice: false
-              } 
+              // input: {
+              //   enableDocument: false,
+              //   enableImage: false,
+              //   enableVoice: false
+              // } 
             },
             groupChannelList: {
               enableTypingIndicator: true,
