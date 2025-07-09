@@ -281,7 +281,7 @@ export default function EditProfilSellerViews() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nomor Rekening</label>
                 <input
-                  type="text"
+                  type="number"
                   name="no_rek"
                   value={formData.no_rek}
                   onChange={handleChange}
@@ -313,7 +313,7 @@ export default function EditProfilSellerViews() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nomor E-Wallet</label>
                 <input
-                  type="text"
+                  type="number"
                   name="no_rek"
                   value={formData.no_rek}
                   onChange={handleChange}

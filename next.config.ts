@@ -13,7 +13,9 @@ const nextConfig: NextConfig = {
   remotePatterns: [
     {
       protocol: 'https',
+      // protocol: 'http',
       hostname: 'api.midmanners.store',
+      // hostname: 'localhost',
       // port: '8000',
       pathname: '/storage/**',
     },
