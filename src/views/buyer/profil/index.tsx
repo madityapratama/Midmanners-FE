@@ -10,6 +10,7 @@ import {
   Store,
   LogOut,
   Loader,
+  XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
@@ -154,7 +155,7 @@ const handleLogout = async () => {
   {/* Activities Section */}
   <div className="bg-white rounded-xl p-6 shadow-sm">
     <h3 className="text-lg mb-4 font-calsans">Aktivitas</h3>
-    <div className="grid grid-cols-3 gap-4 text-center font-poppins">
+    <div className="grid grid-cols-4 gap-4 text-center font-poppins">
       {[
         {
           icon: <Truck size={30} className="mx-auto" />,
@@ -172,6 +173,12 @@ const handleLogout = async () => {
           icon: <CheckCircle size={30} className="mx-auto" />,
           label: "Selesai",
           tab: "selesai",
+          hoverColor: "hover:text-emerald-600",
+        },
+        {
+          icon: <XCircle size={30} className="mx-auto" />,
+          label: "Batal",
+          tab: "batal",
           hoverColor: "hover:text-emerald-600",
         },
       ].map((item) => (

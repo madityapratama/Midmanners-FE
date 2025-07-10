@@ -9,6 +9,7 @@ import {
   X,
   RotateCw,
   Check,
+  XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -50,6 +51,7 @@ export default function AktivitasViews() {
     { key: "menunggu", label: "Menunggu Dikirim", icon: Clock },
     { key: "terkirim", label: "Sudah Terkirim", icon: Truck },
     { key: "selesai", label: "Selesai", icon: CheckCircle },
+    { key: "batal", label: "batal", icon: XCircle },
   ];
 
   useEffect(() => {
@@ -75,6 +77,9 @@ export default function AktivitasViews() {
         case "selesai":
           endpoint = "/orders/buyer/selesai";
           break;
+        case "batal":
+          endpoint = "/orders/buyer/batal";
+          break;
         default:
           endpoint = "/orders/buyer/menungguDikirim";
       }
@@ -82,6 +87,7 @@ export default function AktivitasViews() {
       const response = await api.get(
         `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`
       );
+      // console.log(response.data.data);
 
       setOrders(response.data.data || []);
     } catch (error) {
@@ -201,7 +207,13 @@ export default function AktivitasViews() {
                   <div className="font-medium">
                     {formatPrice(order.post.price)}
                   </div>
-                </div>
+              </div>
+              
+              {activeTab === "batal" && (
+                    <>
+                      <div>Status Pengembalian: {order.refund_status}</div>
+                    </>
+                  )}
 
                 {/* Tombol aksi */}
                 {activeTab === "menunggu" && (
