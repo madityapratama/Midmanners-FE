@@ -9,6 +9,7 @@ import {
   XCircle,
   Clock,
   LogOut,
+  CircleDollarSign,
 } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -34,17 +35,17 @@ export default function SellerProfileViews() {
     router.push(path);
   };
 
-const handleLogout = async () => {
-  setIsLoggingOut(true);
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // 🔧 beri waktu render ulang
-    await logout();
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // Efek "memproses"
-    router.push("/");
-  } finally {
-    setIsLoggingOut(false);
-  }
-};
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // 🔧 beri waktu render ulang
+      await logout();
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Efek "memproses"
+      router.push("/");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#f2f2f6] font-poppins text-indigo-950 pb-10">
@@ -76,25 +77,24 @@ const handleLogout = async () => {
         {/* Info Profil */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4 gap-4">
           <div className="flex items-center gap-4">
-              {/* Placeholder avatar - bisa diganti dengan gambar */}
+            {/* Placeholder avatar - bisa diganti dengan gambar */}
             <div className="w-24 h-24 -mt-11 border-4 border-white rounded-full bg-gray-300 flex items-center justify-center text-white text-sm overflow-hidden shadow-lg">
-                {profile?.profile_image ? (
-                  <Image
-                    src={imageUrl}
-                    priority
-                    alt="Profile"
-                    width={96}
-                    height={96}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-indigo-950/30 flex items-center justify-center text-white">
-                    <span className="text-2xl font-bold">
-                      {profile?.name?.charAt(0) || "P"}
-                    </span>
-                  </div>
-                )}
-            
+              {profile?.profile_image ? (
+                <Image
+                  src={imageUrl}
+                  priority
+                  alt="Profile"
+                  width={96}
+                  height={96}
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <div className="w-full h-full bg-indigo-950/30 flex items-center justify-center text-white">
+                  <span className="text-2xl font-bold">
+                    {profile?.name?.charAt(0) || "P"}
+                  </span>
+                </div>
+              )}
             </div>
             <div>
               <h2 className="text-2xl font-bold font-calsans">
@@ -116,6 +116,15 @@ const handleLogout = async () => {
               </div>
             </div>
           </div>
+          <div>
+            <a
+              href="/files/snk.pdf"
+              download
+              className="text-sm text-indigo-700 underline"
+            >
+              Kesepatakan menjadi seller
+            </a>
+          </div>
         </div>
 
         <hr className="my-6 border-indigo-950/20" />
@@ -123,7 +132,7 @@ const handleLogout = async () => {
         {/* Menu Aktivitas */}
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <h3 className="text-lg mb-4 font-calsans">Aktivitas Toko</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 text-center font-poppins">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-4 text-center font-poppins place-content-center">
             {[
               {
                 icon: <Tag size={30} className="mx-auto" />,
@@ -134,6 +143,11 @@ const handleLogout = async () => {
                 icon: <List size={30} className="mx-auto" />,
                 label: "Daftar Jualan",
                 path: "/seller/daftarJualan",
+              },
+              {
+                icon: <CircleDollarSign  size={30} className="mx-auto" />,
+                label: "Rekap Pendapatan",
+                path: "/seller/rekapPendapatan",
               },
               {
                 icon: <Loader size={30} className="mx-auto" />,

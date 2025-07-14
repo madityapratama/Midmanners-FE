@@ -17,5 +17,6 @@ export const protectedRoutes = [
   '/pendingPostingan',
   '/pengajuan*',
   '/semuaTransaksi*',
+  '/seller/recapPendapatan'
 
 ];
