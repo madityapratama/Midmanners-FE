@@ -19,9 +19,10 @@ export default function DetailTransaksiViews() {
   const { id } = router.query;
 
   // State for transaction data
-  const [transaction, setTransaction] = useState<any>(null);
+  const [transaction, setTransaction] = useState < any > (null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState < string | null > (null);
+  const [danaPencairan, setDanaPencairan] = useState(null);
 
   // Fetch transaction data
   useEffect(() => {
@@ -42,12 +43,19 @@ export default function DetailTransaksiViews() {
     fetchTransaction();
   }, [id]);
 
+  console.log("Transaction Data:", transaction?.status);
+
   // Handle status change for dana terkirim
   const handleDanaTerkirim = async () => {
+    if (!danaPencairan) {
+      toast.error("Jumlah pencairan belum diisi!");
+      return;
+    }
     try {
-      await api.patch(`/orders/${id}/midman/danaTerkirim`);
+      await api.patch(`/orders/${id}/midman/danaTerkirim`, { jumlah_pencairan: danaPencairan });
       setTransaction((prev: any) => ({
         ...prev,
+        jumlah_pencairan: danaPencairan,
         status: "selesai",
         status_dana: "sudah dikirim",
       }));
@@ -64,6 +72,7 @@ export default function DetailTransaksiViews() {
       await api.patch(`/orders/${id}/midman/danaRefund`);
       setTransaction((prev: any) => ({
         ...prev,
+        danaPencairan,
         status: "dibatalkan",
         refund_status: "sudah refund",
       }));
@@ -98,6 +107,13 @@ export default function DetailTransaksiViews() {
     return `Rp${parseFloat(price).toLocaleString("id-ID")}`;
   };
 
+  //untuk input dana pencairan
+  const inputFormatPrice = (value: any) => {
+    const stringValue = String(value);
+    const num = stringValue.replace(/\D/g, '');
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
   // Get status icon and color
   const getStatusInfo = (status: string) => {
     switch (status) {
@@ -125,7 +141,7 @@ export default function DetailTransaksiViews() {
   };
 
   if (isLoading) {
-    return <Loading/>
+    return <Loading />
   }
 
   if (error || !transaction) {
@@ -176,9 +192,49 @@ export default function DetailTransaksiViews() {
                 <h2 className="text-lg font-bold text-indigo-950">
                   {transaction.post.title}
                 </h2>
-                <p className="text-lg font-semibold text-green-600 mt-1">
-                  {formatPrice(transaction.post.price)}
-                </p>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-2">
+                  <p className="text-lg font-semibold text-green-600">
+                    {formatPrice(transaction.post.price)}
+                  </p>
+                  {transaction.status_dana === "perlu dikirim" ? (
+                    <>
+                    <div className="flex flex-row justify-center items-center gap-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Jumlah Pencairan {'>'}
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <span className="text-gray-500">Rp</span>
+                        </div>
+                        <input
+                          type="text"
+                          value={inputFormatPrice(danaPencairan)}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\./g, '');
+                            if (!isNaN(Number(value))) {
+                              setDanaPencairan(value);
+                            }
+                          }}
+                          className="pl-10 w-full py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          required
+                        />
+                      </div>
+                    </div>
+                    </>
+                  ) : (transaction.status === "dibatalkan" || transaction.status === "perlu diproses") ? (
+                    <></>
+                  ) : (
+                    <>
+                    <div className="text-sm text-gray-500">
+                      Jumlah Pencairan:{" "}
+                      <span className="font-medium text-black">
+                        {formatPrice(transaction.jumlah_pencairan || "0")}
+                      </span>
+                    </div>
+                    </>
+                  )}
+                </div>
+
               </div>
             </div>
           </div>
@@ -363,4 +419,5 @@ export default function DetailTransaksiViews() {
       </div>
     </div>
   );
+
 }
